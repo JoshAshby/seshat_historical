@@ -23,9 +23,11 @@ except:
 	from config import *
 
 
+
 class baseObject(object):
 	def __init__(self, env, members):
 		self.env = env
+		self.session = env["beaker.session"]
 		self.members = members
 	
 	def response(self):
@@ -36,6 +38,10 @@ class baseObject(object):
 			]
 
 		return status, headers
+	
+	def saveCookieJar(self):
+		self.session.save()
+		return self.session
 
 	def GET(self):
 		pass
@@ -48,9 +54,3 @@ class baseObject(object):
 
 	def DELETE(self):
 		pass
-
-	def endPolling(self):
-		return ''
-
-
-

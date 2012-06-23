@@ -30,6 +30,8 @@ import framework as fw
 import baseObject as bo
 from route import *
 
+import random
+import string
 
 @route("/")
 class index(bo.baseObject):
@@ -37,34 +39,28 @@ class index(bo.baseObject):
 		for i in range(1,101):
 			yield ("%i<br>" % i)
 
-		yield self.endPolling()
 
-
-@route("/josh/")
+@route("/session/", True)
 class josh(bo.baseObject):
 	def GET(self):
-		self.data = ''
-
-		for bit in self.env:
-			self.data += ("%s : %s<br>" % (str(bit), str(self.env[bit])))
-
-		yield self.data
-		yield self.endPolling()
+		if not self.session.has_key('id'):
+			self.session['id'] = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+		else:
+			yield str(self.session['id'])
 
 
-@route("/josh/(.*)/")
+@route("/members/(.*)/")
 class joshMember(bo.baseObject):
 	def GET(self):
 		self.data = ''
 
 		for member in self.members:
-			self.data += ("<h1>%s</h1>" % str(member))
+			self.data += ("<h1>%s : %s</h1>" % (str(member), str(self.members[member])))
 
 		for bit in self.env:
-			self.data += ("%s : %s" % (str(bit), str(self.env[bit])))
+			self.data += ("%s : %s<br>" % (str(bit), str(self.env[bit])))
 
 		yield self.data
-		yield self.endPolling()
 
 
 if __name__ == '__main__':

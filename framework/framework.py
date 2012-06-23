@@ -32,21 +32,48 @@ if serverType is "fastcgi":
 else:
 	from gevent.pywsgi import WSGIServer
 import signal
+from beaker.middleware import SessionMiddleware
 
 
 def app(env, start_response):
+	"""
+	WSGI app and controller
+
+	Start off by looking through the dict of url's for a matched
+	regex. If one is found, then build a dict of members, which
+	includes matched groups in the regex, and query strings.
+
+	After the dict of members is built, pass it along with the
+	env to the class which is paired with the matched regex url.
+	
+	Finally, call the proper method in the class, send the headers
+	and start streaming data as it's available.
+
+	If the class provides a cookie/session data, then because of the way
+	this all works, at the moment data can not be streammed. As a result
+	it's all added together, then returned rather than sent out in chunks.
+	"""
 	global urls
 	for url in urls:
 		if serverType is "fastcgi":
-			matched = url["regex"].match(env["REQUEST_URI"][4:].split("?")[0])
+			matched = url["regex"].match(env["REQUEST_URI"][len(fcgiBase):].split("?")[0])
 		else:
 			matched = url["regex"].match(env["PATH_INFO"])
 		if matched:
-			newHTTPObject = url["object"](env, matched.groups())
+			members = {}
 
-			status, headers = newHTTPObject.response()
+			matchedItems = matched.groups()
+			for item in range(len(matchedItems)):
+				members.update({item: matchedItems[item]})
+			
+			query = env["QUERY_STRING"].split("&")
 
-			start_response(status, headers)
+			for item in query:
+				if item:
+					parts = item.split("=")
+					members.update({parts[0]: parts[1]})
+
+			newHTTPObject = url["object"](env, members)
 
 			routes = {
 				"GET": newHTTPObject.GET(),
@@ -55,27 +82,40 @@ def app(env, start_response):
 				"DELETE": newHTTPObject.DELETE()
 				}
 
-			for data in routes[env["REQUEST_METHOD"]]:
-				yield data
-			break
+			status, headers = newHTTPObject.response()
+			hasSession = url["session"]
 
-		else:
-			status = "404 NOT FOUND"
+			if hasSession:
+				content = ''
+				for data in routes[env["REQUEST_METHOD"]]:
+					if data is not StopIteration:
+						content += data
+					else:
+						break
 
-			headers = [
-				("Content-Type", "text/html"),
-			]
+				env["beaker.session"] = newHTTPObject.saveCookieJar()
 
-			try:
 				start_response(status, headers)
-			except AssertionError:
-				pass
 
-			yield "404 Resource Not Found"
+				yield content
+
+			else:
+				start_response(status, headers)
+
+				for data in routes[env["REQUEST_METHOD"]]:
+					if data is not StopIteration:
+						yield data
+					else:
+						break
 			break
 
 
 def main():
+	"""
+	Server
+
+	Starts the server and takes care of all that messy stuff.
+	"""
 	gevent.signal(signal.SIGQUIT, gevent.shutdown)
 	global port
 	global address
@@ -84,7 +124,7 @@ def main():
 	if not address:
 		address = "127.0.0.1"
 	try:
-		server = WSGIServer((address, port), app)
+		server = WSGIServer((address, port), SessionMiddleware(app, session_opts))
 
 		if serverType is "fastcgi":
 			print ("Now serving py as a fastcgi server at %s:%i" % (address, port))

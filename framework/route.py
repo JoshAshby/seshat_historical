@@ -25,11 +25,11 @@ except:
 import re
 
 
-def route(routeURL):
+def route(routeURL, cookie=False):
 	routeURLregex = re.compile("^" + routeURL + "$")
 	def wrapper(HTTPObject):
 		global urls
-		urls.append({"regex": routeURLregex, "object": HTTPObject, "url": routeURL})
+		urls.append({"regex": routeURLregex, "object": HTTPObject, "url": routeURL, "session": cookie})
 
 		return HTTPObject
 	return wrapper
