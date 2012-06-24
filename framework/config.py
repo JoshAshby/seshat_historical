@@ -18,8 +18,8 @@ What type of a server is this going to be running as?
 A fastCGI server for apache, nginx or lighttpd to work with
 or a stand alone server taken care of by gevent and wsgi?
 """
-#serverType = "fastcgi"
-serverType = "gevent"
+serverType = "fastcgi"
+#serverType = "gevent"
 
 """
 If the above serverType is set to fastcgi then we need to make

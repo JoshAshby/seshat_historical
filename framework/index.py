@@ -27,21 +27,23 @@ except:
 	from config import *
 
 import framework as fw
-import baseObject as bo
+from baseObject import baseHTTPPageObject as basePage
+import frameworkUtil as fwUtil
 from route import *
 
 import random
 import string
 
+
 @route("/")
-class index(bo.baseObject):
+class index(basePage):
 	def GET(self):
 		for i in range(1,101):
 			yield ("%i<br>" % i)
 
 
 @route("/session/", True)
-class josh(bo.baseObject):
+class josh(basePage):
 	def GET(self):
 		if not self.session.has_key('id'):
 			self.session['id'] = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
@@ -50,7 +52,7 @@ class josh(bo.baseObject):
 
 
 @route("/members/(.*)/")
-class joshMember(bo.baseObject):
+class joshMember(basePage):
 	def GET(self):
 		self.data = ''
 

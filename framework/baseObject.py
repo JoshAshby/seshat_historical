@@ -23,8 +23,7 @@ except:
 	from config import *
 
 
-
-class baseObject(object):
+class baseHTTPPageObject(object):
 	def __init__(self, env, members):
 		self.env = env
 		self.session = env["beaker.session"]
