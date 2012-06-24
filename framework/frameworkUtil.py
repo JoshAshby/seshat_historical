@@ -19,9 +19,9 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-	from config import *
+        from config import *
 except:
-	abspath = os.path.dirname(__file__)
-	sys.path.append(abspath)
-	os.chdir(abspath)
-	from config import *
+        abspath = os.path.dirname(__file__)
+        sys.path.append(abspath)
+        os.chdir(abspath)
+        from config import *

@@ -40,6 +40,13 @@ Next, do you want this framework to do some extra debugging?
 """
 debug = True
 
+"""
+Now up are the authentication and session database strings
+These are just sqlalchemy database strings so docu is around
+"""
+authDB = "mysql://josh:joshmysql@localhost/test"
+sessionDB = "mysql://josh:joshmysql@localhost/test"
+
 
 """
 #########################STOP EDITING#####################################
@@ -50,10 +57,11 @@ Don't change these following settings unless you know what you're doing!!!
 urls = []
 
 session_opts = {
-	'session.cookie_expires': False,
-	'session.auto': True,
-	'session.type': 'file',
-	'session.data_dir': './data',
-	'session.validate_key': 'abc',
-	'session.encrypt_key': '123',
+        'session.cookie_expires': True,
+        'session.auto': True,
+        'session.type': 'ext:database',
+        'session.url': sessionDB,
+        'session.lock_dir': './locks',
+        'session.key': 'test_key',
+        'session.secret': '33DJ89SQICUP9C5KRL16WHOYTY08FA430OM3YOFVXOW2PSYN8JSVIGWLVM60RDDQHXD7PT4IUTT8E3DTOD6DVAAH002BHBRECJEC',
 }

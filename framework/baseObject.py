@@ -15,41 +15,41 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-	from config import *
+        from config import *
 except:
-	abspath = os.path.dirname(__file__)
-	sys.path.append(abspath)
-	os.chdir(abspath)
-	from config import *
+        abspath = os.path.dirname(__file__)
+        sys.path.append(abspath)
+        os.chdir(abspath)
+        from config import *
 
 
 class baseHTTPPageObject(object):
-	def __init__(self, env, members):
-		self.env = env
-		self.session = env["beaker.session"]
-		self.members = members
-	
-	def response(self):
-		status = "200 OK"
+        def __init__(self, env, members):
+                self.env = env
+                self.session = env["beaker.session"]
+                self.members = members
 
-		headers = [
-			("Content-type", "text/html"),
-			]
+        def response(self):
+                status = "200 OK"
 
-		return status, headers
-	
-	def saveCookieJar(self):
-		self.session.save()
-		return self.session
+                headers = [
+                        ("Content-type", "text/html"),
+                        ]
 
-	def GET(self):
-		pass
+                return status, headers
 
-	def POST(self):
-		pass
+        def returnCookieJar(self):
+                self.session.save()
+                return self.session
 
-	def PUT(self):
-		pass
+        def GET(self):
+                pass
 
-	def DELETE(self):
-		pass
+        def POST(self):
+                pass
+
+        def PUT(self):
+                pass
+
+        def DELETE(self):
+                pass
