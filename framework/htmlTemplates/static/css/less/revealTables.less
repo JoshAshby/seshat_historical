@@ -1,0 +1,51 @@
+/*!
+ * Bootstrap v2.0.3
+ *
+ * Copyright 2012 Twitter, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Designed and built with all the love in the world @twitter by @mdo and @fat.
+ *
+ *
+ * This is just so I can use reveal.js with bootstraps tables
+ * without bootstrap fucking up the styling like it does with reveal.js
+ */
+
+// CSS Reset
+@import "reset.less";
+
+// Core variables and mixins
+@import "variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "mixins.less";
+
+// Base CSS
+@import "forms.less";
+@import "tables.less";
+
+//Other
+@import "thumbnails.less";
+@import "labels-badges.less";
+
+h3 {
+	text-align: right;
+	div {
+		display: inline-block;
+	}
+}
+
+table {
+	margin: 10px;
+	color: black;
+	       th {
+			color: white;
+	       }
+}
+
+.centered {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -400px;
+	margin-left: -512px;
+}

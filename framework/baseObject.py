@@ -29,14 +29,13 @@ class baseHTTPPageObject(object):
                 self.session = env["beaker.session"]
                 self.members = members
 
-        def response(self):
-                status = "200 OK"
-
-                headers = [
+                self.status = "200 OK"
+                self.headers = [
                         ("Content-type", "text/html"),
                         ]
 
-                return status, headers
+        def response(self):
+                return self.status, self.headers
 
         def returnCookieJar(self):
                 self.session.save()

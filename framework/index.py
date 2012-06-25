@@ -30,67 +30,47 @@ import framework as fw
 from baseObject import baseHTTPPageObject as basePage
 from route import *
 
-import random
-import string
+from test import *
+from authController import *
+from authWrap import auth
 
 
 @route("/")
 class index(basePage):
         """
-        This routes to the root URL
-
-        Pages can be generators and use the yield statement
-        such as shown here.
+        Returns base index page.
         """
-        def GET(self):
-                for i in range(1,101):
-                        yield ("%i<br>" % i)
-
-
-@route("/session/")
-class session(basePage):
-        """
-        Pages can also be static and return their content
-        all at once, or they can return None.
-        """
+        @auth
         def GET(self):
                 """
-                Sessions can be used and access from inside each
-                page such as shwon here.
+
                 """
-                if not self.session.has_key('id'):
-                        self.session['id'] = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-                        return None
-                else:
-                        return str(self.session['id'])
+                self.session['login'] = False
+                return "this is a test"
 
 
-@route("/members/(.*)/")
-class members(basePage):
-        """
-        Finally, URL's can have place holders that are matched.
-        These can be found in self.members with numbers, corrisponding
-        to the placement in the URL. These place holders are simply
-        regex strings, such as (.*)
-
-        for example, /members/(.*)/ will have one
-                number in self.members, 0. This is because the 
-                placement of the (.*) matched regex is at 0
-
-        self.members also includes any query strings appended to 
-        the URL.
-        Try loading this page as: /members/Hello/?query=Dog&search=Fred+Jones
-        """
+@route("/static/(.*)")
+class static(basePage):
         def GET(self):
-                self.data = ''
+                if self.members and self.members[0][-1] is not "/":
+                        fileHeaders = {
+                                "js": ("Content-type", "text/script"),
+                                "coffee": ("Content-type", "text/coffeescript"),
+                                "png": ("Content-type", "image/png"),
+                                "jpg": ("Content-type", "image/jpeg"),
+                                "jpeg": ("Content-type", "image/jpeg"),
+                                "css": ("Content-type", "text/css"),
+                                "less": ("Content-type", "text/less"),
+                                "gif": ("Content-type", "image/gif"),
+                                "txt": ("Content-type", "text/plain"),
+                                }
 
-                for member in self.members:
-                        self.data += ("<h1>%s : %s</h1>" % (str(member), str(self.members[member])))
+                        fileType = self.members[0].split(".")[-1]
+                        self.headers = [
+                                fileHeaders[fileType]
+                                ]
 
-                for bit in self.env:
-                        self.data += ("%s : %s<br>" % (str(bit), str(self.env[bit])))
-
-                return self.data
+                        return open('./htmlTemplates/static/%s' % self.members[0])
 
 
 if __name__ == '__main__':
