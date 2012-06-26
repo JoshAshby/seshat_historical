@@ -29,10 +29,12 @@ except:
 import framework as fw
 from baseObject import baseHTTPPageObject as basePage
 from route import *
+from authWrap import *
+
+import indexView as iv
 
 from test import *
 from authController import *
-from authWrap import auth
 
 
 @route("/")
@@ -45,8 +47,9 @@ class index(basePage):
                 """
 
                 """
-                self.session['login'] = False
-                return "this is a test"
+                view = iv.indexView()
+
+                return view.build()
 
 
 @route("/static/(.*)")

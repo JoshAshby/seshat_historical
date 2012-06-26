@@ -74,18 +74,18 @@ def app(env, start_response):
                                         parts = item.split("=")
                                         members.update({parts[0]: parts[1]})
 
+                        for item in env['wsgi.input']:
+                                if item:
+                                        parts = item.split("&")
+                                        for part in parts:
+                                                query = part.split("=")
+                                                members.update({query[0]: query[1]})
+
                         newHTTPObject = url["object"](env, members)
 
-                        routes = {
-                                "GET": newHTTPObject.GET(),
-                                "POST": newHTTPObject.POST(),
-                                "PUT": newHTTPObject.PUT(),
-                                "DELETE": newHTTPObject.DELETE()
-                                }
+                        data = getattr(newHTTPObject, env["REQUEST_METHOD"])()
 
                         env["beaker.session"] = newHTTPObject.returnCookieJar()
-
-                        data = routes[env["REQUEST_METHOD"]]
 
                         status, headers = newHTTPObject.response()
 

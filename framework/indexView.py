@@ -1,8 +1,7 @@
 #!/usr/bin/env python2
 """
 Web App/API framework built on top of gevent
-View for authentication pages such as login
-and logout.
+View for the main index page
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -16,9 +15,9 @@ joshuaashby@joshashby.com
 import baseView as bv
 import templateConfig as tpl
 
-class loginView(bv.baseView):
+class indexView(bv.baseView):
         def HTML(self):
-                page = tpl.genericTemplate(file=tpl.mainTplSet["login"])
-                page.title = "Login"
-                page.navTitle = "Login"
+                page = tpl.genericTemplate(file=tpl.mainTplSet["index"])
+                page.title = "Home"
+                page.navTitle = "Home"
                 return page

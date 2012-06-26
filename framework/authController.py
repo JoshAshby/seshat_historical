@@ -25,20 +25,58 @@ except:
 import framework as fw
 from baseObject import baseHTTPPageObject as basePage
 from route import *
+import authModel as am
+import authView as av
+from authWrap import *
 
 
-subURL = "/admin"
-
-
-@route("/login")
+@route(subURL["auth"] + "/login")
 class login(basePage):
         def GET(self):
                 """
                 Display the login page
                 """
-                pass
+                view = av.loginView()
+
+                return view.build()
+
         def POST(self):
                 """
                 log the user in
+                """
+                passwd = self.members["passwd"]
+                name = self.members["user"]
+
+                self.session = am.loginUser(name, passwd, self.session)
+
+                self.status = "303 SEE OTHER"
+                self.headers = [("location", baseURL + "/")]
+
+
+@route(subURL["auth"] + "/logout")
+class logout(basePage):
+        def GET(self):
+                """
+
+                """
+                self.session = am.logoutUser(self.session)
+
+                self.status = "303 SEE OTHER"
+                self.headers = [("location", (subURLLink["auth"] + "/login"))]
+
+
+@route(subURL["auth"] + "/new/user")
+class newUser(basePage):
+        @auth
+        def GET(self):
+                """
+
+                """
+                pass
+
+        @auth
+        def PUT(self):
+                """
+
                 """
                 pass

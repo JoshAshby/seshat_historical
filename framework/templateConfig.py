@@ -32,27 +32,22 @@ along with partial templates
 tplHome = "./htmlTemplates/"
 prtTplHome = "./htmlTemplates/partials/"
 
-"""
-Finally we need to define the base url for various 
-things such as static assets and what not.
-"""
-baseURL = "http://localhost/web/"
-assetURL = "http://localhost/web/static/"
-
 #set-o-main templates. This is really here for ease of use and so forth
-mainSet = {
+mainTplSet = {
         "index": (tplHome + "index.tpl.html"),
+        "login": (tplHome + "login.tpl.html"),
 }
 
 #same as above just for partials
-partialSet = {
+partialTplSet = {
 }
-
 
 #generic template class, called by all the views currently
 #because nothing fancy is needed.
 class genericTemplate(Template):
-        pass
+        baseURL = baseURL
+        assetURL = assetURL
+        subURL = subURL
 
 
 #just one for Partials, not that it's needed, but just as a 

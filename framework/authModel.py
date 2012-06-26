@@ -32,11 +32,11 @@ class User(Base):
 
         id = Column(Integer, primary_key=True)
         name = Column(String(100))
-        password = Column(String(60))
+        password = Column(String(100))
 
 
 def loginUser(user, password, session):
-        user = session.query(User).filter_by(name=user).first()
+        user = dbSession.query(User).filter_by(name=user).first()
 
         if user:
                 hashedUserPasswd = user.password
@@ -44,16 +44,22 @@ def loginUser(user, password, session):
                 hashedPassedPasswd = bcrypt.hashpw(password, hashedUserPasswd)
 
                 if hashedPassedPasswd == hashedUserPasswd:
-                        session['login'] == True
+                        session['login'] = True
                         return session
                 else:
-                        return False
+                        return
         else:
-                return None
+                return
+
+
+def logoutUser(session):
+        session['login'] = False
+        return session
 
 def newUser(user, passwd, session):
-        user = User(name=user, password=passd)
+        passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
+        user = User(name=user, password=passwordHash)
         dbSession.add(user)
-        session['login'] == True
+        session['login'] = True
         dbSession.commit()
         return session

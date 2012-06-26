@@ -47,6 +47,22 @@ These are just sqlalchemy database strings so docu is around
 authDB = "mysql://josh:joshmysql@localhost/test"
 sessionDB = "mysql://josh:joshmysql@localhost/test"
 
+"""
+Finally we need to define the base url for various 
+things such as static assets and what not.
+"""
+baseURL = "http://localhost/web"
+assetURL = baseURL + "/static"
+subURL = {
+        "auth": "/admin",
+        "test": "/test",
+        }
+
+subURLLink = {}
+
+if serverType is "fastcgi":
+        for url in subURL:
+                subURLLink.update({url: fcgiBase + subURL[url]})
 
 """
 #########################STOP EDITING#####################################

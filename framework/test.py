@@ -33,10 +33,7 @@ import random
 import string
 
 
-subURL = "/test"
-
-
-@route(subURL + "/members/(.*)/")
+@route(subURL["test"] + "/members/(.*)/")
 class members(basePage):
         """
         URL's can have place holders that are matched.
@@ -65,8 +62,7 @@ class members(basePage):
 
 
 
-@route(subURL + "/session")
-@route(subURL + "/session/")
+@route(subURL["test"] + "/session")
 class session(basePage):
         """
         Pages can also be static and return their content

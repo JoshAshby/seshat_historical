@@ -13,7 +13,15 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
-from authConfig import *
+import sys, os
+
+try:
+        from config import *
+except:
+        abspath = os.path.dirname(__file__)
+        sys.path.append(abspath)
+        os.chdir(abspath)
+        from config import *
 
 
 """
@@ -26,6 +34,6 @@ def auth(fn):
                         return fn(obj)
                 else:
                         obj.status = "303 SEE OTHER"
-                        obj.headers = [('location', authURL)]
+                        obj.headers = [("location", subURLLink["auth"] + "/login")]
                         return None
         return wrapper
