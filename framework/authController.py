@@ -24,40 +24,51 @@ except:
 
 import framework as fw
 from baseObject import baseHTTPPageObject as basePage
-from route import *
+from route import route
 import authModel as am
 import authView as av
-from authWrap import *
+from authWrap import auth
 
 
 @route(subURL["auth"] + "/login")
 class login(basePage):
         def GET(self):
                 """
-                Display the login page
+                Display the login page.
                 """
-                view = av.loginView()
+                if self.session.has_key("login") and self.session["login"] is True:
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", baseURL + "/")]
+                else:
+                        view = av.loginView("HTML")
 
-                return view.build()
+                        return view.build()
 
         def POST(self):
                 """
-                log the user in
+                Use form data to check login, and the redirect if successful
+                if not redirect to login page again.
                 """
                 passwd = self.members["passwd"]
                 name = self.members["user"]
 
                 self.session = am.loginUser(name, passwd, self.session)
 
-                self.status = "303 SEE OTHER"
-                self.headers = [("location", baseURL + "/")]
+                if self.session.has_key('login') and self.session['login'] is True:
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", baseURL + "/")]
+                else:
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", baseURL + subURL["auth"] + "/login")]
 
 
 @route(subURL["auth"] + "/logout")
 class logout(basePage):
         def GET(self):
                 """
+                Simply log the user out. Nothing much to do here.
 
+                redirect to login page after we're done.
                 """
                 self.session = am.logoutUser(self.session)
 
@@ -70,7 +81,8 @@ class newUser(basePage):
         @auth
         def GET(self):
                 """
-
+                This will eventually give a nice form in order to
+                make a new user, right now it does nothing however.
                 """
                 pass
 

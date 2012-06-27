@@ -28,7 +28,7 @@ except:
 
 import framework as fw
 from baseObject import baseHTTPPageObject as basePage
-from route import *
+from route import route
 import random
 import string
 

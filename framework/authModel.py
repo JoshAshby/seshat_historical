@@ -12,6 +12,16 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
+import sys, os
+
+try:
+        from config import *
+except:
+        abspath = os.path.dirname(__file__)
+        sys.path.append(abspath)
+        os.chdir(abspath)
+        from config import *
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
@@ -19,7 +29,7 @@ from sqlalchemy.orm import sessionmaker
 
 import bcrypt
 
-engine = create_engine('mysql://josh:joshmysql@localhost/test')
+engine = create_engine(authDB)
 
 Base = declarative_base()
 
@@ -28,6 +38,9 @@ dbSession = Session()
 
 
 class User(Base):
+        """
+
+        """
         __tablename__ = 'users'
 
         id = Column(Integer, primary_key=True)
@@ -36,6 +49,9 @@ class User(Base):
 
 
 def loginUser(user, password, session):
+        """
+
+        """
         user = dbSession.query(User).filter_by(name=user).first()
 
         if user:
@@ -45,18 +61,21 @@ def loginUser(user, password, session):
 
                 if hashedPassedPasswd == hashedUserPasswd:
                         session['login'] = True
-                        return session
-                else:
-                        return
-        else:
-                return
+
+        return session
 
 
 def logoutUser(session):
+        """
+
+        """
         session['login'] = False
         return session
 
 def newUser(user, passwd, session):
+        """
+
+        """
         passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
         user = User(name=user, password=passwordHash)
         dbSession.add(user)

@@ -17,6 +17,9 @@ import baseView as bv
 import templateConfig as tpl
 
 class loginView(bv.baseView):
+        """
+
+        """
         def HTML(self):
                 page = tpl.genericTemplate(file=tpl.mainTplSet["login"])
                 page.title = "Login"

@@ -13,13 +13,16 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
+
+
 class baseView(object):
-        def __init__(self, **kwargs):
+        def __init__(self, replyType, data={}):
                 """
-                ***TODO***
-                Fix this for the new framework
+
                 """
-                self.inform = self.HTML()
+
+                self.inform = getattr(self, replyType)()
+                self.data = data
 
         def HTML(self):
                 pass

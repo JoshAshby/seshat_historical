@@ -28,8 +28,8 @@ except:
 
 import framework as fw
 from baseObject import baseHTTPPageObject as basePage
-from route import *
-from authWrap import *
+from route import route
+from authWrap import auth
 
 import indexView as iv
 
@@ -47,13 +47,18 @@ class index(basePage):
                 """
 
                 """
-                view = iv.indexView()
+                view = iv.indexView("HTML")
 
                 return view.build()
 
 
 @route("/static/(.*)")
 class static(basePage):
+        """
+        We need to be able to handle static content and
+        return it with the right headers also... lets do that
+        now with a fancy dict and some logic.
+        """
         def GET(self):
                 if self.members and self.members[0][-1] is not "/":
                         fileHeaders = {
@@ -77,4 +82,8 @@ class static(basePage):
 
 
 if __name__ == '__main__':
+        """
+        Because we're not doing anything else yet, such as starting a websockets
+        server or whatever, we're going to just go into forever serve mode.
+        """
         fw.forever()
