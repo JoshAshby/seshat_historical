@@ -27,6 +27,7 @@ except:
         from config import *
 
 import framework as fw
+import frameworkUtil as fwUtil
 from baseObject import baseHTTPPageObject as basePage
 from route import route
 from authWrap import auth
@@ -47,7 +48,8 @@ class index(basePage):
                 """
 
                 """
-                view = iv.indexView("HTML")
+                trail = fwUtil.buildBSBreadcrumbs({"Home": "/"})
+                view = iv.indexView(data={"trail": trail})
 
                 self.content.put(view.build())
 

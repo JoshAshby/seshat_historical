@@ -48,6 +48,7 @@ class genericTemplate(Template):
         baseURL = baseURL
         assetURL = assetURL
         subURL = subURL
+        navTitle = appName
 
 
 #just one for Partials, not that it's needed, but just as a 

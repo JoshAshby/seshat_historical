@@ -16,12 +16,12 @@ joshuaashby@joshashby.com
 
 
 class baseView(object):
-        def __init__(self, replyType="HTML", data={}):
+        def __init__(self, data={"trail": ""}, replyType="HTML"):
                 """
 
                 """
-                self.inform = getattr(self, replyType)()
                 self.data = data
+                self.inform = getattr(self, replyType)()
 
         def HTML(self):
                 pass

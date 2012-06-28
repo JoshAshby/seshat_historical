@@ -23,6 +23,7 @@ except:
         from config import *
 
 import framework as fw
+import frameworkUtil as fwUtil
 from baseObject import baseHTTPPageObject as basePage
 from route import route
 import authModel as am
@@ -40,7 +41,8 @@ class login(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + "/")]
                 else:
-                        view = av.loginView("HTML")
+                        trail = fwUtil.buildBSBreadcrumbs({"Home": "/", "Login": baseURL + subURL["auth"] + "/login"})
+                        view = av.loginView(data={"trail": trail})
 
                         self.content.put(view.build())
 

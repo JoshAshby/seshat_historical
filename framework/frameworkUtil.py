@@ -25,3 +25,12 @@ except:
         sys.path.append(abspath)
         os.chdir(abspath)
         from config import *
+
+
+def buildBSBreadcrumbs(crumbDict):
+        trail = "<ul class=\"breadcrumb\">"
+        for crumb in crumbDict:
+                trail += ("<li><a href=\"%s\">%s</a></li> <span class=\"divider\">/</span>" % (crumbDict[crumb], crumb))
+        trail += "</ul>"
+        return trail
+

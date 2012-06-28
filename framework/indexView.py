@@ -19,5 +19,5 @@ class indexView(bv.baseView):
         def HTML(self):
                 page = tpl.genericTemplate(file=tpl.mainTplSet["index"])
                 page.title = "Home"
-                page.navTitle = "Home"
+                page.crumbs = self.data["trail"]
                 return page

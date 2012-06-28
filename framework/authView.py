@@ -23,5 +23,5 @@ class loginView(bv.baseView):
         def HTML(self):
                 page = tpl.genericTemplate(file=tpl.mainTplSet["login"])
                 page.title = "Login"
-                page.navTitle = "Login"
+                page.crumbs = self.data["trail"]
                 return page

@@ -12,7 +12,7 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
-
+appName = "Seshat"
 """
 What type of a server is this going to be running as?
 A fastCGI server for apache, nginx or lighttpd to work with
@@ -26,7 +26,7 @@ If the above serverType is set to fastcgi then we need to make
 sure that the routing is taken care of properly. I'll describe
 this setting later when I have more time.
 """
-fcgiBase = "/web"
+fcgiBase = ""
 
 """
 Next up, which address and port do we want the server to bind to
@@ -51,7 +51,7 @@ sessionDB = "mysql://josh:joshmysql@localhost/test"
 Finally we need to define the base url for various 
 things such as static assets and what not.
 """
-baseURL = "http://localhost/web"
+baseURL = "http://localhost"
 assetURL = "http://localhost/static"
 subURL = {
         "auth": "/admin",
@@ -80,4 +80,10 @@ session_opts = {
         'session.lock_dir': './locks',
         'session.key': 'test_key',
         'session.secret': '33DJ89SQICUP9C5KRL16WHOYTY08FA430OM3YOFVXOW2PSYN8JSVIGWLVM60RDDQHXD7PT4IUTT8E3DTOD6DVAAH002BHBRECJEC',
+}
+
+cache_opts = {
+        'cache.type': 'ext:database',
+        'cache.url': sessionDB,
+        'cache.lock_dir': './locks',
 }

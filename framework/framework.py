@@ -26,11 +26,14 @@ except:
         os.chdir(abspath)
         from config import *
 
+from gevent import monkey; monkey.patch_all()
 import gevent
+
 if serverType is "fastcgi":
         from gevent_fastcgi.server import WSGIServer
 else:
         from gevent.pywsgi import WSGIServer
+
 import signal
 from beaker.middleware import SessionMiddleware
 import inspect
@@ -94,6 +97,7 @@ def app(env, start_response):
 
                         headerThread = gevent.spawn(newHTTPObject.head, headers)
                         statusThread = gevent.spawn(newHTTPObject.statuss, status)
+
                         gevent.joinall([dataThread, sessionThread, headerThread])
 
                         env["beaker.session"] = session.get()
