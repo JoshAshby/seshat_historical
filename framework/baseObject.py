@@ -37,12 +37,23 @@ class baseHTTPPageObject(object):
                         ("Content-type", "text/html"),
                         ]
 
-        def response(self):
-                return self.status, self.headers
+        def route(self, method, data):
+                self.content = data
+                getattr(self, method)()
+                data = self.content
+                data.put(StopIteration)
 
-        def returnCookieJar(self):
-                self.session.save()
-                return self.session
+        def head(self, headers):
+                headers.put(self.headers)
+                headers.put(StopIteration)
+
+        def statuss(self, status):
+                status.put(self.status)
+                status.put(StopIteration)
+
+        def returnCookieJar(self, session):
+                session.put(self.session)
+                session.put(StopIteration)
 
         def GET(self):
                 pass

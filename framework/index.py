@@ -49,36 +49,7 @@ class index(basePage):
                 """
                 view = iv.indexView("HTML")
 
-                return view.build()
-
-
-@route("/static/(.*)")
-class static(basePage):
-        """
-        We need to be able to handle static content and
-        return it with the right headers also... lets do that
-        now with a fancy dict and some logic.
-        """
-        def GET(self):
-                if self.members and self.members[0][-1] is not "/":
-                        fileHeaders = {
-                                "js": ("Content-type", "text/script"),
-                                "coffee": ("Content-type", "text/coffeescript"),
-                                "png": ("Content-type", "image/png"),
-                                "jpg": ("Content-type", "image/jpeg"),
-                                "jpeg": ("Content-type", "image/jpeg"),
-                                "css": ("Content-type", "text/css"),
-                                "less": ("Content-type", "text/less"),
-                                "gif": ("Content-type", "image/gif"),
-                                "txt": ("Content-type", "text/plain"),
-                                }
-
-                        fileType = self.members[0].split(".")[-1]
-                        self.headers = [
-                                fileHeaders[fileType]
-                                ]
-
-                        return open('./htmlTemplates/static/%s' % self.members[0])
+                self.content.put(view.build())
 
 
 if __name__ == '__main__':

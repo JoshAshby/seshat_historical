@@ -52,7 +52,7 @@ Finally we need to define the base url for various
 things such as static assets and what not.
 """
 baseURL = "http://localhost/web"
-assetURL = baseURL + "/static"
+assetURL = "http://localhost/static"
 subURL = {
         "auth": "/admin",
         "test": "/test",

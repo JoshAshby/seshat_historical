@@ -50,15 +50,15 @@ class members(basePage):
         Try loading this page as: /test/members/Hello/?query=Dog&search=Fred+Jones
         """
         def GET(self):
-                self.data = ""
+                data = ""
 
                 for member in self.members:
-                        self.data += ("<h1>%s : %s</h1>" % (str(member), str(self.members[member])))
+                        data += ("<h1>%s : %s</h1>" % (str(member), str(self.members[member])))
 
                 for bit in self.env:
-                        self.data += ("%s : %s<br>" % (str(bit), str(self.env[bit])))
+                        data += ("%s : %s<br>" % (str(bit), str(self.env[bit])))
 
-                return self.data
+                self.content.put(data)
 
 
 
@@ -76,6 +76,6 @@ class session(basePage):
                 self.session["login"] = True
                 if not self.session.has_key("test"):
                         self.session["test"] = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-                        return "Set"
+                        self.content.put("Set")
                 else:
-                        return str(self.session["test"])
+                        self.content.put(str(self.session["test"]))

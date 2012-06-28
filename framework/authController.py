@@ -42,7 +42,7 @@ class login(basePage):
                 else:
                         view = av.loginView("HTML")
 
-                        return view.build()
+                        self.content.put(view.build())
 
         def POST(self):
                 """

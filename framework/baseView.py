@@ -16,11 +16,10 @@ joshuaashby@joshashby.com
 
 
 class baseView(object):
-        def __init__(self, replyType, data={}):
+        def __init__(self, replyType="HTML", data={}):
                 """
 
                 """
-
                 self.inform = getattr(self, replyType)()
                 self.data = data
 

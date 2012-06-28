@@ -35,6 +35,8 @@ import signal
 from beaker.middleware import SessionMiddleware
 import inspect
 
+from gevent import queue
+
 
 def app(env, start_response):
         """
@@ -83,28 +85,23 @@ def app(env, start_response):
 
                         newHTTPObject = url["object"](env, members)
 
-                        data = getattr(newHTTPObject, env["REQUEST_METHOD"])()
+                        data = queue.Queue()
+                        dataThread = gevent.spawn(newHTTPObject.route, env["REQUEST_METHOD"], data)
 
-                        env["beaker.session"] = newHTTPObject.returnCookieJar()
+                        session = queue.Queue()
+                        sessionThread = gevent.spawn(newHTTPObject.returnCookieJar, session)
+                        status, headers = queue.Queue(), queue.Queue()
 
-                        status, headers = newHTTPObject.response()
+                        headerThread = gevent.spawn(newHTTPObject.head, headers)
+                        statusThread = gevent.spawn(newHTTPObject.statuss, status)
+                        gevent.joinall([dataThread, sessionThread, headerThread])
 
-                        start_response(status, headers)
+                        env["beaker.session"] = session.get()
 
-                        if type(data) is str:
-                                return data
-                        if type(data) is file:
-                                return data
-                        if data and inspect.isgenerator(data):
-                                content = ""
-                                for i in data:
-                                        if i is not StopIteration:
-                                                content += str(i)
-                                        else:
-                                                break
-                                return content
-                        else:
-                                return ""
+                        start_response(status.get(), headers.get())
+
+                        return data
+
         status = "404 NOT FOUND"
         headers = []
         start_response(status, headers)

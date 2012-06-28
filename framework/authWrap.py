@@ -29,11 +29,10 @@ It's important to note that @auth'ed pages can not be generators
 and must use return instead of yield
 """
 def auth(fn):
-        def wrapper(obj):
+        def wrappered(obj):
                 if obj.session.has_key('login') and obj.session['login'] is True:
                         return fn(obj)
                 else:
                         obj.status = "303 SEE OTHER"
                         obj.headers = [("location", subURLLink["auth"] + "/login")]
-                        return None
-        return wrapper
+        return wrappered
