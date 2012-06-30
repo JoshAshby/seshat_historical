@@ -35,6 +35,7 @@ prtTplHome = "./views/htmlTemplates/partials/"
 #set-o-main templates. This is really here for ease of use and so forth
 mainTplSet = {
         "index": (tplHome + "index.tpl.html"),
+        "authIndex": (tplHome + "authIndex.tpl.html"),
         "login": (tplHome + "login.tpl.html"),
         "newUser": (tplHome + "newUser.tpl.html"),
 }
@@ -50,6 +51,9 @@ class genericTemplate(Template):
         assetURL = assetURL
         subURL = subURL
         navTitle = appName
+        nav = " "
+        crumbs = " "
+        footerLinks = " "
 
 
 #just one for Partials, not that it's needed, but just as a 

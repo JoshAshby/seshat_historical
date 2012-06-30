@@ -42,19 +42,22 @@ class baseHTTPPageObject(object):
                         ]
 
         def build(self, data):
-                authRe = re.compile(authRegex)
+                content = ""
+                authRe = re.compile("([^_\W]*)")
                 matches = authRe.match(str(self.__class__.__name__))
-                matches = matches.groups()
+                if matches:
+                        matches = matches.groups()
 
-                if matches[0] == "auth":
-                        if not session.has_key("login") or not session["login"]:
-                                self.status = "303 SEE OTHER"
-                                self.headers = [("location", baseURL + subURL["auth"] + "/login")]
-                                content = ""
-                        else:
-                                content = getattr(self, self.method)()
-                else:
+                        if matches[0] == "auth":
+                                if not self.session.has_key("login") or not self.session["login"]:
+                                        self.status = "303 SEE OTHER"
+                                        self.headers = [("location", baseURL + subURL["auth"] + "/login")]
+                                        content = ""
+
+                if not content:
                         content = getattr(self, self.method)()
+                if not content:
+                        content = ""
 
                 data.put(content)
                 data.put(StopIteration)

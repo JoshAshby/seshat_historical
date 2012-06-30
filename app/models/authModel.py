@@ -91,8 +91,6 @@ def newUser(user, passwd, perms, session, notes=""):
                 passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
                 user = UserORM(name=user, password=passwordHash, perms=perms, notes=notes)
                 dbSession.add(user)
-                session["login"] = True
-                session["user"] = user.name
                 dbSession.commit()
         return session
 
@@ -104,7 +102,7 @@ def checkPerms(session, perms):
                 return True
         return False
 
-def listPerms():
+def permList():
         permList = []
         perms = dbSession.query(PermsORM).all()
         for perm in perms:
