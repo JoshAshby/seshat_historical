@@ -30,5 +30,7 @@ class baseView(object):
                 pass
 
         def build(self):
+                print dir(self)
+                print self
                 return str(self.inform)
 
