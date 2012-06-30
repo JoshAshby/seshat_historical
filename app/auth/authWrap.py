@@ -30,7 +30,7 @@ and must use return instead of yield
 """
 def auth(fn):
         def wrapper(obj):
-                if obj.session.has_key('login') and obj.session['login'] is True:
+                if obj.session.has_key('login') and obj.session['login'] is True and obj.session.has_key("name"):
                         return fn(obj)
                 else:
                         obj.status = "303 SEE OTHER"

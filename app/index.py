@@ -39,7 +39,7 @@ from authController import *
 
 
 @route("/")
-class index(basePage):
+class menu_Home(basePage):
         """
         Returns base index page.
         """
@@ -48,11 +48,11 @@ class index(basePage):
                 """
 
                 """
-                elementUnits = {"trail": {"Home": "/"}}
-                elementObject = fwUtil.bootstrapUtil(elementUnits)
-                trailUnit = elementObject.buildCrumbs()
+                elementUnits = {"trail": [{"Home": "/"}], "active": "Home"}
+                elementObject = fwUtil.bootstrapUtil(self.session, elementUnits)
+                trailUnit, navUnit = elementObject.build()
 
-                view = iv.indexView(data={"trail": trailUnit, "nav": ""})
+                view = iv.indexView(data={"trail": trailUnit, "nav": navUnit})
 
                 self.content.put(view.build())
 

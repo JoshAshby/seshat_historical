@@ -61,8 +61,8 @@ def loginUser(user, password, session):
 
                 if hashedPassedPasswd == hashedUserPasswd:
                         session['login'] = True
-
-        return session
+                        session['user'] = user.name
+                        return session
 
 
 def logoutUser(session):
@@ -70,6 +70,7 @@ def logoutUser(session):
 
         """
         session['login'] = False
+        session['user'] = "Anon"
         return session
 
 def newUser(user, passwd, session):
@@ -79,6 +80,7 @@ def newUser(user, passwd, session):
         passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
         user = User(name=user, password=passwordHash)
         dbSession.add(user)
-        session['login'] = True
+        session["login"] = True
+        session["user"] = user.name
         dbSession.commit()
         return session

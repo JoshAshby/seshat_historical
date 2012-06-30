@@ -30,6 +30,5 @@ def route(routeURL):
         def wrapper(HTTPObject):
                 global urls
                 urls.append({"regex": routeURLregex, "object": HTTPObject, "url": routeURL})
-
                 return HTTPObject
         return wrapper

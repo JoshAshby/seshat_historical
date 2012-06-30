@@ -55,6 +55,9 @@ class baseHTTPPageObject(object):
                 session.put(self.session)
                 session.put(StopIteration)
 
+        def HEAD(self):
+                return self.GET()
+
         def GET(self):
                 pass
 

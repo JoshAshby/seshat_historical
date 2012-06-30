@@ -41,8 +41,8 @@ class login(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + "/")]
                 else:
-                        elementUnits = {"trail": {"Home": "/"}}
-                        elementObject = fwUtil.bootstrapUtil(elementUnits)
+                        elementUnits = {"trail": [{"Home": "/"}, {"Login": "/admin/login"}], "active": "Login"}
+                        elementObject = fwUtil.bootstrapUtil(self.session, elementUnits)
                         trailUnit = elementObject.buildCrumbs()
 
                         view = av.loginView(data={"trail": trailUnit, "nav": ""})
