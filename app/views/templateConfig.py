@@ -36,6 +36,7 @@ prtTplHome = "./views/htmlTemplates/partials/"
 mainTplSet = {
         "index": (tplHome + "index.tpl.html"),
         "login": (tplHome + "login.tpl.html"),
+        "newUser": (tplHome + "newUser.tpl.html"),
 }
 
 #same as above just for partials

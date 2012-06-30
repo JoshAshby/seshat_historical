@@ -1,0 +1,42 @@
+#include "views/htmlTemplates/base/header.tpl.html"
+                        <div class="row">
+                                <div class="span6 offset3">
+                                        <form class="well form-horizontal" action="$baseURL$subURL["auth"]/newUser" method="POST">
+                                                <fieldset>
+                                                        <div class="control-group">
+                                                                <h1>Make a New User</h1>
+                                                        </div>
+                                                        <div class="control-group">
+                                                                <label class="control-label">User Name: </label>
+                                                                <div class="controls">
+                                                                        <input type="text" value="" name="user" id="user"/>
+                                                                </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                                <label class="control-label">Password: </label>
+                                                                <div class="controls">
+                                                                        <input type="password" name="passwd" id="passwd"/>
+                                                                </div>
+                                                        </div>
+                                                        <div class="control-group">
+                                                                <label class="control-label">Perms: </label>
+                                                                <div class="controls">
+                                                                        <select name="perms" id="perms">
+                                                                                $permOptions
+                                                                        </select>
+                                                                </div>
+                                                        </div>
+                                                        <div class="form-actions">
+                                                                <button class="btn btn-primary" action="submit" /><i class="icon-ok icon-white"></i> Create User</button>
+                                                        </div>
+                                                        <div class="control-group">
+                                                                <label class="control-label">Notes: </label>
+                                                                <div class="controls">
+                                                                        <textarea id="notes" name="notes"></textarea>
+                                                                </div>
+                                                        </div>
+                                                </fieldset>
+                                        </form>
+                                </div>
+                        </div>
+#include "views/htmlTemplates/base/footer.tpl.html"

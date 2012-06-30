@@ -28,7 +28,16 @@ from baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
 import models.authModel as am
 import views.authView as av
-from auth.authWrap import auth
+
+
+@route(subURL["auth"] + "/")
+class auth_Home_admin(basePage):
+        def GET(self):
+                """
+                """
+                view = av.indexView(data="")
+
+                return view.build()
 
 
 @route(subURL["auth"] + "/login")
@@ -41,13 +50,9 @@ class login(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + "/")]
                 else:
-                        elementUnits = {"trail": [{"Home": "/"}, {"Login": "/admin/login"}], "active": "Login"}
-                        elementObject = fwUtil.bootstrapUtil(self.session, elementUnits)
-                        trailUnit = elementObject.buildCrumbs()
+                        view = av.loginView(data="")
 
-                        view = av.loginView(data={"trail": trailUnit, "nav": ""})
-
-                        self.content.put(view.build())
+                        return view.build()
 
         def POST(self):
                 """
@@ -81,19 +86,27 @@ class logout(basePage):
                 self.headers = [("location", (subURLLink["auth"] + "/login"))]
 
 
-@route(subURL["auth"] + "/new/user")
-class newUser(basePage):
-        @auth
+@route(subURL["auth"] + "/newUser")
+class auth_NewUser_admin(basePage):
         def GET(self):
                 """
                 This will eventually give a nice form in order to
                 make a new user, right now it does nothing however.
                 """
-                pass
+                view = av.newUserView(data="")
 
-        @auth
-        def PUT(self):
+                return view.build()
+
+
+        def POST(self):
                 """
 
                 """
-                pass
+                name = self.members["user"]
+                password = self.members["passwd"]
+                perms = self.members["perms"]
+                notes = self.members["notes"]
+                self.session = am.newUser(name, password, perms, self.session, notes)
+
+                self.status = "303 SEE OTHER"
+                self.headers = [("location", (subURLLink["auth"] + "/"))]

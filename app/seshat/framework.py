@@ -72,13 +72,6 @@ def app(env, start_response):
                         for item in range(len(matchedItems)):
                                 members.update({item: matchedItems[item]})
 
-                        query = env["QUERY_STRING"].split("&")
-
-                        for item in query:
-                                if item:
-                                        parts = item.split("=")
-                                        members.update({parts[0]: parts[1]})
-
                         for item in env['wsgi.input']:
                                 if item:
                                         parts = item.split("&")
@@ -86,19 +79,15 @@ def app(env, start_response):
                                                 query = part.split("=")
                                                 members.update({query[0]: query[1]})
 
+                        data, status, headers, session = queue.Queue(), queue.Queue(), queue.Queue(), queue.Queue()
                         newHTTPObject = url["object"](env, members)
 
-                        data = queue.Queue()
-                        dataThread = gevent.spawn(newHTTPObject.route, env["REQUEST_METHOD"], data)
+                        dataThread = gevent.spawn(newHTTPObject.build, data)
+                        statusThread = gevent.spawn(newHTTPObject.buildHeaders, headers)
+                        headerThread = gevent.spawn(newHTTPObject.buildStatus, status)
+                        sessionThread = gevent.spawn(newHTTPObject.buildCookieJar, session)
 
-                        session = queue.Queue()
-                        sessionThread = gevent.spawn(newHTTPObject.returnCookieJar, session)
-                        status, headers = queue.Queue(), queue.Queue()
-
-                        headerThread = gevent.spawn(newHTTPObject.head, headers)
-                        statusThread = gevent.spawn(newHTTPObject.statuss, status)
-
-                        gevent.joinall([dataThread, sessionThread, headerThread])
+                        gevent.joinall([dataThread, statusThread, headerThread, sessionThread])
 
                         env["beaker.session"] = session.get()
 
@@ -130,13 +119,6 @@ def main():
         else:
                 print ("Now serving py at %s:%i" % (address, port))
         print "Press Ctrl+c or send SIGQUIT to stop"
-
-        print "\r\nHeres some fancy URLs also:\n\r"
-
-        print "  Url : Class Name"
-        print "  -------------------------"
-        for url in urls:
-                print ("  %s : %s" % (url['url'], url["object"].__name__))
 
         if serverType is "fastcgi":
                 print "\r\n\r\nNo logging of requests done here."

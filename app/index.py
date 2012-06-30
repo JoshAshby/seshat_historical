@@ -30,31 +30,24 @@ import seshat.framework as fw
 import util.frameworkUtil as fwUtil
 from baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
-from auth.authWrap import auth
 
 import views.indexView as iv
 
-from testController import *
 from authController import *
 
 
 @route("/")
-class menu_Home(basePage):
+class auth_menu_Home(basePage):
         """
         Returns base index page.
         """
-        @auth
         def GET(self):
                 """
 
                 """
-                elementUnits = {"trail": [{"Home": "/"}], "active": "Home"}
-                elementObject = fwUtil.bootstrapUtil(self.session, elementUnits)
-                trailUnit, navUnit = elementObject.build()
+                view = iv.indexView(data=self)
 
-                view = iv.indexView(data={"trail": trailUnit, "nav": navUnit})
-
-                self.content.put(view.build())
+                return view.build()
 
 
 if __name__ == '__main__':

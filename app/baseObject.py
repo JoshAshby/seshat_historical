@@ -22,6 +22,9 @@ except:
         os.chdir(abspath)
         from config import *
 
+import re
+import gevent
+
 
 class baseHTTPPageObject(object):
         """
@@ -31,27 +34,40 @@ class baseHTTPPageObject(object):
                 self.env = env
                 self.session = env["beaker.session"]
                 self.members = members
+                self.method = env["REQUEST_METHOD"]
 
                 self.status = "200 OK"
                 self.headers = [
                         ("Content-type", "text/html"),
                         ]
 
-        def route(self, method, data):
-                self.content = data
-                getattr(self, method)()
-                data = self.content
+        def build(self, data):
+                authRe = re.compile(authRegex)
+                matches = authRe.match(str(self.__class__.__name__))
+                matches = matches.groups()
+
+                if matches[0] == "auth":
+                        if not session.has_key("login") or not session["login"]:
+                                self.status = "303 SEE OTHER"
+                                self.headers = [("location", baseURL + subURL["auth"] + "/login")]
+                                content = ""
+                        else:
+                                content = getattr(self, self.method)()
+                else:
+                        content = getattr(self, self.method)()
+
+                data.put(content)
                 data.put(StopIteration)
 
-        def head(self, headers):
+        def buildHeaders(self, headers):
                 headers.put(self.headers)
                 headers.put(StopIteration)
 
-        def statuss(self, status):
+        def buildStatus(self, status):
                 status.put(self.status)
                 status.put(StopIteration)
 
-        def returnCookieJar(self, session):
+        def buildCookieJar(self, session):
                 session.put(self.session)
                 session.put(StopIteration)
 

@@ -16,6 +16,19 @@ joshuaashby@joshashby.com
 import baseView as bv
 import templateConfig as tpl
 
+
+class indexView(bv.baseView):
+        """
+
+        """
+        def HTML(self):
+                page = tpl.genericTemplate(file=tpl.mainTplSet["authIndex"])
+                page.title = "Admin Home"
+                page.nav = self.data["nav"]
+                page.crumbs = self.data["trail"]
+                return page
+
+
 class loginView(bv.baseView):
         """
 
@@ -25,4 +38,19 @@ class loginView(bv.baseView):
                 page.title = "Login"
                 page.nav = self.data["nav"]
                 page.crumbs = self.data["trail"]
+                return page
+
+
+class newUserView(bv.baseView):
+        """
+
+        """
+        def HTML(self):
+                page = tpl.genericTemplate(file=tpl.mainTplSet["newUser"])
+                page.title = "New User"
+                page.nav = self.data["nav"]
+                page.crumbs = self.data["trail"]
+                page.permOptions = ""
+                for perm in self.data["permList"]:
+                        page.permOptions += "<option>%s</option>" % perm
                 return page

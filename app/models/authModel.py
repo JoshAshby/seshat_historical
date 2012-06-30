@@ -24,7 +24,7 @@ except:
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import sessionmaker
 
 import bcrypt
@@ -37,7 +37,7 @@ Session = sessionmaker(bind=engine)
 dbSession = Session()
 
 
-class User(Base):
+class UserORM(Base):
         """
 
         """
@@ -46,13 +46,23 @@ class User(Base):
         id = Column(Integer, primary_key=True)
         name = Column(String(100))
         password = Column(String(100))
+        perms = Column(String(25))
+        notes = Column(Text)
+
+class PermsORM(Base):
+        """
+        """
+        __tablename__ = "perms"
+
+        perms_id = Column(Integer, primary_key=True)
+        perm = Column(String(25))
 
 
 def loginUser(user, password, session):
         """
 
         """
-        user = dbSession.query(User).filter_by(name=user).first()
+        user = dbSession.query(UserORM).filter_by(name=user).first()
 
         if user:
                 hashedUserPasswd = user.password
@@ -64,7 +74,6 @@ def loginUser(user, password, session):
                         session['user'] = user.name
                         return session
 
-
 def logoutUser(session):
         """
 
@@ -73,14 +82,31 @@ def logoutUser(session):
         session['user'] = "Anon"
         return session
 
-def newUser(user, passwd, session):
+def newUser(user, passwd, perms, session, notes=""):
         """
-
         """
-        passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
-        user = User(name=user, password=passwordHash)
-        dbSession.add(user)
-        session["login"] = True
-        session["user"] = user.name
-        dbSession.commit()
+        userExists = dbSession.query(UserORM).filter_by(name=user).all()
+        print userExists
+        if not userExists:
+                passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
+                user = UserORM(name=user, password=passwordHash, perms=perms, notes=notes)
+                dbSession.add(user)
+                session["login"] = True
+                session["user"] = user.name
+                dbSession.commit()
         return session
+
+def checkPerms(session, perms):
+        user = dbSession.query(UserORM).filter_by(name=session["user"]).first()
+        if user.perms == "GOD":
+                return True
+        if user.perms == perms:
+                return True
+        return False
+
+def listPerms():
+        permList = []
+        perms = dbSession.query(PermsORM).all()
+        for perm in perms:
+                permList.append(perm.perm)
+        return permList
