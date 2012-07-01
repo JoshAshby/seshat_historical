@@ -86,12 +86,12 @@ def newUser(user, passwd, perms, session, notes=""):
         """
         """
         userExists = dbSession.query(UserORM).filter_by(name=user).all()
-        print userExists
         if not userExists:
                 passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
                 user = UserORM(name=user, password=passwordHash, perms=perms, notes=notes)
                 dbSession.add(user)
                 dbSession.commit()
+                session["checked"] = True
         return session
 
 def checkPerms(session, perms):

@@ -48,7 +48,7 @@ class baseView(object):
                 global urls
                 for url in urls:
                         match = menu.match(url["object"].__name__)
-                        if match and match.groups()[0] == "menu":
+                        if "menu" in menu.findall(url["object"].__name__):
                                 match = str(url["object"].__name__)
                                 match = match.split("_")
                                 active = ""

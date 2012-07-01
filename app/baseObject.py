@@ -24,8 +24,7 @@ except:
 
 import re
 import gevent
-from gevent import queue
-
+from models.authModel import checkPerms
 
 class baseHTTPPageObject(object):
         """
@@ -46,12 +45,14 @@ class baseHTTPPageObject(object):
         def build(self, data):
                 content = ""
                 authRe = re.compile("([^_\W]*)")
-                matches = authRe.match(str(self.__class__.__name__))
+                matches = authRe.findall(str(self.__class__.__name__))
                 if matches:
-                        matches = matches.groups()
-
-                        if matches[0] == "auth":
+                        if "auth" in matches:
                                 if not self.session.has_key("login") or not self.session["login"]:
+                                        self.status = "303 SEE OTHER"
+                                        self.headers = [("location", baseURL + subURL["auth"] + "/login")]
+                                        content = ""
+                                if not checkPerms(self.session, "admin"):
                                         self.status = "303 SEE OTHER"
                                         self.headers = [("location", baseURL + subURL["auth"] + "/login")]
                                         content = ""

@@ -72,6 +72,13 @@ def app(env, start_response):
                         for item in range(len(matchedItems)):
                                 members.update({item: matchedItems[item]})
 
+                        for item in env['QUERY_STRING'].split("&"):
+                                if item:
+                                        parts = item.split("&")
+                                        for part in parts:
+                                                query = part.split("=")
+                                                members.update({query[0]: query[1]})
+
                         for item in env['wsgi.input']:
                                 if item:
                                         parts = item.split("&")
