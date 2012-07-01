@@ -37,7 +37,7 @@ from authController import *
 
 
 @route("/")
-class auth_menu_Home(basePage):
+class menu_Home(basePage):
         """
         Returns base index page.
         """

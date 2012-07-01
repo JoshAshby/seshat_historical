@@ -13,6 +13,17 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
+import sys, os
+
+try:
+        from config import *
+except:
+        abspath = os.path.dirname(__file__)
+        sys.path.append(abspath)
+        os.chdir(abspath)
+        from config import *
+
+import re
 
 
 class baseView(object):
@@ -30,7 +41,48 @@ class baseView(object):
                 pass
 
         def build(self):
-                print dir(self)
-                print self
-                return str(self.inform)
+                self.inform.nav += """
+                        <ul class="nav"><li class="divider-vertical"></li>
+                """
+                menu = re.compile(menuRegex)
+                global urls
+                for url in urls:
+                        match = menu.match(url["object"].__name__)
+                        if match and match.groups()[0] == "menu":
+                                match = str(url["object"].__name__)
+                                match = match.split("_")
+                                active = ""
+                                if url["object"].__name__ is self.data.__class__.__name__:
+                                        active = "active"
+                                self.inform.nav += """<li class="%s"><a href="%s">%s</a></li>""" % (active, url["url"], match[1])
+                                self.inform.footerLinks += """| <a href="%s">%s</a> """ % (url["url"], match[1])
+                self.inform.nav += """</ul>
+                        <ul class="nav pull-right">
+                        """
+                if self.data.session.has_key("login") and self.data.session["login"]:
+                        greeting = "Heya, %s!" % str(self.data.session["user"])
+                        dropDown = """
+                                <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                %s
+                                                <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                                <li><a href="%s"><i class="icon-road"></i> %s</a></li>
+                                                %s
+                                        </ul>
+                                </li>
+                        """ % (greeting, subURL["auth"] + "/logout", "Logout", "")
+                        self.inform.nav += dropDown
+                else:
+                        self.inform.nav += """<li><a href="%s"><i class="icon-road icon-white"></i> Login</a></li>""" % (subURL["auth"] + "/login")
+                self.inform.nav += """
+                        </ul>
+                """
 
+                if self.data.messages:
+                        self.inform.messages = self.data.messages
+                else:
+                        self.inform.messages = ""
+
+                return str(self.inform)

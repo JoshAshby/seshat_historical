@@ -54,6 +54,7 @@ class genericTemplate(Template):
         nav = " "
         crumbs = " "
         footerLinks = " "
+        messages = " "
 
 
 #just one for Partials, not that it's needed, but just as a 

@@ -29,6 +29,6 @@ def route(routeURL):
         routeURLregex = re.compile("^" + routeURL + "$")
         def wrapper(HTTPObject):
                 global urls
-                urls.append({"regex": routeURLregex, "object": HTTPObject})
+                urls.append({"regex": routeURLregex, "object": HTTPObject, "url": routeURL})
                 return HTTPObject
         return wrapper

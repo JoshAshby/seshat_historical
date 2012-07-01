@@ -24,6 +24,7 @@ except:
 
 import re
 import gevent
+from gevent import queue
 
 
 class baseHTTPPageObject(object):
@@ -35,6 +36,7 @@ class baseHTTPPageObject(object):
                 self.session = env["beaker.session"]
                 self.members = members
                 self.method = env["REQUEST_METHOD"]
+                self.messages = ""
 
                 self.status = "200 OK"
                 self.headers = [
@@ -73,6 +75,24 @@ class baseHTTPPageObject(object):
         def buildCookieJar(self, session):
                 session.put(self.session)
                 session.put(StopIteration)
+
+        def passError(self, message):
+                errorMess = """
+                <div class="alert alert-error alert-block">
+                        <i class="icon-fire"></i> <strong>OH SNAP!!</strong> Looks like something went wrong!<br>
+                        %s
+                </div>
+                """ % message
+                self.messages += errorMess
+
+        def passMessage(self, message):
+                mess = """
+                <div class="alert alert-block">
+                        <i class="icon-exclamation-sign"></i> <strong>Don't Worry!!</strong> This isn't bad, just some info for you.<br>
+                        %s
+                </div>
+                """ % message
+                self.messages += mess
 
         def HEAD(self):
                 return self.GET()

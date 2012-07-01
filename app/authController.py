@@ -35,7 +35,7 @@ class auth_Home_admin(basePage):
         def GET(self):
                 """
                 """
-                view = av.indexView(data="")
+                view = av.indexView(data=self)
 
                 return view.build()
 
@@ -50,7 +50,7 @@ class login(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + "/")]
                 else:
-                        view = av.loginView(data="")
+                        view = av.loginView(data=self)
 
                         return view.build()
 
@@ -93,7 +93,9 @@ class auth_NewUser_admin(basePage):
                 This will eventually give a nice form in order to
                 make a new user, right now it does nothing however.
                 """
-                view = av.newUserView(data="")
+                if self.members["alreadyUsed"]:
+                        self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
+                view = av.newUserView(data=self)
 
                 return view.build()
 
@@ -106,7 +108,10 @@ class auth_NewUser_admin(basePage):
                 password = self.members["passwd"]
                 perms = self.members["perms"]
                 notes = self.members["notes"]
-                self.session = am.newUser(name, password, perms, self.session, notes)
-
-                self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURLLink["auth"] + "/"))]
+                try:
+                        self.session = am.newUser(name, password, perms, self.session, notes)
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", (subURLLink["auth"] + "/"))]
+                except:
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", (subURLLink["auth"] + "/newUser?alreadyUsed=" + name))]
