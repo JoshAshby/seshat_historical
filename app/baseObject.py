@@ -24,25 +24,25 @@ except:
 
 import re
 import gevent
-from models.authModel import checkPerms
+import models.authModel as am
+import models.sessionModel as sm
 
 class baseHTTPPageObject(object):
         """
 
         """
-        def __init__(self, env, members):
+        def __init__(self, env, members, sessionId):
                 self.env = env
-                self.session = env["beaker.session"]
                 self.members = members
+                self.session = sm.Session(sessionId)
                 self.method = env["REQUEST_METHOD"]
-                self.messages = ""
 
                 self.status = "200 OK"
                 self.headers = [
                         ("Content-type", "text/html"),
                         ]
 
-        def build(self, data):
+        def build(self, data, headers, status, session):
                 content = ""
                 authRe = re.compile("([^_\W]*)")
                 matches = authRe.findall(str(self.__class__.__name__))
@@ -65,35 +65,26 @@ class baseHTTPPageObject(object):
                 data.put(content)
                 data.put(StopIteration)
 
-        def buildHeaders(self, headers):
                 headers.put(self.headers)
                 headers.put(StopIteration)
 
-        def buildStatus(self, status):
                 status.put(self.status)
                 status.put(StopIteration)
 
-        def buildCookieJar(self, session):
                 session.put(self.session)
                 session.put(StopIteration)
 
-        def passError(self, message):
+        def passError(self, message, style="alert-error"):
                 errorMess = """
-                <div class="alert alert-error alert-block">
+                <div class="alert %s alert-block">
                         <i class="icon-fire"></i> <strong>OH SNAP!!</strong> Looks like something went wrong!<br>
                         %s
                 </div>
-                """ % message
-                self.messages += errorMess
+                """ % (message, sstyle)
+                self.session["errors"] += errorMess
 
-        def passMessage(self, message):
-                mess = """
-                <div class="alert alert-block">
-                        <i class="icon-exclamation-sign"></i> <strong>Don't Worry!!</strong> This isn't bad, just some info for you.<br>
-                        %s
-                </div>
-                """ % message
-                self.messages += mess
+        def clearError(self):
+                self.session["errors"] = ""
 
         def HEAD(self):
                 return self.GET()

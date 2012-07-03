@@ -38,6 +38,19 @@ class loginView(bv.baseView):
                 return page
 
 
+class userListView(bv.baseView):
+        """
+
+        """
+        def HTML(self):
+                page = tpl.genericTemplate(file=tpl.mainTplSet["userList"])
+                page.title = "User List"
+                for user in self.data["users"]:
+                        partial = tpl.partialTemplate(file=tpl.partialTplSet["row_list_User"])
+                        partial.name = user["name"]
+                        partial.notes = user["notes"]
+                        partial.userId = user["id"]
+
 class newUserView(bv.baseView):
         """
 
@@ -49,4 +62,5 @@ class newUserView(bv.baseView):
                 permList = am.permList()
                 for perm in permList:
                         page.permOptions += "<option>%s</option>" % perm
+
                 return page

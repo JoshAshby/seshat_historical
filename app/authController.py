@@ -93,9 +93,8 @@ class auth_NewUser_admin(basePage):
                 This will eventually give a nice form in order to
                 make a new user, right now it does nothing however.
                 """
-                if "alreadyUsed" in self.members:
-                        self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
                 view = av.newUserView(data=self)
+                self.clearError()
 
                 return view.build()
 
@@ -113,4 +112,6 @@ class auth_NewUser_admin(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", (subURLLink["auth"] + "/"))]
                 self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURLLink["auth"] + "/newUser?alreadyUsed=" + name))]
+                self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
+                self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
+

@@ -35,10 +35,15 @@ else:
         from gevent.pywsgi import WSGIServer
 
 import signal
-from beaker.middleware import SessionMiddleware
 import inspect
 
 from gevent import queue
+import string
+import random
+import Cookie
+
+
+cookie = Cookie.SimpleCookie()
 
 
 def app(env, start_response):
@@ -66,6 +71,15 @@ def app(env, start_response):
                 else:
                         matched = url["regex"].match(env["PATH_INFO"])
                 if matched:
+
+                        try:
+                                cookie.load(env["HTTP_COOKIE"])
+                                sessionId = cookie["sid"]
+                        except:
+                                cookie["sid"] = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(100))
+                        cook = cookie.output(header="")
+                                sessionId = cookie["sid"]
+
                         members = {}
 
                         matchedItems = matched.groups()
@@ -86,19 +100,17 @@ def app(env, start_response):
                                                 query = part.split("=")
                                                 members.update({query[0]: query[1]})
 
-                        data, status, headers, session = queue.Queue(), queue.Queue(), queue.Queue(), queue.Queue()
-                        newHTTPObject = url["object"](env, members)
+                        newHTTPObject = url["object"](env, members, sessionId)
 
-                        dataThread = gevent.spawn(newHTTPObject.build, data)
-                        statusThread = gevent.spawn(newHTTPObject.buildHeaders, headers)
-                        headerThread = gevent.spawn(newHTTPObject.buildStatus, status)
-                        sessionThread = gevent.spawn(newHTTPObject.buildCookieJar, session)
+                        data, headers, status = queue.Queue(), queue.Queue(), queue.Queue()
+                        dataThread = gevent.spawn(newHTTPObject.build, data, headers, status
+                        dataThread.join()
 
-                        gevent.joinall([dataThread, statusThread, headerThread, sessionThread])
+                        header = headers.get()
+                        cookieHeader = ("Set-Cookie", cook)
+                        header.append(cookieHeader)
 
-                        env["beaker.session"] = session.get()
-
-                        start_response(status.get(), headers.get())
+                        start_response(status.get(), header)
 
                         return data
 
@@ -119,7 +131,7 @@ def main():
                 port = int(port)
         if not address:
                 address = "127.0.0.1"
-        server = WSGIServer((address, port), SessionMiddleware(app, session_opts))
+        server = WSGIServer((address, port), app)
 
         if serverType is "fastcgi":
                 print ("Now serving py as a fastcgi server at %s:%i" % (address, port))

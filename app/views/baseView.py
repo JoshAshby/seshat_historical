@@ -59,7 +59,7 @@ class baseView(object):
                 self.inform.nav += """</ul>
                         <ul class="nav pull-right">
                         """
-                if self.data.session.has_key("login") and self.data.session["login"]:
+                if 0:
                         greeting = "Heya, %s!" % str(self.data.session["user"])
                         dropDown = """
                                 <li class="dropdown">
@@ -80,8 +80,8 @@ class baseView(object):
                         </ul>
                 """
 
-                if self.data.messages:
-                        self.inform.messages = self.data.messages
+                if 0:
+                        self.inform.messages = self.data.session["errors"]
                 else:
                         self.inform.messages = ""
 
