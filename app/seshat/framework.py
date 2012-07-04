@@ -74,11 +74,10 @@ def app(env, start_response):
 
                         try:
                                 cookie.load(env["HTTP_COOKIE"])
-                                sessionId = cookie["sid"]
                         except:
-                                cookie["sid"] = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(100))
+                                cookie["sid"] = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
                         cook = cookie.output(header="")
-                                sessionId = cookie["sid"]
+                        sessionId = cook
 
                         members = {}
 
@@ -103,7 +102,7 @@ def app(env, start_response):
                         newHTTPObject = url["object"](env, members, sessionId)
 
                         data, headers, status = queue.Queue(), queue.Queue(), queue.Queue()
-                        dataThread = gevent.spawn(newHTTPObject.build, data, headers, status
+                        dataThread = gevent.spawn(newHTTPObject.build, data, headers, status)
                         dataThread.join()
 
                         header = headers.get()

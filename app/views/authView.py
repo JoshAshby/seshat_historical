@@ -15,7 +15,6 @@ joshuaashby@joshashby.com
 """
 import baseView as bv
 import templateConfig as tpl
-import models.authModel as am
 
 
 class indexView(bv.baseView):

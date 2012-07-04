@@ -25,39 +25,45 @@ except:
 import authModel as am
 import pickle
 import redis
+import string
+import random
 
 redisServer = redis.Redis("localhost")
 
 
-class session(object):
+class Session(object):
         def __init__(self, sessionId):
-                pickledData = redis.get(sessionId)
-                self.data = pickle.loads(pickledData)
+                self.sessionId = sessionId
+                try:
+                        pickledData = redisServer.get(self.sessionId)
+                        self.data = pickle.loads(pickledData)
+                except:
+                        self.data = {
+                                "message": [],
+                                "history": [],
+                                "username": "",
+                                "user_id": "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10)),
+                                "level": None,
+                        }
 
         def commit(self):
                 pickledSession = pickle.dumps(self.data)
-                redis.set(self.id, pickledSession)
+                redisServer.set(self.sessionId, pickledSession)
+
+        def __setitem__(self, item, value):
+                self.data[item] = value
 
         def __getitem__(self, item):
-                pass
-
-        def __setitem__(self):
-                pass
+                return self.data[item]
 
         def __repr__(self):
                 pass
 
         def __str__(self):
-                pass
-
-        def status(self):
-                pass
-
-        def perms(self):
-                pass
-
-        def _history(self, hist):
-                pass
+                returnData = ""
+                for bit in self.data:
+                        returnData += "%s : %s\n\r" % (bit, self.data[bit])
+                return returnData
 
         def pushHistory(self, hist):
                 pass
@@ -65,11 +71,51 @@ class session(object):
         def getHistory(self):
                 pass
 
-        def _message(self, message):
-                pass
-
         def getMessage(self):
-                pass
+                returnData = ""
+                for message in self.data["message"]:
+                        returnData += message
 
-        def pushMessage(self, message, type="info"):
-                pass
+                self.data["message"] = []
+
+                return returnData
+
+        def pushMessage(self, message, messType="info"):
+                if messType == "error":
+                        style = """
+                                <i class="icon-fire"></i> <strong>OH SNAP!!</strong><br>
+                        """
+                elif messType == "info":
+                        style = """
+                                <i class="icon-exclamation-sign"></i> <strong>Don't Panic</strong><br>
+                                """
+                elif messType == "success":
+                        style = """
+                                <i class="icon-thumbs-up">/i> <strong>WOOT!!</strong> What ever you did, it worked!!<br>
+                                """
+                messageTpl = """
+                <div class="alert alert-%s alert-block">
+                        %s
+                        %s
+                </div>
+                """ % (messType, style, message)
+                self.data["message"].append(messageTpl)
+
+        def login(self, user, passwd):
+                userData = am.checkUser(user, passwd)
+                if userData:
+                        self.data["level"] = userData.perms
+                        self.data["username"] = userData.name
+                        self.data["users_id"] = userData.users_id
+                else:
+                        raise "Wrong user or password"
+
+        def logout(self):
+                self.data = {
+                        "message": [],
+                        "history": [],
+                        "username": "",
+                        "users_id": "".join(random.choice(string.ascii_uppercase)),
+                        "level": None,
+                }
+

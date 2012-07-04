@@ -42,25 +42,24 @@ class baseHTTPPageObject(object):
                         ("Content-type", "text/html"),
                         ]
 
-        def build(self, data, headers, status, session):
+        def build(self, data, headers, status):
                 content = ""
                 authRe = re.compile("([^_\W]*)")
                 matches = authRe.findall(str(self.__class__.__name__))
-                if matches:
-                        if "auth" in matches:
-                                if not self.session.has_key("login") or not self.session["login"]:
+                if matches and "auth" in matches:
+                        if self.session["level"] == "GOD":
+                                content = getattr(self, self.method)()
+                        else:
+                                if self.session["level"] != "basic":
                                         self.status = "303 SEE OTHER"
                                         self.headers = [("location", baseURL + subURL["auth"] + "/login")]
-                                        content = ""
-                                if not checkPerms(self.session, "admin"):
-                                        self.status = "303 SEE OTHER"
-                                        self.headers = [("location", baseURL + subURL["auth"] + "/login")]
-                                        content = ""
-
-                if not content:
+                                        self.session.pushMessage("You need to be logged in to access this.", "error")
+                                if "admin" in matches:
+                                        if self.session["level"] != "admin":
+                                                self.session.pushMessage("You need to have admin rights to access this.", "error")
+                else:
                         content = getattr(self, self.method)()
-                if not content:
-                        content = ""
+
 
                 data.put(content)
                 data.put(StopIteration)
@@ -71,20 +70,7 @@ class baseHTTPPageObject(object):
                 status.put(self.status)
                 status.put(StopIteration)
 
-                session.put(self.session)
-                session.put(StopIteration)
-
-        def passError(self, message, style="alert-error"):
-                errorMess = """
-                <div class="alert %s alert-block">
-                        <i class="icon-fire"></i> <strong>OH SNAP!!</strong> Looks like something went wrong!<br>
-                        %s
-                </div>
-                """ % (message, sstyle)
-                self.session["errors"] += errorMess
-
-        def clearError(self):
-                self.session["errors"] = ""
+                self.session.commit()
 
         def HEAD(self):
                 return self.GET()

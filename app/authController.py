@@ -26,12 +26,12 @@ import seshat.framework as fw
 import util.frameworkUtil as fwUtil
 from baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
-import models.authModel as am
 import views.authView as av
+import models.authModel as am
 
 
 @route(subURL["auth"] + "/")
-class auth_Home_admin(basePage):
+class auth_Home(basePage):
         def GET(self):
                 """
                 """
@@ -46,9 +46,11 @@ class login(basePage):
                 """
                 Display the login page.
                 """
-                if self.session.has_key("login") and self.session["login"] is True:
+                if self.session["username"]:
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + "/")]
+                        self.session.pushMessage("Hey look, you're already signed in!")
+                        return ""
                 else:
                         view = av.loginView(data=self)
 
@@ -62,14 +64,16 @@ class login(basePage):
                 passwd = self.members["passwd"]
                 name = self.members["user"]
 
-                self.session = am.loginUser(name, passwd, self.session)
-
-                if self.session.has_key('login') and self.session['login'] is True:
+                try:
+                        self.session.login(name, passwd)
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + "/")]
-                else:
+                except:
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + subURL["auth"] + "/login")]
+                        self.session.pushMessage("Something went wrong with your username or password, plase try again.", "error")
+
+                return ""
 
 
 @route(subURL["auth"] + "/logout")
@@ -80,10 +84,12 @@ class logout(basePage):
 
                 redirect to login page after we're done.
                 """
-                self.session = am.logoutUser(self.session)
+                self.session.logout()
 
                 self.status = "303 SEE OTHER"
                 self.headers = [("location", (subURLLink["auth"] + "/login"))]
+
+                return ""
 
 
 @route(subURL["auth"] + "/newUser")
@@ -94,7 +100,6 @@ class auth_NewUser_admin(basePage):
                 make a new user, right now it does nothing however.
                 """
                 view = av.newUserView(data=self)
-                self.clearError()
 
                 return view.build()
 
@@ -107,11 +112,14 @@ class auth_NewUser_admin(basePage):
                 password = self.members["passwd"]
                 perms = self.members["perms"]
                 notes = self.members["notes"]
-                self.session = am.newUser(name, password, perms, self.session, notes)
-                if not self.session.has_key("checked") or self.session["checked"] is not True:
+                try:
+                        am.newUser(name, password, perms, notes)
                         self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURLLink["auth"] + "/"))]
-                self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
-                self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
+                        self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
+                        self.session.pushMessage(("Congrats! The user %s was created!" % name))
+                except:
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
+                        self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
+                return ""
 

@@ -43,7 +43,7 @@ class UserORM(Base):
         """
         __tablename__ = 'users'
 
-        id = Column(Integer, primary_key=True)
+        users_id = Column(Integer, primary_key=True)
         name = Column(String(100))
         password = Column(String(100))
         perms = Column(String(25))
@@ -58,7 +58,7 @@ class PermsORM(Base):
         perm = Column(String(25))
 
 
-def loginUser(user, password, session):
+def checkUser(user, password):
         """
 
         """
@@ -70,41 +70,18 @@ def loginUser(user, password, session):
                 hashedPassedPasswd = bcrypt.hashpw(password, hashedUserPasswd)
 
                 if hashedPassedPasswd == hashedUserPasswd:
-                        session['login'] = True
-                        session['user'] = user.name
-                        return session
+                        return user
+        else:
+                return False
 
-def logoutUser(session):
-        """
-
-        """
-        session['login'] = False
-        session['user'] = "Anon"
-        return session
-
-def newUser(user, passwd, perms, session, notes=""):
+def newUser(user, passwd, perms, notes=""):
         """
         """
         userExists = dbSession.query(UserORM).filter_by(name=user).all()
-        if not userExists:
-                passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
-                user = UserORM(name=user, password=passwordHash, perms=perms, notes=notes)
-                dbSession.add(user)
-                dbSession.commit()
-                session["checked"] = True
-        return session
-
-def checkPerms(session, perms):
-        user = dbSession.query(UserORM).filter_by(name=session["user"]).first()
-        if user.perms == "GOD":
-                return True
-        if user.perms == perms:
-                return True
-        return False
-
-def permList():
-        permList = []
-        perms = dbSession.query(PermsORM).all()
-        for perm in perms:
-                permList.append(perm.perm)
-        return permList
+        if userExists:
+                raise "Woops, that username's already in use."
+        passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
+        user = UserORM(name=user, password=passwordHash, perms=perms, notes=notes)
+        dbSession.add(user)
+        dbSession.commit()
+        return True
