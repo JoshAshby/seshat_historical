@@ -85,3 +85,23 @@ def newUser(user, passwd, perms, notes=""):
         dbSession.add(user)
         dbSession.commit()
         return True
+
+def updateUser(user, perms, notes=""):
+        userExists = dbSession.query(UserORM).filter_by(name=user).all()
+        if userExists:
+                raise "Woops, that username's already in use."
+
+
+def permList():
+        permList = []
+        perms = dbSession.query(PermsORM).all()
+        for perm in perms:
+                permList.append(perm.perm)
+        return permList
+
+def userList():
+        userList = []
+        users = dbSession.query(UserORM).all()
+        for user in users:
+                userList.append({"name": user.name, "id": user.users_id, "notes": user.notes, "perms": user.perms})
+        return userList

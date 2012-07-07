@@ -38,10 +38,12 @@ mainTplSet = {
         "authIndex": (tplHome + "authIndex.tpl.html"),
         "login": (tplHome + "login.tpl.html"),
         "newUser": (tplHome + "newUser.tpl.html"),
+        "userList": (tplHome + "userList.tpl.html"),
 }
 
 #same as above just for partials
 partialTplSet = {
+        "row_list_User": (prtTplHome + "row_list_User.tpl.html"),
 }
 
 #generic template class, called by all the views currently

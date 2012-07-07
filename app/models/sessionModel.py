@@ -65,12 +65,6 @@ class Session(object):
                         returnData += "%s : %s\n\r" % (bit, self.data[bit])
                 return returnData
 
-        def pushHistory(self, hist):
-                pass
-
-        def getHistory(self):
-                pass
-
         def getMessage(self):
                 returnData = ""
                 for message in self.data["message"]:

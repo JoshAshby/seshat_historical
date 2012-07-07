@@ -33,8 +33,6 @@ from seshat.route import route
 
 import views.indexView as iv
 
-from authController import *
-
 
 @route("/")
 class menu_Home(basePage):
@@ -48,6 +46,9 @@ class menu_Home(basePage):
                 view = iv.indexView(data=self)
 
                 return view.build()
+
+
+from authController import *
 
 
 if __name__ == '__main__':

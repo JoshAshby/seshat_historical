@@ -99,6 +99,7 @@ class auth_NewUser_admin(basePage):
                 This will eventually give a nice form in order to
                 make a new user, right now it does nothing however.
                 """
+                self.permList = am.permList()
                 view = av.newUserView(data=self)
 
                 return view.build()
@@ -123,3 +124,37 @@ class auth_NewUser_admin(basePage):
                         self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
                 return ""
 
+
+@route(subURL["auth"] + "/userList")
+class auth_userList_admin_menu(basePage):
+        def GET(self):
+                """
+
+                """
+                self.users = am.userList()
+                self.permList = am.permList()
+
+                view = av.userListView(data=self)
+
+                return view.build()
+
+
+
+@route(subUTL["auth"] + "/updateUser")
+class auth_updateUser_admin(basePage):
+        def POST(self):
+                """
+                """
+                name = self.members["user"]
+                perms = self.members["perms"]
+                notes = self.members["notes"]
+                try:
+                        am.updateUser(name, perms, notes)
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", (subURLLink["auth"] + "/userList"))]
+                        self.session.pushMessage(("Congrats! The user %s was updated!" % name))
+                except:
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
+                        self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
+                return ""
