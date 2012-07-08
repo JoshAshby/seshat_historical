@@ -61,6 +61,12 @@ class baseView(object):
                         """
                 if self.data.session["username"] != "":
                         greeting = "Heya, %s!" % str(self.data.session["username"])
+                        addDrop = ""
+                        if self.data.session["level"] == "admin" or self.data.session["level"] == "GOD":
+                                addDrop = """
+                                        <li><a href="%s"><i class="icon-cog"></i> Admin Panel</a></li>
+                                """ % (subURL["auth"] + "/")
+
                         dropDown = """
                                 <li class="dropdown">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -72,7 +78,7 @@ class baseView(object):
                                                 %s
                                         </ul>
                                 </li>
-                        """ % (greeting, subURL["auth"] + "/logout", "Logout", "")
+                        """ % (greeting, subURL["auth"] + "/logout", "Logout", addDrop)
                         self.inform.nav += dropDown
                 else:
                         self.inform.nav += """<li><a href="%s"><i class="icon-road icon-white"></i> Login</a></li>""" % (subURL["auth"] + "/login")

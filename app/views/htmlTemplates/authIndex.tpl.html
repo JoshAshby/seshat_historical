@@ -1,6 +1,23 @@
 #include "views/htmlTemplates/base/header.tpl.html"
                         <div class="row">
                                 <div class="span12">
+                                        <div class="row">
+                                                <div class="span3">
+                                                        <div class="well">
+                                                                <ul class="nav nav-list">
+                                                                        <li class="nav-header">Admin Panel</li>
+                                                                        <li><a href="$subURL["auth"]\userList"><i class="icon-user"></i> User List</a></li>
+                                                                        <li><a href="$subURL["auth"]\newUser"><i class="icon-plus"></i> New User</a></li>
+                                                                </ul>
+                                                        </div>
+                                                </div>
+                                                <div class="span9">
+                                                        <div class="hero-unit">
+                                                                <h1>Well now...</h1>
+                                                                <p>Looks like someone trusts you enough to have granted you the privlage of admining bits of this site. Have fun!</p>
+                                                        </div>
+                                                </div>
+                                        </div>
                                 </div>
                         </div>
 #include "views/htmlTemplates/base/footer.tpl.html"

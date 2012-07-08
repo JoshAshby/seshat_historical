@@ -1,11 +1,11 @@
 <tr>
-        <form action="updateUser" method="POST">
+        <form action="$baseURL$subURL["auth"]/userList" method="POST">
         <td>
                 $id
-                <input type="hidden" value="$id">
+                <input type="hidden" name="id" value="$id">
         </td>
         <td>
-                <input type="text" value="$name" name="id">
+                <input type="text" value="$name" name="name">
         </td>
         <td>
                 <select name="perms">

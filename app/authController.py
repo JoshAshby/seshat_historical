@@ -121,12 +121,12 @@ class auth_NewUser_admin(basePage):
                 except:
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
-                        self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
+                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name))
                 return ""
 
 
 @route(subURL["auth"] + "/userList")
-class auth_userList_admin_menu(basePage):
+class auth_userList_admin(basePage):
         def GET(self):
                 """
 
@@ -139,22 +139,20 @@ class auth_userList_admin_menu(basePage):
                 return view.build()
 
 
-
-@route(subUTL["auth"] + "/updateUser")
-class auth_updateUser_admin(basePage):
         def POST(self):
                 """
                 """
+                id = self.members["id"]
                 name = self.members["user"]
                 perms = self.members["perms"]
                 notes = self.members["notes"]
                 try:
-                        am.updateUser(name, perms, notes)
+                        am.updateUser(id, name, perms, notes)
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", (subURLLink["auth"] + "/userList"))]
                         self.session.pushMessage(("Congrats! The user %s was updated!" % name))
                 except:
                         self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
-                        self.passError("The user name %s is already in use. Sorry!"%self.members["alreadyUsed"])
+                        self.headers = [("location", (subURLLink["auth"] + "/userList"))]
+                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name))
                 return ""
