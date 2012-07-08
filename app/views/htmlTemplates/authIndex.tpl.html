@@ -16,6 +16,33 @@
                                                                 <h1>Well now...</h1>
                                                                 <p>Looks like someone trusts you enough to have granted you the privlage of admining bits of this site. Have fun!</p>
                                                         </div>
+                                                        <div class="row">
+                                                                <div class="span9">
+                                                                        <form action="$baseURL$subURL["auth"]/newPost" method="POST" class="well form-horizontal">
+                                                                                <fieldset>
+                                                                                        <div class="control-group">
+                                                                                                <h2>Post something new today</h2>
+                                                                                        </div>
+                                                                                        <div class="control-group">
+                                                                                                <label for="title" class="control-label">Post Title: </label>
+                                                                                                <div class="controls">
+                                                                                                        <input class="span6" type="text" name="title" id="title">
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="control-group">
+                                                                                                <label for="post" class="control-label">Post: </label>
+                                                                                                <div class="controls">
+                                                                                                        <textarea class="span6" name="post" is="post"></textarea>
+                                                                                                </div>
+                                                                                        </div>
+                                                                                        <div class="form-actions">
+                                                                                                <button class="btn btn-primary" action="submit"><i class="icon-plus icon-white"></i> Publish new post</button>
+                                                                                        </div>
+                                                                                </fieldset>
+                                                                        </form>
+                                                                </div>
+                                                        </div>
+
                                                 </div>
                                         </div>
                                 </div>

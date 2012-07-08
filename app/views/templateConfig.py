@@ -44,6 +44,7 @@ mainTplSet = {
 #same as above just for partials
 partialTplSet = {
         "row_list_User": (prtTplHome + "row_list_User.tpl.html"),
+        "post_index": (prtTplHome + "post_index.tpl.html"),
 }
 
 #generic template class, called by all the views currently

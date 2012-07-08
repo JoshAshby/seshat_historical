@@ -19,4 +19,14 @@ class indexView(bv.baseView):
         def HTML(self):
                 page = tpl.genericTemplate(file=tpl.mainTplSet["index"])
                 page.title = "Home"
+                page.topNews = ""
+                page.posts = ""
+                for post in self.data.posts:
+                        partial = tpl.partialTemplate(file=tpl.partialTplSet["post_index"])
+                        partial.title = post.title
+                        partial.author = post.author
+                        partial.time = post.time
+                        partial.post = post.post
+
+                        page.posts += str(partial)
                 return page

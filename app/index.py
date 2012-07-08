@@ -32,6 +32,7 @@ from baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
 
 import views.indexView as iv
+import models.indexModel as im
 
 
 @route("/")
@@ -43,6 +44,10 @@ class menu_Home(basePage):
                 """
 
                 """
+                try:
+                        self.posts = im.listPosts()
+                except:
+                        self.posts = []
                 view = iv.indexView(data=self)
 
                 return view.build()
