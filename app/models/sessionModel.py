@@ -30,6 +30,14 @@ import random
 
 redisServer = redis.Redis("localhost")
 
+"""
+**TODO**
+
+Make this less shitty and actually use redis rather than just storing a pickled
+object. Such as using Redis hashes. Hashes might also be a fun thing to use with
+the auth module and the post module, along with the rest of Redis...
+"""
+
 
 class Session(object):
         def __init__(self, sessionId):

@@ -29,7 +29,9 @@ import models.sessionModel as sm
 
 class baseHTTPPageObject(object):
         """
-
+        Base HTTP page response object
+        This determins which REQUEST method to send to,
+        along with authentication level needed to access the object.
         """
         def __init__(self, env, members, sessionId):
                 self.env = env
@@ -44,22 +46,24 @@ class baseHTTPPageObject(object):
 
         def build(self, data, headers, status):
                 content = ""
-                authRe = re.compile("([^_\W]*)")
-                matches = authRe.findall(str(self.__class__.__name__))
-                if matches and "auth" in matches:
-                        if self.session["level"] == "GOD":
-                                content = getattr(self, self.method)()
-                        else:
-                                if self.session["level"] != "basic":
-                                        self.status = "303 SEE OTHER"
-                                        self.headers = [("location", baseURL + subURL["auth"] + "/login")]
-                                        self.session.pushMessage("You need to be logged in to access this.", "error")
-                                if "admin" in matches:
-                                        if self.session["level"] != "admin":
-                                                self.session.pushMessage("You need to have admin rights to access this.", "error")
-                else:
+                error = False
+                matches = authRegex.findall(str(self.__class__.__name__))
+                if self.session["level"] == "GOD":
+                        """
+                        Duh, This user is obviously omnicious and has access to every
+                        area in the site.
+                        """
                         content = getattr(self, self.method)()
 
+                for level in am.permList():
+                         if level in matches and level != self.session["level"]:
+                                self.session.pushMessage("You need to have %s rights to access this." % level, "error")
+                                self.status = "303 SEE OTHER"
+                                self.headers = [("location", subURL["auth"] + "/login")]
+                                error = True
+
+                if not error:
+                        content = getattr(self, self.method)()
 
                 data.put(content)
                 data.put(StopIteration)

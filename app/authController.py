@@ -26,21 +26,10 @@ import seshat.framework as fw
 import util.frameworkUtil as fwUtil
 from baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
+
 import views.authView as av
-import models.authModel as am
-import models.indexModel as im
 
 import re
-
-
-@route(subURL["auth"] + "/")
-class auth_Home(basePage):
-        def GET(self):
-                """
-                """
-                view = av.indexView(data=self)
-
-                return view.build()
 
 
 @route(subURL["auth"] + "/login")
@@ -73,7 +62,7 @@ class login(basePage):
                         self.headers = [("location", baseURL + "/")]
                 except:
                         self.status = "303 SEE OTHER"
-                        self.headers = [("location", baseURL + subURL["auth"] + "/login")]
+                        self.headers = [("location", subURL["auth"] + "/login")]
                         self.session.pushMessage("Something went wrong with your username or password, plase try again.", "error", "error")
 
                 return ""
@@ -90,90 +79,6 @@ class logout(basePage):
                 self.session.logout()
 
                 self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURLLink["auth"] + "/login"))]
+                self.headers = [("location", (subURL["auth"] + "/login"))]
 
-                return ""
-
-
-@route(subURL["auth"] + "/newUser")
-class auth_NewUser_admin(basePage):
-        def GET(self):
-                """
-                This will eventually give a nice form in order to
-                make a new user, right now it does nothing however.
-                """
-                self.permList = am.permList()
-                view = av.newUserView(data=self)
-
-                return view.build()
-
-
-        def POST(self):
-                """
-
-                """
-                name = self.members["user"]
-                password = self.members["passwd"]
-                perms = self.members["perms"]
-                notes = self.members["notes"]
-                try:
-                        am.newUser(name, password, perms, notes)
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
-                        self.session.pushMessage(("Congrats! The user %s was created!" % name))
-                except:
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURLLink["auth"] + "/newUser"))]
-                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
-                return ""
-
-
-@route(subURL["auth"] + "/userList")
-class auth_userList_admin(basePage):
-        def GET(self):
-                """
-
-                """
-                self.users = am.userList()
-                self.permList = am.permList()
-
-                view = av.userListView(data=self)
-
-                return view.build()
-
-
-        def POST(self):
-                """
-                """
-                id = self.members["id"]
-                name = self.members["user"]
-                perms = self.members["perms"]
-                notes = self.members["notes"]
-                try:
-                        am.updateUser(id, name, perms, notes)
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURLLink["auth"] + "/userList"))]
-                        self.session.pushMessage(("Congrats! The user %s was updated!" % name))
-                except:
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURLLink["auth"] + "/userList"))]
-                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
-                return ""
-
-
-@route(subURL["auth"] + "/newPost")
-class auth_admin_newPost(basePage):
-        def POST(self):
-                """
-                """
-                title = self.members["title"]
-                post = self.members["post"]
-
-                title = re.sub("\+", " ", title)
-                post = re.sub("\+", " ", post)
-
-                im.newPost(title, post, self.session["username"])
-                self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURLLink["auth"] + "/"))]
-                self.session.pushMessage(("Congrats! The post %s was created!" % title))
                 return ""

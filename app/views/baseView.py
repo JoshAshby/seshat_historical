@@ -44,7 +44,7 @@ class baseView(object):
                 self.inform.nav += """
                         <ul class="nav"><li class="divider-vertical"></li>
                 """
-                menu = re.compile(menuRegex)
+                menu = authRegex
                 global urls
                 for url in urls:
                         match = menu.match(url["object"].__name__)
@@ -65,7 +65,7 @@ class baseView(object):
                         if self.data.session["level"] == "admin" or self.data.session["level"] == "GOD":
                                 addDrop = """
                                         <li><a href="%s"><i class="icon-cog"></i> Admin Panel</a></li>
-                                """ % (subURL["auth"] + "/")
+                                """ % (subURL["admin"] + "/")
 
                         dropDown = """
                                 <li class="dropdown">

@@ -32,7 +32,7 @@ from baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
 
 import views.indexView as iv
-import models.indexModel as im
+import models.postModel as pm
 
 
 @route("/")
@@ -45,7 +45,7 @@ class menu_Home(basePage):
 
                 """
                 try:
-                        self.posts = im.listPosts()
+                        self.posts = pm.listPosts()
                 except:
                         self.posts = []
                 view = iv.indexView(data=self)
@@ -54,6 +54,7 @@ class menu_Home(basePage):
 
 
 from authController import *
+from adminController import *
 
 
 if __name__ == '__main__':

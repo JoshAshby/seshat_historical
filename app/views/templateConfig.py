@@ -35,7 +35,7 @@ prtTplHome = "./views/htmlTemplates/partials/"
 #set-o-main templates. This is really here for ease of use and so forth
 mainTplSet = {
         "index": (tplHome + "index.tpl.html"),
-        "authIndex": (tplHome + "authIndex.tpl.html"),
+        "adminIndex": (tplHome + "adminIndex.tpl.html"),
         "login": (tplHome + "login.tpl.html"),
         "newUser": (tplHome + "newUser.tpl.html"),
         "userList": (tplHome + "userList.tpl.html"),

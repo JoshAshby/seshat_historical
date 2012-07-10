@@ -29,10 +29,7 @@ except:
 from gevent import monkey; monkey.patch_all()
 import gevent
 
-if serverType is "fastcgi":
-        from gevent_fastcgi.server import WSGIServer
-else:
-        from gevent.pywsgi import WSGIServer
+from gevent_fastcgi.server import WSGIServer
 
 import signal
 import inspect
@@ -66,12 +63,8 @@ def app(env, start_response):
         """
         global urls
         for url in urls:
-                if serverType is "fastcgi":
-                        matched = url["regex"].match(env["REQUEST_URI"][len(fcgiBase):].split("?")[0])
-                else:
-                        matched = url["regex"].match(env["PATH_INFO"])
+                matched = url["regex"].match(env["REQUEST_URI"][len(fcgiBase):].split("?")[0])
                 if matched:
-
                         try:
                                 cookie.load(env["HTTP_COOKIE"])
                         except:
@@ -132,20 +125,11 @@ def main():
                 address = "127.0.0.1"
         server = WSGIServer((address, port), app)
 
-        if serverType is "fastcgi":
-                print ("Now serving py as a fastcgi server at %s:%i" % (address, port))
-        else:
-                print ("Now serving py at %s:%i" % (address, port))
+        print ("Now serving py as a fastcgi server at %s:%i" % (address, port))
         print "Press Ctrl+c or send SIGQUIT to stop"
 
-        if serverType is "fastcgi":
-                print "\r\n\r\nNo logging of requests done here."
-                print "Check your server logs instead."
-        else:
-                print "\r\n\r\nNow logging requests:"
-                print "  Remote IP - - [YYYY-MM-DD HH:MM:SS] \"METHOD url HTTP/version\" Status code Something Request timing"
-                print "------------------------------------------------------------------------------------------------------"
-
+        print "\r\n\r\nNo logging of requests done here."
+        print "Check your server logs instead."
         return server
 
 
