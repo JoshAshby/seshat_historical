@@ -38,6 +38,7 @@ from gevent import queue
 import string
 import random
 import Cookie
+import re
 
 
 cookie = Cookie.SimpleCookie()
@@ -83,14 +84,14 @@ def app(env, start_response):
                                         parts = item.split("&")
                                         for part in parts:
                                                 query = part.split("=")
-                                                members.update({query[0]: query[1]})
+                                                members.update({re.sub("\+", " ", query[0]): re.sub("\+", " ", query[1])})
 
                         for item in env['wsgi.input']:
                                 if item:
                                         parts = item.split("&")
                                         for part in parts:
                                                 query = part.split("=")
-                                                members.update({query[0]: query[1]})
+                                                members.update({re.sub("\+", " ", query[0]): re.sub("\+", " ", query[1])})
 
                         newHTTPObject = url["object"](env, members, sessionId)
 

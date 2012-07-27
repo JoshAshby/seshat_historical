@@ -22,19 +22,9 @@ except:
         os.chdir(abspath)
         from config import *
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Text
-from sqlalchemy.orm import sessionmaker
 
 import bcrypt
-
-engine = create_engine(authDB)
-
-Base = declarative_base()
-
-Session = sessionmaker(bind=engine)
-dbSession = Session()
 
 
 class UserORM(Base):

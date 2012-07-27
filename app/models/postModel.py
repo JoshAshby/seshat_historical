@@ -23,21 +23,10 @@ except:
         os.chdir(abspath)
         from config import *
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, Text, DateTime
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
 
 from datetime import datetime as dt
-
-
-engine = create_engine(authDB)
-
-Base = declarative_base()
-
-Session = sessionmaker(bind=engine)
-dbSession = Session()
 
 
 class PostORM(Base):
@@ -59,8 +48,38 @@ def newPost(title, post, author):
 
         dbSession.commit()
 
+def updatePost(id, title, post, author):
+        post = dbSession.query(PostORM).filter_by(post_id=id).first()
+        post.title = title
+        post.auther = author
+        post.time = dt.now()
+
+        dbSession.commit()
+
 def listPosts():
         posts = dbSession.query(PostORM).order_by(desc(PostORM.time)).all()
         if not posts:
                 raise "No Posts"
         return posts
+
+class RedisPostORM(object):
+        """
+        Baisc ORM style system for Posts which are stored in Redis as hashes.
+        """
+        def __init__(self):
+                """
+                """
+                self.key = max(redisPost.keys())+1
+
+        def listPosts(self):
+                for key in redisPost.keys():
+                        pass
+
+        def newPost(self, author="", title="", post=""):
+                """
+                """
+                redisPost.hset(self.key, "author", author)
+                redisPost.hset(self.key, "title", title)
+                redisPost.hset(self.key, "post", post)
+                redisPost.hset(self.ey, "time", dt.now())
+

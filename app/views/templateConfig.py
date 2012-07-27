@@ -35,15 +35,20 @@ prtTplHome = "./views/htmlTemplates/partials/"
 #set-o-main templates. This is really here for ease of use and so forth
 mainTplSet = {
         "index": (tplHome + "index.tpl.html"),
-        "adminIndex": (tplHome + "adminIndex.tpl.html"),
+
         "login": (tplHome + "login.tpl.html"),
+
+        "adminIndex": (tplHome + "adminIndex.tpl.html"),
         "newUser": (tplHome + "newUser.tpl.html"),
         "userList": (tplHome + "userList.tpl.html"),
+        "postList": (tplHome + "postList.tpl.html"),
+        "newPost": (tplHome + "newPost.tpl.html"),
 }
 
 #same as above just for partials
 partialTplSet = {
         "row_list_User": (prtTplHome + "row_list_User.tpl.html"),
+        "row_list_Post": (prtTplHome + "row_list_Post.tpl.html"),
         "post_index": (prtTplHome + "post_index.tpl.html"),
 }
 
@@ -63,4 +68,6 @@ class genericTemplate(Template):
 #just one for Partials, not that it's needed, but just as a 
 #reminder that your working with a partial. same as above basically.
 class partialTemplate(Template):
-        pass
+        baseURL = baseURL
+        assetURL = assetURL
+        subURL = subURL

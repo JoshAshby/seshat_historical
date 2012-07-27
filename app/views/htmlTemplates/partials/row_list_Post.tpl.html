@@ -1,0 +1,24 @@
+<form class="well form-horizontal" action="$baseURL$subURL["admin"]/posts/" method="POST">
+        <fieldset>
+                $id
+                <input type="hidden" name="id" value="$id">
+                <br>
+                <div class="control-group">
+                        <label class="control-label">Title: </label>
+                        <div class="controls">
+                                <input class=span9 type="text" name="title" value="$title">
+                        </div>
+                </div>
+                <div class="control-group">
+                        <label class="control-label">Post: </label>
+                        <div class="controls">
+                                <textarea name="post" class="span9" style="height: 200px">$post</textarea>
+                        </div>
+                </div>
+                <br>
+                <div class="form-actions">
+                        <button class="btn btn-primary" action="submit" /><i class="icon-ok icon-white"></i> Update</button>
+                </div>
+        </fieldset>
+</form>
+<hr>

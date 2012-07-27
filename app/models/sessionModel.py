@@ -24,11 +24,10 @@ except:
 
 import authModel as am
 import pickle
-import redis
 import string
 import random
 
-redisServer = redis.Redis("localhost")
+
 
 """
 **TODO**
@@ -43,7 +42,7 @@ class Session(object):
         def __init__(self, sessionId):
                 self.sessionId = sessionId
                 try:
-                        pickledData = redisServer.get(self.sessionId)
+                        pickledData = redisSession.get(self.sessionId)
                         self.data = pickle.loads(pickledData)
                 except:
                         self.data = {
@@ -56,7 +55,7 @@ class Session(object):
 
         def commit(self):
                 pickledSession = pickle.dumps(self.data)
-                redisServer.set(self.sessionId, pickledSession)
+                redisSession.set(self.sessionId, pickledSession)
 
         def __setitem__(self, item, value):
                 self.data[item] = value

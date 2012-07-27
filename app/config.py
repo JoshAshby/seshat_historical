@@ -13,6 +13,10 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import re
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import redis
 
 
 appName = "Seshat"
@@ -63,3 +67,12 @@ Don't change these following settings unless you know what you're doing!!!
 ##########################################################################
 """
 urls = []
+
+engine = create_engine(authDB)
+
+Base = declarative_base()
+
+Session = sessionmaker(bind=engine)
+dbSession = Session()
+
+redisServer = redis.Redis("localhost")

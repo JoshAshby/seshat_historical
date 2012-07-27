@@ -71,3 +71,35 @@ class newUserView(bv.baseView):
                         page.permOptions += "<option>%s</option>" % perm
 
                 return page
+
+
+class newPostView(bv.baseView):
+        """
+        """
+        def HTML(self):
+                page = tpl.genericTemplate(file=tpl.mainTplSet["newPost"])
+                page.title = "New Post"
+
+                return page
+
+
+class postListView(bv.baseView):
+        """
+        """
+        def HTML(self):
+                page = tpl.genericTemplate(file=tpl.mainTplSet["postList"])
+                page.title = "Post List"
+                page.postList = ""
+
+                for post in self.data.posts:
+                        partial = tpl.partialTemplate(file=tpl.partialTplSet["row_list_Post"])
+                        partial.post = post.post
+                        partial.author = post.author
+                        partial.time = post.time
+                        partial.title = post.title
+                        partial.id = post.post_id
+
+                        page.postList += str(partial)
+
+                return page
+

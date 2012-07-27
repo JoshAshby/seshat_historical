@@ -53,14 +53,15 @@ class baseHTTPPageObject(object):
                         Duh, This user is obviously omnicious and has access to every
                         area in the site.
                         """
-                        content = getattr(self, self.method)()
+                        pass
 
-                for level in am.permList():
-                         if level in matches and level != self.session["level"]:
-                                self.session.pushMessage("You need to have %s rights to access this." % level, "error")
-                                self.status = "303 SEE OTHER"
-                                self.headers = [("location", subURL["auth"] + "/login")]
-                                error = True
+                else:
+                        for level in am.permList():
+                                if level in matches and level != self.session["level"]:
+                                        self.session.pushMessage("You need to have %s rights to access this." % level, "error")
+                                        self.status = "303 SEE OTHER"
+                                        self.headers = [("location", subURL["auth"] + "/login")]
+                                        error = True
 
                 if not error:
                         content = getattr(self, self.method)()

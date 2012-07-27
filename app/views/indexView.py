@@ -14,6 +14,7 @@ joshuaashby@joshashby.com
 """
 import baseView as bv
 import templateConfig as tpl
+import markdown
 
 class indexView(bv.baseView):
         def HTML(self):
@@ -26,7 +27,7 @@ class indexView(bv.baseView):
                         partial.title = post.title
                         partial.author = post.author
                         partial.time = post.time
-                        partial.post = post.post
+                        partial.post = markdown.markdown(post.post)
 
                         page.posts += str(partial)
                 return page

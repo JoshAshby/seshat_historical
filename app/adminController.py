@@ -32,7 +32,7 @@ import views.adminView as av
 import models.authModel as am
 import models.postModel as pm
 
-import re
+import urllib
 
 
 @route(subURL["admin"] + "/")
@@ -49,8 +49,8 @@ class adminIndex_admin(basePage):
 class userNew_admin(basePage):
         def GET(self):
                 """
-                This will eventually give a nice form in order to
-                make a new user, right now it does nothing however.
+                This gives a nice little list of all the users in the system, 
+                with the exception of users marked as having GOD level.
                 """
                 self.permList = am.permList()
                 view = av.newUserView(data=self)
@@ -116,7 +116,7 @@ class postsIndex_admin(basePage):
         def GET(self):
                 """
                 """
-                self.posts = pm.postList()
+                self.posts = pm.listPosts()
                 view = av.postListView(data=self)
 
                 return view.build()
@@ -124,10 +124,33 @@ class postsIndex_admin(basePage):
         def POST(self):
                 """
                 """
+                id = self.members["id"]
                 title = self.members["title"]
                 post = self.members["post"]
 
-                im.newPost(title, post, self.session["username"])
+                pm.updatePost(id, title, post, self.session["username"])
+                self.status = "303 SEE OTHER"
+                self.headers = [("location", (subURL["admin"] + "/posts/"))]
+                self.session.pushMessage(("Congrats! The post %s was updated!" % title))
+                return ""
+
+
+@route(subURL["admin"] + "/posts/new")
+class postsNew_admin(basePage):
+        def GET(self):
+                """
+                """
+                view = av.newPostView(data=self)
+
+                return view.build()
+
+        def POST(self):
+                """
+                """
+                title = self.members["title"]
+                post = urllib.unquote(self.members["post"])
+
+                pm.newPost(title, post, self.session["username"])
                 self.status = "303 SEE OTHER"
                 self.headers = [("location", (subURL["admin"] + "/posts/"))]
                 self.session.pushMessage(("Congrats! The post %s was created!" % title))
