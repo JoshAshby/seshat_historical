@@ -126,9 +126,16 @@ class postsIndex_admin(basePage):
                 """
                 id = self.members["id"]
                 title = self.members["title"]
-                post = self.members["post"]
+                post = urllib.unquote(self.members["post"])
 
-                pm.updatePost(id, title, post, self.session["username"])
+                updatePost = pm.RedisPostORM(id)
+
+                updatePost.title = title
+                updatePost.post = post
+                updatePost.author = self.session["username"]
+
+                updatePost.cou()
+
                 self.status = "303 SEE OTHER"
                 self.headers = [("location", (subURL["admin"] + "/posts/"))]
                 self.session.pushMessage(("Congrats! The post %s was updated!" % title))
@@ -150,7 +157,13 @@ class postsNew_admin(basePage):
                 title = self.members["title"]
                 post = urllib.unquote(self.members["post"])
 
-                pm.newPost(title, post, self.session["username"])
+                newPost = pm.RedisPostORM()
+
+                newPost.title = title
+                newPost.post = post
+                newPost.author = self.session["username"]
+
+                newPost.cou()
                 self.status = "303 SEE OTHER"
                 self.headers = [("location", (subURL["admin"] + "/posts/"))]
                 self.session.pushMessage(("Congrats! The post %s was created!" % title))

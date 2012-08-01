@@ -97,7 +97,7 @@ class postListView(bv.baseView):
                         partial.author = post.author
                         partial.time = post.time
                         partial.title = post.title
-                        partial.id = post.post_id
+                        partial.id = post.key
 
                         page.postList += str(partial)
 

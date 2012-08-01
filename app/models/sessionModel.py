@@ -35,6 +35,8 @@ import random
 Make this less shitty and actually use redis rather than just storing a pickled
 object. Such as using Redis hashes. Hashes might also be a fun thing to use with
 the auth module and the post module, along with the rest of Redis...
+
+Looking over this again: it's so ugly it hurts... really time to rewrite this.
 """
 
 
@@ -42,7 +44,7 @@ class Session(object):
         def __init__(self, sessionId):
                 self.sessionId = sessionId
                 try:
-                        pickledData = redisSession.get(self.sessionId)
+                        pickledData = redisSessionServer.get(self.sessionId)
                         self.data = pickle.loads(pickledData)
                 except:
                         self.data = {
@@ -55,7 +57,7 @@ class Session(object):
 
         def commit(self):
                 pickledSession = pickle.dumps(self.data)
-                redisSession.set(self.sessionId, pickledSession)
+                redisSessionServer.set(self.sessionId, pickledSession)
 
         def __setitem__(self, item, value):
                 self.data[item] = value

@@ -23,63 +23,59 @@ except:
         os.chdir(abspath)
         from config import *
 
-from sqlalchemy import Column, Integer, Text, DateTime
-from sqlalchemy.sql.expression import desc
-
 from datetime import datetime as dt
 
-
-class PostORM(Base):
-        """
-
-        """
-        __tablename__ = 'posts'
-
-        post_id = Column(Integer, primary_key=True)
-        title = Column(Text)
-        post = Column(Text)
-        author = Column(Text)
-        time = Column(DateTime)
-
-
-def newPost(title, post, author):
-        post = PostORM(title=title, post=post, author=author, time=dt.now())
-        dbSession.add(post)
-
-        dbSession.commit()
-
-def updatePost(id, title, post, author):
-        post = dbSession.query(PostORM).filter_by(post_id=id).first()
-        post.title = title
-        post.auther = author
-        post.time = dt.now()
-
-        dbSession.commit()
-
 def listPosts():
-        posts = dbSession.query(PostORM).order_by(desc(PostORM.time)).all()
-        if not posts:
-                raise "No Posts"
+        posts = []
+        for key in redisPostServer.keys():
+                if key[:5]=="post:":
+                        post = RedisPostORM(key)
+                        posts.append(post)
         return posts
 
 class RedisPostORM(object):
         """
         Baisc ORM style system for Posts which are stored in Redis as hashes.
         """
-        def __init__(self):
+        def __init__(self, key=""):
                 """
+                Go through and either make a new post object, or if we are given a key
+                which can be in the style of either a string or number, and formated as
+                just the number, or like so: post:postID
                 """
-                self.key = max(redisPost.keys())+1
+                if not key:
+                        try:
+                                self.key = "post:" + str(max(redisPostServer.keys())+1)
+                        except:
+                                self.key = "post:0"
+                        self.author = ""
+                        self.title = ""
+                        self.time = dt.now()
+                        self.post = ""
+                else:
+                        if not key[:5]=="post:":
+                                self.key = "post:" + str(key)
+                        else:
+                                self.key = str(key)
+                        self.author = redisPostServer.hget(self.key, "author")
+                        self.title = redisPostServer.hget(self.key, "title")
+                        self.time = redisPostServer.hget(self.key, "time")
+                        self.post = redisPostServer.hget(self.key, "post")
 
-        def listPosts(self):
-                for key in redisPost.keys():
-                        pass
+        def __getitem__(self, item):
+                return getattr(self, item)
 
-        def newPost(self, author="", title="", post=""):
-                """
-                """
-                redisPost.hset(self.key, "author", author)
-                redisPost.hset(self.key, "title", title)
-                redisPost.hset(self.key, "post", post)
-                redisPost.hset(self.ey, "time", dt.now())
+        def __setitem__(self, item, value):
+                setattr(self, item, value)
 
+        def cou(self):
+                """
+                stands for create or update since this is really a dual function function
+                """
+                redisPostServer.hset(self.key, "author", self.author)
+                redisPostServer.hset(self.key, "title", self.title)
+                redisPostServer.hset(self.key, "post", self.post)
+                redisPostServer.hset(self.key, "time", self.time)
+
+        def delete(self):
+                redisPostServer.delete(self.key)

@@ -63,7 +63,7 @@ class login(basePage):
                 except:
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", subURL["auth"] + "/login")]
-                        self.session.pushMessage("Something went wrong with your username or password, plase try again.", "error", "error")
+                        self.session.pushMessage("Something went wrong with your username or password, plase try again.", "error")
 
                 return ""
 
