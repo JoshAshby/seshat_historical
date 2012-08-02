@@ -45,7 +45,11 @@ class RedisPostORM(object):
                 """
                 if not key:
                         try:
-                                self.key = "post:" + str(max(redisPostServer.keys())+1)
+                                keys = redisPostServer.keys()
+                                keyNum = []
+                                for keyTotal in keys:
+                                        keyNum.append(int(keyTotal[5:]))
+                                self.key = "post:" + str(max(keyNum)+1)
                         except:
                                 self.key = "post:0"
                         self.author = ""

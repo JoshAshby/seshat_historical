@@ -41,14 +41,16 @@ Looking over this again: it's so ugly it hurts... really time to rewrite this.
 
 
 class Session(object):
+        parts = ["message", "history", "username", "user_id", "level"]
         def __init__(self, sessionId):
-                self.sessionId = sessionId
-                try:
-                        pickledData = redisSessionServer.get(self.sessionId)
-                        self.data = pickle.loads(pickledData)
-                except:
+                self.data = {}
+                self.sessionId = "session:" + sessionId
+                if(redisSessionServer.exists(self.sessionId)):
+                        for bit in self.parts:
+                                self.data[bit] = redisSessionServer.hget(self.sessionId, bit)
+                else:
                         self.data = {
-                                "message": [],
+                                "message": "",
                                 "history": [],
                                 "username": "",
                                 "user_id": "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10)),
@@ -56,8 +58,8 @@ class Session(object):
                         }
 
         def commit(self):
-                pickledSession = pickle.dumps(self.data)
-                redisSessionServer.set(self.sessionId, pickledSession)
+                for bit in self.data:
+                        redisSessionServer.hset(self.sessionId, bit, self.data[bit])
 
         def __setitem__(self, item, value):
                 self.data[item] = value
@@ -75,12 +77,8 @@ class Session(object):
                 return returnData
 
         def getMessage(self):
-                returnData = ""
-                for message in self.data["message"]:
-                        returnData += message
-
-                self.data["message"] = []
-
+                returnData = self.data["message"]
+                self.data["message"] = ""
                 return returnData
 
         def pushMessage(self, message, messType="info"):
@@ -102,7 +100,7 @@ class Session(object):
                         %s
                 </div>
                 """ % (messType, style, message)
-                self.data["message"].append(messageTpl)
+                self.data["message"] += str(messageTpl)
 
         def login(self, user, passwd):
                 userData = am.checkUser(user, passwd)
@@ -115,7 +113,7 @@ class Session(object):
 
         def logout(self):
                 self.data = {
-                        "message": [],
+                        "message": "",
                         "history": [],
                         "username": "",
                         "users_id": "".join(random.choice(string.ascii_uppercase)),
