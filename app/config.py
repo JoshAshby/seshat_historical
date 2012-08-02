@@ -75,5 +75,8 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 dbSession = Session()
 
-redisSessionServer = redis.Redis("localhost", db=0)
+#redisSessionServer = redis.Redis("localhost", db=0)
 redisPostServer = redis.Redis("localhost", db=1)
+redisSessionServer = redisPostServer
+redisUserServer = redisPostServer
+redisPermServer = redisPostServer
