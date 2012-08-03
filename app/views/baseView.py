@@ -34,21 +34,39 @@ import views.templateConfig as tc
 
 
 class baseView(object):
-        def __init__(self, data={}):
-                self.data = data
+        def __init__(self):
+                self.blocks = {}
 
-        def __setitem__(self, item, value):
-                self.data.update({item: value})
+        def __setitem__(self, block, value):
+                self.blocks.update({block: value})
 
         def build(self):
-                pass
+                page = tc.mainTplSet["default"]
+                for block in self.blocks:
+                        if type(self.blocks[block]) != str:
+                                setattr(page, block, self.blocks[block].build())
+                        else:
+                                setattr(page, block, self.blocks[block])
+                return str(page)
 
 
 class noSidebarView(baseView):
         def build(self):
-                pass
+                page = tc.mainTplSet["noSidebar"]
+                for block in self.blocks:
+                        if type(self.blocks[block]) != str:
+                                setattr(page, block, self.blocks[block].build())
+                        else:
+                                setattr(page, block, self.blocks[block])
+                return str(page)
 
 
 class sidebarView(baseView):
         def build(self):
-                pass
+                page = tc.mainTplSet["sidebar"]
+                for block in self.blocks:
+                        if type(self.blocks[block]) != str:
+                                setattr(page, block, self.blocks[block].build())
+                        else:
+                                setattr(page, block, self.blocks[block])
+                return str(page)

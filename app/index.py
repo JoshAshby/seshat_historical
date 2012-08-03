@@ -49,7 +49,13 @@ class menu_Home(basePage):
                 except:
                         self.posts = []
 
-                view = bv.noSidebarView()
+                view = bv.baseView()
+#                nav = bm.baseMenu()
+                view["nav"] = " "
+                view["title"] = "Home"
+                view["messages"] = self.session.getMessage()
+
+                view["content"] = "Hello"
 
                 return view.build()
 

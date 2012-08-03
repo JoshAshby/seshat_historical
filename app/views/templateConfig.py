@@ -32,19 +32,6 @@ along with partial templates
 tplHome = "./views/htmlTemplates/"
 prtTplHome = "./views/htmlTemplates/partials/"
 
-#set-o-main templates. This is really here for ease of use and so forth
-mainTplSet = {
-        "sidebar": (tplHome + "sidebar.tpl.html"),
-        "noSidebar": (tplHome + "noSidebar.tpl.html"),
-}
-
-#same as above just for partials
-partialTplSet = {
-        "row_list_User": (prtTplHome + "row_list_User.tpl.html"),
-        "row_list_Post": (prtTplHome + "row_list_Post.tpl.html"),
-        "post_index": (prtTplHome + "post_index.tpl.html"),
-}
-
 #generic template class, called by all the views currently
 #because nothing fancy is needed.
 class genericTemplate(Template):
@@ -64,3 +51,20 @@ class partialTemplate(Template):
         baseURL = baseURL
         assetURL = assetURL
         subURL = subURL
+
+
+#set-o-main templates. This is really here for ease of use and so forth
+mainTplSet = {
+        "sidebar": genericTemplate(file=(tplHome + "sidebar.tpl.html")),
+        "noSidebar": genericTemplate(file=(tplHome + "noSidebar.tpl.html")),
+        "default": genericTemplate(file=(tplHome + "noSidebar.tpl.html")),
+}
+
+#same as above just for partials
+partialTplSet = {
+        "row_list_User": partialTemplate(file=(prtTplHome + "row_list_User.tpl.html")),
+        "row_list_Post": partialTemplate(file=(prtTplHome + "row_list_Post.tpl.html")),
+        "post_index": partialTemplate(file=(prtTplHome + "post_index.tpl.html")),
+}
+
+
