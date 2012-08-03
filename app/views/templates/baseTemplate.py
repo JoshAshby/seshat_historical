@@ -35,7 +35,7 @@ import util.frameworkUtil as fwUtil
 
 class baseTemplate(object):
         def __init__(self, data={}):
-                pass
+                self.data = data
 
         def build(self):
                 pass

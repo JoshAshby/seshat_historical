@@ -24,6 +24,7 @@ except:
         from config import *
 
 import re
+import views.forms.baseForm as bf
 
 
 class baseView(object):
@@ -61,9 +62,26 @@ class baseView(object):
                         """
                 if self.data.session["username"] != "":
                         greeting = "Heya, %s!" % str(self.data.session["username"])
-                        addDrop = ""
+
+                        testForm = bf.baseForm(fields=[
+                                {"name": "username",
+                                "value": "",
+                                "type": "text",
+                                "class": ""},
+                                {"name": "passwd",
+                                "value": "",
+                                "type": "password",
+                                "class": ""},
+                                {"name": "submit",
+                                "value": "Log in",
+                                "type": "submit",
+                                "class": "btn btn-primary"}
+                                ], action="/auth/login")
+
+                        addDrop = testForm.build()
+
                         if self.data.session["level"] == "admin" or self.data.session["level"] == "GOD":
-                                addDrop = """
+                                addDrop += """
                                         <li><a href="%s"><i class="icon-cog"></i> Admin Panel</a></li>
                                 """ % (subURL["admin"] + "/")
 

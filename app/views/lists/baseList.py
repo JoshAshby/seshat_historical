@@ -31,8 +31,8 @@ import util.frameworkUtil as fwUtil
 
 
 class baseList(object):
-        def __init__(self, data={}):
-                pass
+        def __init__(self, data=[], template=""):
+                self.data = data
 
         def build(self):
                 pass

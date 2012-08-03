@@ -31,8 +31,8 @@ import util.frameworkUtil as fwUtil
 
 
 class baseBreadcrumb(object):
-        def __init__(self, data={}):
-                pass
+        def __init__(self, data):
+                self.data = data
 
         def build(self):
                 pass

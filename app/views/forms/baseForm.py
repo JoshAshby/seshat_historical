@@ -36,10 +36,40 @@ import seshat.framework as fw
 import util.frameworkUtil as fwUtil
 
 
+"""
+This should be expanded to styled with form controls
+and unstyled for placment into things like dropdowns and that...
+Both should just have to override build to place in the styles...
+maybe formClass will be removed if thats the case...
+"""
 class baseForm(object):
-        def __init__(self, data={}):
-                pass
+        def __init__(self, fields=[], action="", formClass="", id="", prefix=""):
+                self.fields = fields
+                self.action = action
+                self.formClass = formClass
+                self.id = id
+                self.prefix = prefix
+
+        def __setitem__(self, value):
+                self.fields.append(value)
 
         def build(self):
-                pass
+                """
+                name
+                value
+                type
+                class
+                required
+                label
+                """
+                returnData = "<form action=\"%s\" class=\"%s\" id=\"%s\">" % (self.action, self.formClass, self.id)
+                for block in self.fields:
+                        if self.prefix:
+                                block["name"] = self.prefix + "_" + block["name"]
+
+                        returnData += "<input type=\"%s\" class=\"%s\" id=\"%s\" value=\"%s\" name=\"%s\" />" % (block["type"], block["class"], block["name"], block["value"], block["name"])
+
+                returnData += "</form>"
+
+                return str(returnData)
 

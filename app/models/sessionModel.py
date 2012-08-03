@@ -60,6 +60,7 @@ class Session(object):
         def commit(self):
                 for bit in self.data:
                         redisSessionServer.hset(self.sessionId, bit, self.data[bit])
+                redisSessionServer.expire(self.sessionId, 172800) #two days after last action
 
         def __setitem__(self, item, value):
                 self.data[item] = value
