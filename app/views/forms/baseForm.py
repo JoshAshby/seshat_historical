@@ -1,13 +1,7 @@
 #!/usr/bin/env python2
 """
 Web App/API framework built on top of gevent
-base form object which provides the ability to generate a form based off
-of either a JSON object, or a python set.
-
-Arrays are treated as selects, numbers as spinners,
-and text as input[type="text"]
-
-type can be changed by passing to each field what it is.
+base form object which provides the ability to generate a form
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -33,7 +27,6 @@ except:
         from config import *
 
 import seshat.framework as fw
-import util.frameworkUtil as fwUtil
 
 
 """

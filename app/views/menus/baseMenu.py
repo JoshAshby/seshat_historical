@@ -27,7 +27,6 @@ except:
         from config import *
 
 import seshat.framework as fw
-import util.frameworkUtil as fwUtil
 
 
 class baseMenu(object):

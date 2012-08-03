@@ -28,18 +28,6 @@ import string
 import random
 
 
-
-"""
-**TODO**
-
-Make this less shitty and actually use redis rather than just storing a pickled
-object. Such as using Redis hashes. Hashes might also be a fun thing to use with
-the auth module and the post module, along with the rest of Redis...
-
-Looking over this again: it's so ugly it hurts... really time to rewrite this.
-"""
-
-
 class Session(object):
         parts = ["message", "history", "username", "user_id", "level"]
         def __init__(self, sessionId):

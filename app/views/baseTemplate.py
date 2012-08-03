@@ -30,7 +30,6 @@ except:
         from config import *
 
 import seshat.framework as fw
-import util.frameworkUtil as fwUtil
 
 
 class baseTemplate(object):
@@ -38,9 +37,4 @@ class baseTemplate(object):
                 self.data = data
 
         def build(self):
-                pass
-
-        def _content(self, content):
-                """
-                """
                 pass

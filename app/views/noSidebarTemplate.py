@@ -28,17 +28,9 @@ except:
         from config import *
 
 import seshat.framework as fw
-import util.frameworkUtil as fwUtil
+import views.baseTemplate as bt
 
 
-class noSidebarTemplate(object):
-        def __init__(self, data={}):
-                pass
-
+class noSidebarTemplate(bt.baseTemplate):
         def build(self):
-                pass
-
-        def _content(self, content):
-                """
-                """
                 pass

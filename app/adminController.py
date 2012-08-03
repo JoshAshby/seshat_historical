@@ -23,11 +23,8 @@ except:
         from config import *
 
 import seshat.framework as fw
-import util.frameworkUtil as fwUtil
 from baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
-
-import views.adminView as av
 
 import models.authModel as am
 import models.postModel as pm
