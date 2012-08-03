@@ -2,7 +2,9 @@
 """
 Web App/API framework built on top of gevent
 Base object for the creation of template objects.
-this template lacks a sidebar
+All templates by default have a menu bar, message area,
+breakcrumbs, and a content area. Additional areas maybe added
+by subclassing this template and adding support for that area.
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -28,9 +30,25 @@ except:
         from config import *
 
 import seshat.framework as fw
-import views.baseTemplate as bt
+import views.templateConfig as tc
 
 
-class noSidebarTemplate(bt.baseTemplate):
+class baseView(object):
+        def __init__(self, data={}):
+                self.data = data
+
+        def __setitem__(self, item, value):
+                self.data.update({item: value})
+
+        def build(self):
+                pass
+
+
+class noSidebarView(baseView):
+        def build(self):
+                pass
+
+
+class sidebarView(baseView):
         def build(self):
                 pass

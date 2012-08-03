@@ -32,6 +32,8 @@ from seshat.route import route
 
 import models.postModel as pm
 
+import views.baseView as bv
+
 
 @route("/")
 class menu_Home(basePage):
@@ -46,7 +48,8 @@ class menu_Home(basePage):
                         self.posts = pm.listPosts()
                 except:
                         self.posts = []
-                view = iv.indexView(data=self)
+
+                view = bv.noSidebarView()
 
                 return view.build()
 

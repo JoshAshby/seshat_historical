@@ -29,6 +29,8 @@ from seshat.route import route
 import models.authModel as am
 import models.postModel as pm
 
+import views.baseView as bv
+
 import urllib
 
 
@@ -37,23 +39,22 @@ class adminIndex_admin(basePage):
         def GET(self):
                 """
                 """
-                view = av.indexView(data=self)
+                view = bv.sidebarView()
 
                 return view.build()
 
 
 @route(subURL["admin"] + "/users/new")
-class userNew_admin(basePage):
+class usersNew_admin(basePage):
         def GET(self):
                 """
                 This gives a nice little list of all the users in the system, 
                 with the exception of users marked as having GOD level.
                 """
                 self.permList = am.permList()
-                view = av.newUserView(data=self)
+                view = bv.sidebarView()
 
                 return view.build()
-
 
         def POST(self):
                 """
@@ -76,7 +77,7 @@ class userNew_admin(basePage):
 
 
 @route(subURL["admin"] + "/users/")
-class userIndex_admin(basePage):
+class usersIndex_admin(basePage):
         def GET(self):
                 """
 
@@ -84,7 +85,7 @@ class userIndex_admin(basePage):
                 self.users = am.userList()
                 self.permList = am.permList()
 
-                view = av.userListView(data=self)
+                view = bv.sidebarView()
 
                 return view.build()
 
@@ -114,7 +115,7 @@ class postsIndex_admin(basePage):
                 """
                 """
                 self.posts = pm.listPosts()
-                view = av.postListView(data=self)
+                view = bv.sidebarView()
 
                 return view.build()
 
@@ -144,7 +145,7 @@ class postsNew_admin(basePage):
         def GET(self):
                 """
                 """
-                view = av.newPostView(data=self)
+                view = bv.sidebarView()
 
                 return view.build()
 

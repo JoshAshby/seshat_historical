@@ -57,9 +57,6 @@ subURL = {
         "auth": "/auth",
         }
 
-
-authRegex = re.compile("([^_\W]*)")
-
 """
 #########################STOP EDITING#####################################
 ***WARNING***
@@ -67,6 +64,8 @@ Don't change these following settings unless you know what you're doing!!!
 ##########################################################################
 """
 urls = []
+
+authRegex = re.compile("([^_\W]*)")
 
 engine = create_engine(authDB)
 
@@ -76,7 +75,7 @@ Session = sessionmaker(bind=engine)
 dbSession = Session()
 
 #redisSessionServer = redis.Redis("localhost", db=0)
-redisPostServer = redis.Redis("localhost", db=1)
+redisPostServer = redis.Redis("localhost", db=0)
 redisSessionServer = redisPostServer
 redisUserServer = redisPostServer
 redisPermServer = redisPostServer

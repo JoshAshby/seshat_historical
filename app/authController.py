@@ -28,6 +28,8 @@ from seshat.route import route
 
 import re
 
+import views.baseView as bv
+
 
 @route(subURL["auth"] + "/login")
 class login(basePage):
@@ -41,7 +43,12 @@ class login(basePage):
                         self.session.pushMessage("Hey look, you're already signed in!")
                         return ""
                 else:
-                        view = av.loginView(data=self)
+                        view = bv.noSidebarView()
+                        loginForm = bf.baseForm()
+
+                        loginForm = loginForm.build()
+
+                        view["content"] = loginForm
 
                         return view.build()
 
@@ -50,8 +57,8 @@ class login(basePage):
                 Use form data to check login, and the redirect if successful
                 if not redirect to login page again.
                 """
-                passwd = self.members["passwd"]
-                name = self.members["user"]
+                passwd = self.members["password"]
+                name = self.members["username"]
 
                 try:
                         self.session.login(name, passwd)
