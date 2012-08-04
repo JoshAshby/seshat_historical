@@ -44,6 +44,56 @@ class baseForm(object):
                 self.prefix = prefix
                 self.method = method
 
+        def build(self):
+                """
+                name
+                value
+                type
+                class
+                label
+                """
+                returnData = """
+                <form action="%s" method="%s" class="%s" id="%s">
+                        <fieldset>
+                """ % (self.action, self.method, self.formClass, self.id)
+
+                for block in self.fields:
+                        if self.prefix:
+                                block["name"] = self.prefix + "_" + block["name"]
+
+                        if block.has_key("label"):
+                                returnData += """<label class="%s" for="%s">%s</label>
+                                """ % (block["class"] if block.has_key("class") else "",
+                                       block["name"],
+                                       block["label"])
+
+                        if block["type"] is not "submit" and block["type"] is not "textarea":
+                                returnData += """<input type="%s" class="%s" id="%s" name="%s" value="%s"/>""" % (block["type"],
+                                       block["class"] if block.has_key("class") else "",
+                                       block["name"],
+                                       block["name"],
+                                       block["value"] if block.has_key("value") else "")
+
+                        if block["type"] == "textarea":
+                                returnData += """<textarea class="%s" id="%s" name="%s">%s</textarea>""" % (block["class"] if block.has_key("class") else"",
+                                      block["name"],
+                                      block["name"],
+                                      block["value"] if block.has_key("value") else "")
+
+                        if block["type"] == "submit":
+                                returnData += """<button type="submit" class="btn %s" name="%s" id="%s">%s</button>""" % (block["class"] if block.has_key("class") else "",
+                                      block["name"],
+                                      block["name"],
+                                      block["value"] if block.has_key("value") else "")
+
+                        if block.has_key("label"):
+                                returnData += "</div>"
+
+                returnData += "<fieldset></form>"
+
+                return str(returnData)
+
+
 
 class styledForm(baseForm):
         def build(self):

@@ -45,7 +45,7 @@ class login(basePage):
                         return ""
                 else:
                         view = bv.noSidebarView()
-#                        nav = bm.baseMenu()
+                        view["nav"] = self.navbar()
                         view["nav"] = " "
                         view["title"] = "Login"
                         view["messages"] = self.session.getMessage()
@@ -61,7 +61,7 @@ class login(basePage):
                                 "class": "btn-primary",
                                 "value": "Login"}]
 
-                        loginForm = bf.styledForm(fields=login, action="/auth/login")
+                        loginForm = bf.styledForm(fields=login, action=(subURL["auth"] + "/login"))
 
                         view["content"] = bv.baseRow(loginForm)
 

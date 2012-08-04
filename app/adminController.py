@@ -40,40 +40,13 @@ class adminIndex_admin(basePage):
                 """
                 """
                 view = bv.sidebarView()
+                view["nav"] = self.navbar()
+                view["title"] = "Admin Panel"
+                view["messages"] = self.session.getMessage()
+
+                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
                 return view.build()
-
-
-@route(subURL["admin"] + "/users/new")
-class usersNew_admin(basePage):
-        def GET(self):
-                """
-                This gives a nice little list of all the users in the system, 
-                with the exception of users marked as having GOD level.
-                """
-                self.permList = am.permList()
-                view = bv.sidebarView()
-
-                return view.build()
-
-        def POST(self):
-                """
-
-                """
-                name = self.members["user"]
-                password = self.members["passwd"]
-                perms = self.members["perms"]
-                notes = self.members["notes"]
-                try:
-                        am.newUser(name, password, perms, notes)
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users/new"))]
-                        self.session.pushMessage(("Congrats! The user %s was created!" % name))
-                except:
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users/new"))]
-                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
-                return ""
 
 
 @route(subURL["admin"] + "/users/")
@@ -86,6 +59,11 @@ class usersIndex_admin(basePage):
                 self.permList = am.permList()
 
                 view = bv.sidebarView()
+                view["nav"] = self.navbar()
+                view["title"] = "Users"
+                view["messages"] = self.session.getMessage()
+
+                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
                 return view.build()
 
@@ -109,6 +87,43 @@ class usersIndex_admin(basePage):
                 return ""
 
 
+@route(subURL["admin"] + "/users/new")
+class usersNew_admin(basePage):
+        def GET(self):
+                """
+                This gives a nice little list of all the users in the system, 
+                with the exception of users marked as having GOD level.
+                """
+                self.permList = am.permList()
+                view = bv.sidebarView()
+                view["nav"] = self.navbar()
+                view["title"] = "Adding a new User"
+                view["messages"] = self.session.getMessage()
+
+                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+
+                return view.build()
+
+        def POST(self):
+                """
+
+                """
+                name = self.members["user"]
+                password = self.members["passwd"]
+                perms = self.members["perms"]
+                notes = self.members["notes"]
+                try:
+                        am.newUser(name, password, perms, notes)
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", (subURL["admin"] + "/users/new"))]
+                        self.session.pushMessage(("Congrats! The user %s was created!" % name))
+                except:
+                        self.status = "303 SEE OTHER"
+                        self.headers = [("location", (subURL["admin"] + "/users/new"))]
+                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
+                return ""
+
+
 @route(subURL["admin"] + "/posts/")
 class postsIndex_admin(basePage):
         def GET(self):
@@ -116,6 +131,11 @@ class postsIndex_admin(basePage):
                 """
                 self.posts = pm.listPosts()
                 view = bv.sidebarView()
+                view["nav"] = self.navbar()
+                view["title"] = "Posts"
+                view["messages"] = self.session.getMessage()
+
+                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
                 return view.build()
 
@@ -146,6 +166,11 @@ class postsNew_admin(basePage):
                 """
                 """
                 view = bv.sidebarView()
+                view["nav"] = self.navbar()
+                view["title"] = "Adding a new Post"
+                view["messages"] = self.session.getMessage()
+
+                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
                 return view.build()
 

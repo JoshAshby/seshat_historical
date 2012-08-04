@@ -46,41 +46,47 @@ class baseMenu(object):
                 returnData = """<ul class="nav">"""
 
                 for link in self.left:
-                        classes = ""
-                        if type(link["label"]) != str:
-                                link["label"] = link["label"].build()
-                        if link["id"] == self.active: classes = "active"
-                        returnData += """
-                        <li class="%s">
-                                <a href="%s" class="%s" id="%s">%s</a>
-                        </li>
-                        """ % (classes,
-                              link["link"],
-                              link["class"] if link.has_key("class") else "",
-                              link["id"] if link.has_key("id") else "",
-                              link["label"])
+                        if not link.has_key("type"):
+                                classes = ""
+                                if type(link["label"]) != str:
+                                        link["label"] = link["label"].build()
+                                if link["id"] == self.active: classes = "active"
+                                returnData += """
+                                <li class="%s">
+                                        <a href="%s" class="%s" id="%s">%s</a>
+                                </li>
+                                """ % (classes,
+                                      link["link"],
+                                      link["class"] if link.has_key("class") else "",
+                                      link["id"] if link.has_key("id") else "",
+                                      link["label"])
+                        else:
+                                returnData += link["object"].build()
 
-                        if link["divide"]:
+                        if link.has_key("divide"):
                                 returnData += """<li class="divider-vertical"></li>"""
 
                 returnData += """</ul><ul class="nav pull-right">"""
 
                 for link in self.right:
-                        classes = ""
-                        if type(link["label"]) != str:
-                                link["label"] = link["label"].build()
-                        if link["id"] == self.active: classes = "active"
-                        returnData += """
-                        <li class="%s">
-                                <a href="%s" class="%s" id="%s">%s</a>
-                        </li>
-                        """ % (classes,
-                              link["link"],
-                              link["class"] if link.has_key("class") else "",
-                              link["id"] if link.has_key("id") else "",
-                              link["label"])
+                        if not link.has_key("type"):
+                                classes = ""
+                                if type(link["label"]) != str:
+                                        link["label"] = link["label"].build()
+                                if link["id"] == self.active: classes = "active"
+                                returnData += """
+                                <li class="%s">
+                                        <a href="%s" class="%s" id="%s">%s</a>
+                                </li>
+                                """ % (classes,
+                                      link["link"],
+                                      link["class"] if link.has_key("class") else "",
+                                      link["id"] if link.has_key("id") else "",
+                                      link["label"])
+                        else:
+                                returnData += link["object"].build()
 
-                        if link["divide"]:
+                        if link.has_key("divide"):
                                 returnData += """<li class="divider-vertical"></li>"""
 
                 returnData += """</ul>"""
@@ -108,16 +114,28 @@ class baseDropdown(object):
                 """ % self.label
 
                 for block in self.blocks:
-                        if type(block["label"]) != str:
-                                block["label"] = block["label"].build()
+                        if not block.has_key("type"):
+                                classes = ""
+                                if type(block["label"]) != str:
+                                        block["label"] = block["label"].build()
 
-                        returnData += """
-                        <li class="%s">
-                                <a href="%s" class="%s" id="%s">%s</a>
-                        </li>
-                        """ % (classes,
-                              block["link"],
-                              block["class"] if block.has_key("class") else "",
-                              block["id"] if block.has_key("id") else "",
-                              block["label"])
+                                returnData += """
+                                <li class="%s">
+                                        <a href="%s" class="%s" id="%s">%s</a>
+                                </li>
+                                """ % (classes,
+                                      block["link"],
+                                      block["class"] if block.has_key("class") else "",
+                                      block["id"] if block.has_key("id") else "",
+                                      block["label"])
 
+                        else:
+                                returnData += block["object"].build()
+
+
+                returnData += """
+                        </ul>
+                </li>
+                """
+
+                return returnData

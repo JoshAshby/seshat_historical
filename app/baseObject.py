@@ -27,6 +27,10 @@ import gevent
 import models.authModel as am
 import models.sessionModel as sm
 
+import views.forms.baseForm as bf
+import views.menus.baseMenu as bm
+import views.baseView as bv
+
 
 class baseHTTPPageObject(object):
         """
@@ -44,6 +48,59 @@ class baseHTTPPageObject(object):
                 self.headers = [
                         ("Content-type", "text/html"),
                         ]
+
+        def navbar(self):
+                navbarLeft = [{
+                        "link": "/",
+                        "label": "Home",
+                        "id": 0
+                        }]
+
+                if self.session["username"]:
+                        navDropdownList = [{
+                                "label": bv.baseIcon("cog", "Admin"),
+                                "link": (subURL["admin"] + "/")
+                                }, {
+                                "label": bv.baseIcon("road", "Logout"),
+                                "link": (subURL["auth"] + "/logout")
+                                }]
+
+
+                        navDropdown = bm.baseDropdown(navDropdownList, bv.baseIcon("user", "Heya, " + self.session["username"], True))
+
+                else:
+                        loginForm = bf.baseForm(fields=[{
+                                "type": "text",
+                                "name": "username",
+                                "value": "Username"
+                                }, {
+                                "type": "password",
+                                "name": "password",
+                                "value": "Password"
+                                }, {
+                                "type": "submit",
+                                "class": "btn-primary",
+                                "name": "submit",
+                                "value": "Login"
+                                }], action=(subURL["auth"] + "/login"))
+
+                        navDropdownList = [{
+                                "type": "form",
+                                "object": loginForm
+                                }]
+
+                        navDropdown = bm.baseDropdown(navDropdownList, bv.baseIcon("user", "Heya, Stranger", True))
+
+
+
+                navbarRight = [{
+                        "type": "dropdown",
+                        "object": navDropdown
+                        }]
+
+                nav = bm.baseMenu(left=navbarLeft, right=navbarRight, active=0)
+
+                return nav
 
         def build(self, data, headers, status):
                 content = ""

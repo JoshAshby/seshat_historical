@@ -35,6 +35,7 @@ import models.postModel as pm
 import views.baseView as bv
 import views.forms.baseForm as bf
 import views.lists.baseList as bl
+import views.menus.baseMenu as bm
 
 
 @route("/")
@@ -52,8 +53,8 @@ class menu_Home(basePage):
                         self.posts = []
 
                 view = bv.noSidebarView()
-#                nav = bm.baseMenu()
-                view["nav"] = " "
+
+                view["nav"] = self.navbar()
                 view["title"] = "Home"
                 view["messages"] = self.session.getMessage()
 
@@ -63,6 +64,8 @@ class menu_Home(basePage):
                                 Something goes here... soon.
                         </div>
                 </div>"""
+
+                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
                 return view.build()
 

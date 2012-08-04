@@ -88,6 +88,22 @@ class baseRow(object):
                         %s
                         </div>
                 </div>
-                """ % (classes, self.block.build())
+                """ % (classes, self.block.build() if type(self.block) is not str else self.block)
 
                 return str(returnData)
+
+
+class baseIcon(object):
+        def __init__(self, icon="", label="", white=False):
+                self.icon = icon
+                self.label = label
+                self.white = white
+
+        def build(self):
+                if self.white: self.white = "icon-white"
+                else: self.white=""
+                returnData = """
+                <i class="icon-%s %s"></i> %s
+                """ % (self.icon, self.white, self.label)
+
+                return returnData
