@@ -67,7 +67,7 @@ class styledForm(baseForm):
                                 returnData += """
                                 <div class="control-group">
                                         <label class="control-label %s" for="%s">%s</label>
-                                """ % (block["class"],
+                                """ % (block["class"] if block.has_key("class") else "",
                                        block["name"],
                                        block["label"])
 
@@ -77,30 +77,30 @@ class styledForm(baseForm):
                                         <input type="%s" class="%s" id="%s" name="%s" value="%s"/>
                                 </div>
                                 """ % (block["type"],
-                                       block["class"],
+                                       block["class"] if block.has_key("class") else "",
                                        block["name"],
                                        block["name"],
-                                       block["value"])
+                                       block["value"] if block.has_key("value") else "")
 
-                        if block["type"] == "textare":
+                        if block["type"] == "textarea":
                                 returnData += """
                                 <div class="controls">
                                         <textarea class="%s" id="%s" name="%s">%s</textarea>
                                 </div>
-                                """ % (block["class"],
+                                """ % (block["class"] if block.has_key("class") else"",
                                       block["name"],
                                       block["name"],
-                                      block["value"])
+                                      block["value"] if block.has_key("value") else "")
 
                         if block["type"] == "submit":
                                 returnData += """
                                 <div class="form-actions">
                                         <button type="submit" class="btn %s" name="%s" id="%s">%s</button>
                                 </div>
-                                """ % (block["class"],
+                                """ % (block["class"] if block.has_key("class") else "",
                                       block["name"],
                                       block["name"],
-                                      block["value"])
+                                      block["value"] if block.has_key("value") else "")
 
                         if block.has_key("label"):
                                 returnData += "</div>"

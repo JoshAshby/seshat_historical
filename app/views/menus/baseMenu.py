@@ -30,9 +30,94 @@ import seshat.framework as fw
 
 
 class baseMenu(object):
-        def __init__(self, data={}):
-                pass
+        def __init__(self, left=[], right=[], active=0):
+                """
+                {"link": "",
+                "label": ""
+                "class": "",
+                "id": "",
+                "divide": bool}
+                """
+                self.left = left
+                self.right = right
+                self.active = active
 
         def build(self):
-                pass
+                returnData = """<ul class="nav">"""
+
+                for link in self.left:
+                        classes = ""
+                        if type(link["label"]) != str:
+                                link["label"] = link["label"].build()
+                        if link["id"] == self.active: classes = "active"
+                        returnData += """
+                        <li class="%s">
+                                <a href="%s" class="%s" id="%s">%s</a>
+                        </li>
+                        """ % (classes,
+                              link["link"],
+                              link["class"] if link.has_key("class") else "",
+                              link["id"] if link.has_key("id") else "",
+                              link["label"])
+
+                        if link["divide"]:
+                                returnData += """<li class="divider-vertical"></li>"""
+
+                returnData += """</ul><ul class="nav pull-right">"""
+
+                for link in self.right:
+                        classes = ""
+                        if type(link["label"]) != str:
+                                link["label"] = link["label"].build()
+                        if link["id"] == self.active: classes = "active"
+                        returnData += """
+                        <li class="%s">
+                                <a href="%s" class="%s" id="%s">%s</a>
+                        </li>
+                        """ % (classes,
+                              link["link"],
+                              link["class"] if link.has_key("class") else "",
+                              link["id"] if link.has_key("id") else "",
+                              link["label"])
+
+                        if link["divide"]:
+                                returnData += """<li class="divider-vertical"></li>"""
+
+                returnData += """</ul>"""
+
+                return returnData
+
+
+class baseDropdown(object):
+        def __init__(self, blocks=[], label=""):
+                self.blocks = blocks
+                self.label = label
+
+        def build(self):
+                if type(self.label) != str:
+                        self.label = self.label.build()
+                returnData = """
+                <li class="dropdown">
+                        <a href="#"
+                                class="dropdown-toggle"
+                                data-toggle="dropdown">
+                                %s
+                                <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                """ % self.label
+
+                for block in self.blocks:
+                        if type(block["label"]) != str:
+                                block["label"] = block["label"].build()
+
+                        returnData += """
+                        <li class="%s">
+                                <a href="%s" class="%s" id="%s">%s</a>
+                        </li>
+                        """ % (classes,
+                              block["link"],
+                              block["class"] if block.has_key("class") else "",
+                              block["id"] if block.has_key("id") else "",
+                              block["label"])
 

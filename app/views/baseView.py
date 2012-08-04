@@ -70,3 +70,24 @@ class sidebarView(baseView):
                         else:
                                 setattr(page, block, self.blocks[block])
                 return str(page)
+
+
+class baseRow(object):
+        def __init__(self, block, width="8", offset="2"):
+                self.block = block
+                self.width = width
+                self.offset = offset
+
+        def build(self):
+                width = "span%s" % self.width
+                if self.offset: offset = " offset%s" % self.offset
+                classes = width + offset
+                returnData = """
+                <div class="row">
+                        <div class="%s">
+                        %s
+                        </div>
+                </div>
+                """ % (classes, self.block.build())
+
+                return str(returnData)

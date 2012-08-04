@@ -52,27 +52,18 @@ class login(basePage):
 
                         login = [{"name": "username",
                                 "type": "text",
-                                "class": "",
-                                "value": "",
                                 "label": "Username"},
                                 {"name": "password",
                                 "type": "password",
-                                "class": "",
-                                "value": "",
                                 "label": "Password"},
                                 {"name": "submit",
                                 "type": "submit",
                                 "class": "btn-primary",
                                 "value": "Login"}]
 
-                        loginForm = bf.styledForm(fields=login, action="/auth/login").build()
+                        loginForm = bf.styledForm(fields=login, action="/auth/login")
 
-                        view["content"] = """
-                        <div class="row">
-                                <div class="offset3 span6">
-                                        %s
-                                </div>
-                        </div>""" % (loginForm)
+                        view["content"] = bv.baseRow(loginForm)
 
                         return view.build()
 
