@@ -27,12 +27,27 @@ except:
         from config import *
 
 import seshat.framework as fw
+import views.templateConfig as tc
+import views.baseView as bv
 
 
 class baseList(object):
-        def __init__(self, data=[], template=""):
-                self.data = data
+        def __init__(self, blocks=[], template=""):
+                self.blocks = blocks
+                self.template = template
 
         def build(self):
-                pass
+                returnData = ""
 
+                for block in self.blocks:
+                        page = tc.partialTplSet[self.template]
+
+                        for part in block:
+                                if type(block[part]) != str:
+                                        setattr(page, part, block[part].build())
+                                else:
+                                        setattr(page, part, block[part])
+
+                        returnData += bv.baseRow(str(page), 8, 0).build()
+
+                return returnData

@@ -79,8 +79,8 @@ class baseRow(object):
                 self.offset = offset
 
         def build(self):
-                width = "span%s" % self.width
-                if self.offset: offset = " offset%s" % self.offset
+                width = "span%s" % self.width if self.width else ""
+                offset = " offset%s" % self.offset if self.offset else ""
                 classes = width + offset
                 returnData = """
                 <div class="row">

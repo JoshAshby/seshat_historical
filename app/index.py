@@ -47,25 +47,21 @@ class menu_Home(basePage):
                 """
 
                 """
-                try:
-                        self.posts = pm.listPosts()
-                except:
-                        self.posts = []
+                self.posts = pm.postList()
 
                 view = bv.noSidebarView()
 
-                view["nav"] = self.navbar()
+                view["nav"] = self.navbar("home")
                 view["title"] = "Home"
-                view["messages"] = self.session.getMessage()
+                view["messages"] = bv.baseRow(self.session.getMessage())
 
-                view["content"] = """
-                <div class="row">
-                        <div class="offset2 span8">
-                                Something goes here... soon.
-                        </div>
-                </div>"""
+                if self.posts:
+                        postList = bl.baseList(self.posts, "post_index")
 
-                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+                        view["content"] = bv.baseRow(postList)
+
+                else:
+                        view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
                 return view.build()
 

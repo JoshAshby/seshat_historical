@@ -48,7 +48,7 @@ class login(basePage):
                         view["nav"] = self.navbar()
                         view["nav"] = " "
                         view["title"] = "Login"
-                        view["messages"] = self.session.getMessage()
+                        view["messages"] = bv.baseRow(self.session.getMessage())
 
                         login = [{"name": "username",
                                 "type": "text",

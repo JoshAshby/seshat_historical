@@ -49,11 +49,11 @@ class baseHTTPPageObject(object):
                         ("Content-type", "text/html"),
                         ]
 
-        def navbar(self):
+        def navbar(self, active=""):
                 navbarLeft = [{
                         "link": "/",
                         "label": "Home",
-                        "id": 0
+                        "id": "home"
                         }]
 
                 if self.session["username"]:
@@ -98,7 +98,7 @@ class baseHTTPPageObject(object):
                         "object": navDropdown
                         }]
 
-                nav = bm.baseMenu(left=navbarLeft, right=navbarRight, active=0)
+                nav = bm.baseMenu(left=navbarLeft, right=navbarRight, active=active)
 
                 return nav
 

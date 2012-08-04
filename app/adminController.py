@@ -42,7 +42,7 @@ class adminIndex_admin(basePage):
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
                 view["title"] = "Admin Panel"
-                view["messages"] = self.session.getMessage()
+                view["messages"] = bv.baseRow(self.session.getMessage())
 
                 view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
@@ -61,7 +61,7 @@ class usersIndex_admin(basePage):
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
                 view["title"] = "Users"
-                view["messages"] = self.session.getMessage()
+                view["messages"] = bv.baseRow(self.session.getMessage())
 
                 view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
@@ -98,7 +98,7 @@ class usersNew_admin(basePage):
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
                 view["title"] = "Adding a new User"
-                view["messages"] = self.session.getMessage()
+                view["messages"] = bv.baseRow(self.session.getMessage())
 
                 view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
@@ -133,7 +133,7 @@ class postsIndex_admin(basePage):
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
                 view["title"] = "Posts"
-                view["messages"] = self.session.getMessage()
+                view["messages"] = bv.baseRow(self.session.getMessage())
 
                 view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 
@@ -168,7 +168,7 @@ class postsNew_admin(basePage):
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
                 view["title"] = "Adding a new Post"
-                view["messages"] = self.session.getMessage()
+                view["messages"] = bv.baseRow(self.session.getMessage())
 
                 view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
 

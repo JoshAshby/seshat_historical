@@ -25,14 +25,18 @@ except:
 
 from datetime import datetime as dt
 
+import markdown
 
-def listPosts():
+
+def postList():
         posts = []
         for key in redisPostServer.keys():
                 if key[:5]=="post:":
                         post = RedisPostORM(key)
-                        posts.append(post)
+                        post["post"] = str(markdown.markdown(post["post"]))
+                        posts.append(post.keys)
         return posts
+
 
 class RedisPostORM(object):
         """
@@ -44,6 +48,7 @@ class RedisPostORM(object):
                 which can be in the style of either a string or number, and formated as
                 just the number, or like so: post:postID
                 """
+                self.keys = {}
                 if not key:
                         try:
                                 keys = redisPostServer.keys()
@@ -53,34 +58,34 @@ class RedisPostORM(object):
                                 self.key = "post:" + str(max(keyNum)+1)
                         except:
                                 self.key = "post:0"
-                        self.author = ""
-                        self.title = ""
-                        self.time = dt.now()
-                        self.post = ""
+                        self.keys["author"] = ""
+                        self.keys["title"] = ""
+                        self.keys["time"] = dt.now()
+                        self.keys["post"] = ""
                 else:
                         if not key[:5]=="post:":
                                 self.key = "post:" + str(key)
                         else:
                                 self.key = str(key)
-                        self.author = redisPostServer.hget(self.key, "author")
-                        self.title = redisPostServer.hget(self.key, "title")
-                        self.time = redisPostServer.hget(self.key, "time")
-                        self.post = redisPostServer.hget(self.key, "post")
+                        self.keys["author"] = redisPostServer.hget(self.key, "author")
+                        self.keys["title"] = redisPostServer.hget(self.key, "title")
+                        self.keys["time"] = redisPostServer.hget(self.key, "time")
+                        self.keys["post"] = redisPostServer.hget(self.key, "post")
 
         def __getitem__(self, item):
-                return getattr(self, item)
+                return self.keys[item]
 
         def __setitem__(self, item, value):
-                setattr(self, item, value)
+                self.keys[item] = value
 
         def cou(self):
                 """
                 stands for create or update since this is really a dual function function
                 """
-                redisPostServer.hset(self.key, "author", self.author)
-                redisPostServer.hset(self.key, "title", self.title)
-                redisPostServer.hset(self.key, "post", self.post)
-                redisPostServer.hset(self.key, "time", self.time)
+                redisPostServer.hset(self.key, "author", self.keys["author"])
+                redisPostServer.hset(self.key, "title", self.keys["title"])
+                redisPostServer.hset(self.key, "post", self.keys["post"])
+                redisPostServer.hset(self.key, "time", self.keys["time"])
 
         def delete(self):
                 redisPostServer.delete(self.key)
