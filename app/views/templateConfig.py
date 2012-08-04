@@ -57,7 +57,7 @@ class partialTemplate(Template):
 mainTplSet = {
         "sidebar": genericTemplate(file=(tplHome + "sidebar.tpl.html")),
         "noSidebar": genericTemplate(file=(tplHome + "noSidebar.tpl.html")),
-        "default": genericTemplate(file=(tplHome + "noSidebar.tpl.html")),
+        "default": genericTemplate(file=(tplHome + "blank.tpl.html")),
 }
 
 #same as above just for partials

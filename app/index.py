@@ -33,6 +33,7 @@ from seshat.route import route
 import models.postModel as pm
 
 import views.baseView as bv
+import views.forms.baseForm as bf
 
 
 @route("/")
@@ -49,13 +50,35 @@ class menu_Home(basePage):
                 except:
                         self.posts = []
 
-                view = bv.baseView()
+                view = bv.noSidebarView()
 #                nav = bm.baseMenu()
                 view["nav"] = " "
                 view["title"] = "Home"
                 view["messages"] = self.session.getMessage()
 
-                view["content"] = "Hello"
+                login = [{"name": "username",
+                        "type": "text",
+                        "class": "",
+                        "value": "",
+                        "label": "Username"},
+                        {"name": "passwd",
+                        "type": "password",
+                        "class": "",
+                        "value": "",
+                        "label": "Password"},
+                        {"name": "submit",
+                        "type": "submit",
+                        "class": "btn-primary",
+                        "value": "Log in"}]
+
+                loginForm = bf.styledForm(fields=login, action="/auth/login").build()
+
+                view["content"] = """
+                <div class="row">
+                        <div class="offset3 span6">
+                                %s
+                        </div>
+                </div>""" % (loginForm)
 
                 return view.build()
 

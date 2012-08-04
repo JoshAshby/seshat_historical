@@ -36,33 +36,72 @@ Both should just have to override build to place in the styles...
 maybe formClass will be removed if thats the case...
 """
 class baseForm(object):
-        def __init__(self, fields=[], action="", formClass="", id="", prefix=""):
+        def __init__(self, fields=[], action="", formClass="well form-horizontal", id="", prefix=""):
                 self.fields = fields
                 self.action = action
                 self.formClass = formClass
                 self.id = id
                 self.prefix = prefix
 
-        def __setitem__(self, value):
-                self.fields.append(value)
 
+class styledForm(baseForm):
         def build(self):
                 """
                 name
                 value
                 type
                 class
-                required
                 label
                 """
-                returnData = "<form action=\"%s\" class=\"%s\" id=\"%s\">" % (self.action, self.formClass, self.id)
+                returnData = "<form action=\"%s\" class=\"%s\" id=\"%s\"><fieldset>" % (self.action, self.formClass, self.id)
+
                 for block in self.fields:
                         if self.prefix:
                                 block["name"] = self.prefix + "_" + block["name"]
 
-                        returnData += "<input type=\"%s\" class=\"%s\" id=\"%s\" value=\"%s\" name=\"%s\" />" % (block["type"], block["class"], block["name"], block["value"], block["name"])
+                        if block.has_key("label"):
+                                returnData += """
+                                <div class="control-group">
+                                        <label class="control-label %s" for="%s">%s</label>
+                                """ % (block["class"],
+                                       block["name"],
+                                       block["label"])
 
-                returnData += "</form>"
+                        if block["type"] is not "submit" and block["type"] is not "textarea":
+                                returnData += """
+                                <div class="controls">
+                                        <input type="%s" class="%s" id="%s" name="%s" value="%s"/>
+                                </div>
+                                """ % (block["type"],
+                                       block["class"],
+                                       block["name"],
+                                       block["name"],
+                                       block["value"])
+
+                        if block["type"] == "textare":
+                                returnData += """
+                                <div class="controls">
+                                        <textarea class="%s" id="%s" name="%s">%s</textarea>
+                                </div>
+                                """ % (block["class"],
+                                      block["name"],
+                                      block["name"],
+                                      block["value"])
+
+                        if block["type"] == "submit":
+                                returnData += """
+                                <div class="form-actions">
+                                        <button type="submit" class="btn %s" name="%s" id="%s">%s</button>
+                                </div>
+                                """ % (block["class"],
+                                      block["name"],
+                                      block["name"],
+                                      block["value"])
+
+                        if block.has_key("label"):
+                                returnData += "</div>"
+
+                returnData += "<fieldset></form>"
 
                 return str(returnData)
 
