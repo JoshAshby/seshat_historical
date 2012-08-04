@@ -29,6 +29,7 @@ from seshat.route import route
 import re
 
 import views.baseView as bv
+import views.forms.baseForm as bf
 
 
 @route(subURL["auth"] + "/login")
@@ -44,11 +45,34 @@ class login(basePage):
                         return ""
                 else:
                         view = bv.noSidebarView()
-                        loginForm = bf.baseForm()
+#                        nav = bm.baseMenu()
+                        view["nav"] = " "
+                        view["title"] = "Login"
+                        view["messages"] = self.session.getMessage()
 
-                        loginForm = loginForm.build()
+                        login = [{"name": "username",
+                                "type": "text",
+                                "class": "",
+                                "value": "",
+                                "label": "Username"},
+                                {"name": "password",
+                                "type": "password",
+                                "class": "",
+                                "value": "",
+                                "label": "Password"},
+                                {"name": "submit",
+                                "type": "submit",
+                                "class": "btn-primary",
+                                "value": "Login"}]
 
-                        view["content"] = loginForm
+                        loginForm = bf.styledForm(fields=login, action="/auth/login").build()
+
+                        view["content"] = """
+                        <div class="row">
+                                <div class="offset3 span6">
+                                        %s
+                                </div>
+                        </div>""" % (loginForm)
 
                         return view.build()
 

@@ -36,12 +36,13 @@ Both should just have to override build to place in the styles...
 maybe formClass will be removed if thats the case...
 """
 class baseForm(object):
-        def __init__(self, fields=[], action="", formClass="well form-horizontal", id="", prefix=""):
+        def __init__(self, fields=[], action="", method="POST", formClass="well form-horizontal", id="", prefix=""):
                 self.fields = fields
                 self.action = action
                 self.formClass = formClass
                 self.id = id
                 self.prefix = prefix
+                self.method = method
 
 
 class styledForm(baseForm):
@@ -53,7 +54,10 @@ class styledForm(baseForm):
                 class
                 label
                 """
-                returnData = "<form action=\"%s\" class=\"%s\" id=\"%s\"><fieldset>" % (self.action, self.formClass, self.id)
+                returnData = """
+                <form action="%s" method="%s" class="%s" id="%s">
+                        <fieldset>
+                """ % (self.action, self.method, self.formClass, self.id)
 
                 for block in self.fields:
                         if self.prefix:
