@@ -47,7 +47,7 @@ class menu_Home(basePage):
                 """
 
                 """
-                self.posts = pm.postList()
+                posts = pm.postList()
 
                 view = bv.noSidebarView()
 
@@ -55,8 +55,8 @@ class menu_Home(basePage):
                 view["title"] = "Home"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
-                if self.posts:
-                        postList = bl.baseList(self.posts, "post_index")
+                if posts:
+                        postList = bl.baseList(posts, "post_index")
 
                         view["content"] = bv.baseRow(postList)
 

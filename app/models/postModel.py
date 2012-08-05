@@ -72,6 +72,8 @@ class RedisPostORM(object):
                         self.keys["time"] = redisPostServer.hget(self.key, "time")
                         self.keys["post"] = redisPostServer.hget(self.key, "post")
 
+                        self.keys["id"] = self.key
+
         def __getitem__(self, item):
                 return self.keys[item]
 

@@ -30,6 +30,7 @@ import models.sessionModel as sm
 import views.forms.baseForm as bf
 import views.menus.baseMenu as bm
 import views.baseView as bv
+import views.sidebars.baseSidebar as bs
 
 
 class baseHTTPPageObject(object):
@@ -48,6 +49,19 @@ class baseHTTPPageObject(object):
                 self.headers = [
                         ("Content-type", "text/html"),
                         ]
+
+        def sidebar(self, active=0):
+                sidebarLinks = [{
+                        "label": bv.baseIcon("user", "User List"),
+                        "link": (subURL["admin"] + "/users")
+                        }, {
+                        "label": bv.baseIcon("list", "Post List"),
+                        "link": (subURL["admin"] + "/posts")
+                        }]
+
+                sidebarObject = bs.baseSidebar(sidebarLinks, active)
+
+                return sidebarObject
 
         def navbar(self, active=""):
                 navbarLeft = [{

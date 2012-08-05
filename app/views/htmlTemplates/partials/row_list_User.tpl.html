@@ -1,20 +1,12 @@
-<tr>
-        <form action="$baseURL$subURL["admin"]/users/" method="POST">
-        <td>
-                $id
-                <input type="hidden" name="id" value="$id">
-        </td>
-        <td>
-                <input type="text" value="$name" name="name">
-        </td>
-        <td>
-                <select name="perms">
-                $perms
-        </td>
-        <td>
-                <textarea name="notes">$notes</textarea>
-        </td>
-        <td>
-                <button type="submit" value="submit">Update User</button>
-        </form>
-</tr>
+<div class="span2">
+        $name
+</div>
+<div class="span2">
+        $perms
+</div>
+<div class="span3">
+        $notes
+</div>
+<div class="span1">
+        <a href="subURL["admin"]/users/edit/$id">Edit</a>
+</div>

@@ -30,9 +30,42 @@ import seshat.framework as fw
 
 
 class baseSidebar(object):
-        def __init__(self, data={}):
-                pass
+        def __init__(self, blocks, active=0):
+                """
+                {"link": "",
+                "label": ""
+                "class": "",
+                "id": "",
+                "divide": bool}
+                """
+                self.blocks = blocks
+                self.active = active
 
         def build(self):
-                pass
+                returnData = """<ul class="nav nav-list">"""
+
+                for link in self.blocks:
+                        if not link.has_key("type"):
+                                classes = ""
+                                if type(link["label"]) != str:
+                                        link["label"] = link["label"].build()
+                                if link.has_key("id") and link["id"] == self.active: classes = "active"
+                                returnData += """
+                                <li class="%s">
+                                        <a href="%s" class="%s" id="%s">%s</a>
+                                </li>
+                                """ % (classes,
+                                      link["link"],
+                                      link["class"] if link.has_key("class") else "",
+                                      link["id"] if link.has_key("id") else "",
+                                      link["label"])
+                        else:
+                                returnData += link["object"].build()
+
+                        if link.has_key("divide"):
+                                returnData += """<li class="divider"></li>"""
+
+                returnData += """</ul>"""
+
+                return returnData
 

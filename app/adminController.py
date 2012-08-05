@@ -44,34 +44,52 @@ class adminIndex_admin(basePage):
                 view["title"] = "Admin Panel"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
-                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+                view["sidebar"] = self.sidebar()
+
+                view["content"] = "Well you have nothing to do here, but you might want to take a look over at the sidebar for somethings to do..."
 
                 return view.build()
 
 
-@route(subURL["admin"] + "/users/")
+@route(subURL["admin"] + "/users")
 class usersIndex_admin(basePage):
         def GET(self):
                 """
 
                 """
-                self.users = am.userList()
-                self.permList = am.permList()
+                users = am.userList()
+                permList = am.permList()
 
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
+                view["sidebar"] = self.sidebar()
                 view["title"] = "Users"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
-                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+                if users:
+                        userList = bl.baseList(users, "row_list_users")
+
+                        view["content"] = bv.baseRow()
+
+                else:
+                        view["content"] = "Well either all of your users have god perms and aren't shown, or you don't have any additional users!"
 
                 return view.build()
 
 
+@route(subURL["admin"] + "/users/edit/(.*)")
+class usersEdit_admin(basePage):
+        def GET(self):
+                """
+                """
+                id = self.members[0]
+                user = am.getUser(id=id)
+                pass
+
         def POST(self):
                 """
                 """
-                id = self.members["id"]
+                id = self.members[0]
                 name = self.members["user"]
                 perms = self.members["perms"]
                 notes = self.members["notes"]
@@ -96,6 +114,7 @@ class usersNew_admin(basePage):
                 """
                 self.permList = am.permList()
                 view = bv.sidebarView()
+                view["sidebar"] = self.sidebar()
                 view["nav"] = self.navbar()
                 view["title"] = "Adding a new User"
                 view["messages"] = bv.baseRow(self.session.getMessage())
@@ -124,7 +143,7 @@ class usersNew_admin(basePage):
                 return ""
 
 
-@route(subURL["admin"] + "/posts/")
+@route(subURL["admin"] + "/posts")
 class postsIndex_admin(basePage):
         def GET(self):
                 """
@@ -132,6 +151,7 @@ class postsIndex_admin(basePage):
                 self.posts = pm.listPosts()
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
+                view["sidebar"] = self.sidebar()
                 view["title"] = "Posts"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
@@ -167,6 +187,7 @@ class postsNew_admin(basePage):
                 """
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
+                view["sidebar"] = self.sidebar()
                 view["title"] = "Adding a new Post"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
