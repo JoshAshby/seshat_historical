@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 """
 Web App/API framework built on top of gevent
-base form object which provides the ability to generate a form
+base form objects to build a form from...
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -23,41 +23,6 @@ except:
         from config import *
 
 import seshat.framework as fw
-import views.forms.formObject as fo
-
-
-class baseForm(object):
-        def __init__(self, fields=[], action="", method="POST", width=8):
-                self.fields = fields
-                self.action = action
-                self.method = method
-                self.width = width
-
-        def build(self):
-                """
-                name
-                type (o if dbField)
-                dbField (o if type)
-                value (o)
-                label (o)
-                width (o)
-                """
-                returnData = """
-                <form action="%s" method="%s" class="span%s">
-                        <fieldset>
-                """ % (self.action, self.method, self.width)
-
-                for block in self.fields:
-                        if block.has_key("type"):
-                                field = getattr(fo, "base" + block["name"].title())
-                                returnData += field.build()
-
-                returnData += """
-                        <fieldset>
-                </form>
-                """
-
-                return str(returnData)
 
 
 class baseControlGroup(object):
@@ -100,17 +65,11 @@ class baseButton(object):
         def __init__(self, name, value, btnClass=""):
                 """
                 """
-                self.btnClass = ("btn-" + btnClass) if btnClass else ""
-                self.name = name
-                self.value = value
                 pass
 
         def build(self):
                 """
                 """
-                returnData = """
-                <button name="%s" value="%s" class="%s">
-                """ % (self.name, self.value, self.btnClass)
                 pass
 
 

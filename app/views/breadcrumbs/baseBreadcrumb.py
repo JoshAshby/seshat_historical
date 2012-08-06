@@ -5,10 +5,6 @@ Base object to create breadcrumbs based off of the object/URL
 
 For more information, see: https://github.com/JoshAshby/
 
-**WARNING**
-Make sure you look through and change things in config.py
-before running this file, to be sure it runs the way you want it to
-
 http://xkcd.com/353/
 
 Josh Ashby

@@ -102,9 +102,19 @@ def userList():
                 if user.perms == "GOD":
                         pass
                 else:
-             userList.append({"name": user.name, "id": user.users_id, "notes": user.notes, "perms": user.perms})
+                        userList.append({"name": user.name, "id": user.users_id, "notes": user.notes, "perms": user.perms})
         return userList
 
 class redisUserORM(object):
         def __init__(self, id="", username=""):
                 pass
+
+        def __getitem(self, item):
+                pass
+
+        def __setitem__(self, item, value):
+                pass
+
+        def cou(self):
+                pass
+

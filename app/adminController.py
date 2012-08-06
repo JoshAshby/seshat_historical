@@ -30,6 +30,8 @@ import models.authModel as am
 import models.postModel as pm
 
 import views.baseView as bv
+import views.lists.baseList as bl
+import views.forms.baseForm as bf
 
 import urllib
 
@@ -67,9 +69,9 @@ class usersIndex_admin(basePage):
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
                 if users:
-                        userList = bl.baseList(users, "row_list_users")
+                        userList = bl.baseList(users, "row_list_User")
 
-                        view["content"] = bv.baseRow()
+                        view["content"] = bv.baseRow(userList, 8, 0)
 
                 else:
                         view["content"] = "Well either all of your users have god perms and aren't shown, or you don't have any additional users!"
@@ -148,16 +150,60 @@ class postsIndex_admin(basePage):
         def GET(self):
                 """
                 """
-                self.posts = pm.listPosts()
+                posts = pm.postList()
+
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
                 view["sidebar"] = self.sidebar()
                 view["title"] = "Posts"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
-                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+                if posts:
+                        postList = bl.baseList(posts, "row_list_Post")
+
+                        view["content"] = bv.baseRow(postList, 8, 0)
+
+                else:
+                        view["content"] = "You don't have any posts at this time!"
 
                 return view.build()
+
+
+@route(subURL["admin"] + "/posts/edit/(.*)")
+class postsEdit_admin(basePage):
+        def GET(self):
+                """
+                """
+                id = self.members[0]
+
+                post = pm.redisPostORM(id)
+
+                editForm = bf.baseForm(fields=[{
+                        "name": "title",
+                        "width": 8,
+                        "value": post["title"]
+                        }, {
+                        "name": "post",
+                        "width": 8,
+                        "value": post["post"]
+                        }, {
+                        "name": "submit",
+                        "type": "submit",
+                        "style": "primary",
+                        "value": "Update"
+                        }], action=(subURL["admin"]+"/posts/edit/"+id))
+
+                view = bv.noSidebarView()
+                view["nav"] = self.navbar()
+                view["title"] = "Edit Post" + id
+                view["messages"] = bv.baseRow(self.session.getMessage())
+
+                view["content"] = bv.baseRow(editForm)
+
+                return view.build()
+
+
+                pass
 
         def POST(self):
                 """
@@ -166,7 +212,7 @@ class postsIndex_admin(basePage):
                 title = self.members["title"]
                 post = urllib.unquote(self.members["post"])
 
-                updatePost = pm.RedisPostORM(id)
+                updatePost = pm.redisPostORM(id)
 
                 updatePost.title = title
                 updatePost.post = post
@@ -201,7 +247,7 @@ class postsNew_admin(basePage):
                 title = self.members["title"]
                 post = urllib.unquote(self.members["post"])
 
-                newPost = pm.RedisPostORM()
+                newPost = pm.redisPostORM()
 
                 newPost.title = title
                 newPost.post = post

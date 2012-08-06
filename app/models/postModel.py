@@ -7,7 +7,6 @@ For more information, see: https://github.com/JoshAshby/
 
 http://xkcd.com/353/
 
-
 Josh Ashby
 2012
 http://joshashby.com
@@ -32,13 +31,13 @@ def postList():
         posts = []
         for key in redisPostServer.keys():
                 if key[:5]=="post:":
-                        post = RedisPostORM(key)
+                        post = redisPostORM(key)
                         post["post"] = str(markdown.markdown(post["post"]))
                         posts.append(post.keys)
         return posts
 
 
-class RedisPostORM(object):
+class redisPostORM(object):
         """
         Baisc ORM style system for Posts which are stored in Redis as hashes.
         """
@@ -72,7 +71,7 @@ class RedisPostORM(object):
                         self.keys["time"] = redisPostServer.hget(self.key, "time")
                         self.keys["post"] = redisPostServer.hget(self.key, "post")
 
-                        self.keys["id"] = self.key
+                        self.keys["id"] = self.key[5:]
 
         def __getitem__(self, item):
                 return self.keys[item]

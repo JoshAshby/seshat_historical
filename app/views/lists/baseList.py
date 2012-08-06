@@ -5,10 +5,6 @@ Base object for the creation of list based items
 
 For more information, see: https://github.com/JoshAshby/
 
-**WARNING**
-Make sure you look through and change things in config.py
-before running this file, to be sure it runs the way you want it to
-
 http://xkcd.com/353/
 
 Josh Ashby
@@ -32,9 +28,10 @@ import views.baseView as bv
 
 
 class baseList(object):
-        def __init__(self, blocks=[], template=""):
+        def __init__(self, blocks=[], template="", width=8):
                 self.blocks = blocks
                 self.template = template
+                self.width = width
 
         def build(self):
                 returnData = ""
@@ -48,6 +45,6 @@ class baseList(object):
                                 else:
                                         setattr(page, part, block[part])
 
-                        returnData += bv.baseRow(str(page), 8, 0).build()
+                        returnData += bv.baseRow(str(page), self.width, 0).build()
 
                 return returnData
