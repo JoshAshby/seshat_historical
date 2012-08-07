@@ -51,14 +51,12 @@ class login(basePage):
                         view["messages"] = bv.baseRow(self.session.getMessage())
 
                         login = [{"name": "username",
-                                "type": "text",
                                 "label": "Username"},
                                 {"name": "password",
                                 "type": "password",
                                 "label": "Password"},
                                 {"name": "submit",
                                 "type": "submit",
-                                "class": "btn-primary",
                                 "value": "Login"}]
 
                         loginForm = bf.styledForm(fields=login, action=(subURL["auth"] + "/login"))

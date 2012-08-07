@@ -84,16 +84,16 @@ class baseHTTPPageObject(object):
 
                 else:
                         loginForm = bf.baseForm(fields=[{
-                                "type": "text",
                                 "name": "username",
-                                "value": "Username"
+                                "value": "Username",
+                                "width": 2
                                 }, {
                                 "type": "password",
                                 "name": "password",
-                                "value": "Password"
+                                "value": "Password",
+                                "width": 2
                                 }, {
                                 "type": "submit",
-                                "class": "btn-primary",
                                 "name": "submit",
                                 "value": "Login"
                                 }], action=(subURL["auth"] + "/login"))

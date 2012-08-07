@@ -48,9 +48,21 @@ class baseForm(object):
                 """ % (self.action, self.method, self.width)
 
                 for block in self.fields:
-                        if block.has_key("type"):
-                                field = getattr(fo, "base" + block["name"].title())
-                                returnData += field.build()
+                        width = block["width"] if block.has_key("width") else self.width
+                        if block.has_key("formObjectType"):
+                                field = getattr(fo, "base" + block["type"].title())
+
+                                if field["formObjectType"] is "button":
+                                        field = field(block["name"], block["value"])
+
+                                if field["formObjectype"] is "text":
+                                        if block.has_key("placeholder"):
+                                                field = field(block["name"], block["value"], width, block["placeholder"])
+                                        else:
+                                                field = field(block["name"], block["value"], width)
+
+                        else:
+                                field = getattr(fo, "baseText")(block["name"], block["value"], width)
 
                 returnData += """
                         <fieldset>

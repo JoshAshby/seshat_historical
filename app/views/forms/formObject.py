@@ -50,6 +50,7 @@ class baseControl(object):
 
 
 class baseLabel(object):
+        formObjectType = "label"
         def __init__(self, text):
                 """
                 """
@@ -62,56 +63,71 @@ class baseLabel(object):
 
 
 class baseButton(object):
+        formObjectType = "button"
         def __init__(self, name, value, btnClass=""):
                 """
                 """
-                pass
+                self.values = """name="%s" """ % (name)
+                self.values += """value="%s" """ % (value)
+                self.values += """class="btn btn-%s" """ % (btnClass) if btnClass else """class="btn" """
 
         def build(self):
                 """
                 """
-                pass
+                return """<button %s />"""
 
 
 class baseText(object):
+        formObjectType = "text"
         def __init__(self, name, value="", width=8, placeholder=""):
                 """
                 """
-                pass
+                self.values = """name="%s" """ % (name)
+                self.values += """value="%s" """ % (value)
+                self.values += """class="span%s" """ % (width) if width else ""
+                self.values += """placeholder="%s" """ % (placeholder) if placeholder else ""
 
         def build(self):
                 """
                 """
-                pass
+                return """<input type="text" %s>""" % (self.values)
 
 
 
 class basePassword(object):
+        formObjectType = "text"
         def __init__(self, name, value="", width=8, placeholder=""):
                 """
                 """
-                pass
+                self.values = """name="%s" """ % (name)
+                self.values += """value="%s" """ % (value)
+                self.values += """class="span%s" """ % (width) if width else ""
+                self.values += """placeholder="%s" """ % (placeholder) if placeholder else ""
 
         def build(self):
                 """
                 """
-                pass
+                return """<input type="password" %s>""" % (self.values)
 
 
 class baseTextarea(object):
+        formObjectType = "text"
         def __init__(self, name, value="", width=8, placeholder=""):
                 """
                 """
-                pass
+                self.values = """name="%s" """ % (name)
+                self.value = value
+                self.values += """class="span%s" """ % (width) if width else ""
+                self.values += """placeholder="%s" """ % (placeholder) if placeholder else ""
 
         def build(self):
                 """
                 """
-                pass
+                return """<textarea %s>%s</textarea>""" % (self.values, self.value)
 
 
 class baseSelect(object):
-        def __init__(self, name, options, width=8):
+        def __init__(self, name, value="", width=8):
                 """
                 """
                 pass
@@ -123,7 +139,7 @@ class baseSelect(object):
 
 
 class baseCheckbox(object):
-        def __init__(self, name):
+        def __init__(self, name, value=""):
                 """
                 """
                 pass
@@ -150,9 +166,11 @@ class baseSubmit(object):
         def __init__(self, name, value):
                 """
                 """
-                pass
+                self.values = """name="%s" """ % (name)
+                self.values += """value="%s" """ % (value)
+                self.values += """class="btn btn-primary" """
 
         def build(self):
                 """
                 """
-                pass
+                return """<input type="submit" %s />"""

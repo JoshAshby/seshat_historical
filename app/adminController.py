@@ -185,11 +185,11 @@ class postsEdit_admin(basePage):
                         }, {
                         "name": "post",
                         "width": 8,
-                        "value": post["post"]
+                        "value": post["post"],
+                        "type": "textarea"
                         }, {
                         "name": "submit",
                         "type": "submit",
-                        "style": "primary",
                         "value": "Update"
                         }], action=(subURL["admin"]+"/posts/edit/"+id))
 
