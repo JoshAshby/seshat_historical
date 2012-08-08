@@ -22,99 +22,67 @@ except:
         os.chdir(abspath)
         from config import *
 
-from sqlalchemy import Column, Integer, String, Text
-
 import bcrypt
 
-
-class UserORM(Base):
-        """
-
-        """
-        __tablename__ = 'users'
-
-        users_id = Column(Integer, primary_key=True)
-        name = Column(String(100))
-        password = Column(String(100))
-        perms = Column(String(25))
-        notes = Column(Text)
-
-class PermsORM(Base):
-        """
-        """
-        __tablename__ = "perms"
-
-        perms_id = Column(Integer, primary_key=True)
-        perm = Column(String(25))
-
-
-def checkUser(user, password):
-        """
-
-        """
-        user = dbSession.query(UserORM).filter_by(name=user).first()
-
-        if user:
-                hashedUserPasswd = user.password
-
-                hashedPassedPasswd = bcrypt.hashpw(password, hashedUserPasswd)
-
-                if hashedPassedPasswd == hashedUserPasswd:
-                        return user
-        else:
-                return False
-
-def newUser(user, passwd, perms, notes=""):
-        """
-        """
-        userExists = dbSession.query(UserORM).filter_by(name=user).all()
-        if userExists:
-                raise "Woops, that username's already in use."
-        passwordHash = bcrypt.hashpw(passwd, bcrypt.gensalt())
-        user = UserORM(name=user, password=passwordHash, perms=perms, notes=notes)
-        dbSession.add(user)
-        dbSession.commit()
-        return True
-
-def updateUser(id, user, perms, notes=""):
-        userExists = dbSession.query(UserORM).filter_by(name=user).all()
-        if userExists and userExists.users_id != id:
-                raise "Woops, that username's already in use."
-        user = dbSession.query(UserORM).filter_by(id=id)
-        user.user = user
-        user.perms = perms
-        user.notes = notes
-
-        dbSession.commit()
-
-
-def permList():
-        permList = []
-        perms = dbSession.query(PermsORM).all()
-        for perm in perms:
-                permList.append(perm.perm)
-        return permList
-
 def userList():
-        userList = []
-        users = dbSession.query(UserORM).all()
-        for user in users:
-                if user.perms == "GOD":
-                        pass
-                else:
-                        userList.append({"name": user.name, "id": user.users_id, "notes": user.notes, "perms": user.perms})
-        return userList
+        users = []
+        for key in redisUserServer.keys():
+                if key[:5]=="user:":
+                        users.append(redisUserORM(key))
+        return users
+
+def findUser(username):
+        names = []
+        for key in userList():
+                if key["username"] == username:
+                        return key
+
 
 class redisUserORM(object):
-        def __init__(self, id="", username=""):
-                pass
+        def __init__(self, id=""):
+                self.keys = {}
+                if not id:
+                        try:
+                                keys = redisUserServer.keys()
+                                keyNum = []
+                                for keyTotal in keys:
+                                        keyNum.append(int(keyTotal[5:]))
+                                self.id = "user:" + str(max(keyNum)+1)
+                        except:
+                                self.id = "user:0"
 
-        def __getitem(self, item):
-                pass
+                        self.keys["username"] = ""
+                        self.keys["password"] = ""
+                        self.keys["notes"] = dt.now()
+                        self.keys["perm"] = ""
+                else:
+                        if not id[:5] == "user:":
+                                self.id = "user:" + str(id)
+                        else:
+                                self.id = str(id)
+
+                        self.keys["username"] = redisPostServer.hget(self.id, "username")
+                        self.keys["password"] = redisPostServer.hget(self.id, "password")
+                        self.keys["notes"] = redisPostServer.hget(self.id, "notes")
+                        self.keys["perm"] = redisPostServer.hget(self.id, "perm")
+
+                        self.keys["id"] = self.id[5:]
+
+        def __getitem__(self, item):
+                return self.keys[item]
 
         def __setitem__(self, item, value):
-                pass
+                if item == "password":
+                        value = bcrypt.hashpw(value, bcrypt.gensalt())
+                self.keys[item] = value
 
         def cou(self):
-                pass
+                if findUser(self.keys["username"]):
+                        raise "Username already in use"
+                redisPostServer.hset(self.id, "username", self.keys["username"])
+                redisPostServer.hset(self.id, "password", self.keys["password"])
+                redisPostServer.hset(self.id, "notes", self.keys["notes"])
+                redisPostServer.hset(self.id, "perm", self.keys["perm"])
 
+        def delete(self):
+                redisUserServer.delete(self.id)

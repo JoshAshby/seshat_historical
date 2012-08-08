@@ -85,18 +85,16 @@ class baseHTTPPageObject(object):
                 else:
                         loginForm = bf.baseForm(fields=[{
                                 "name": "username",
-                                "value": "Username",
-                                "width": 2
+                                "placeholder": "Username",
                                 }, {
                                 "type": "password",
                                 "name": "password",
-                                "value": "Password",
-                                "width": 2
+                                "placeholder": "Password",
                                 }, {
                                 "type": "submit",
                                 "name": "submit",
                                 "value": "Login"
-                                }], action=(subURL["auth"] + "/login"))
+                                }], action=(subURL["auth"] + "/login"), width=3)
 
                         navDropdownList = [{
                                 "type": "form",
@@ -128,15 +126,15 @@ class baseHTTPPageObject(object):
                         pass
 
                 else:
-                        for level in am.permList():
-                                if level in matches and level != self.session["level"]:
-                                        self.session.pushMessage("You need to have %s rights to access this." % level, "error")
-                                        self.status = "303 SEE OTHER"
-                                        self.headers = [("location", subURL["auth"] + "/login")]
-                                        error = True
+                        level = "admin"
+                        if level in matches and level != self.session["level"]:
+                                self.session.pushMessage("You need to have %s rights to access this." % level, "error")
+                                self.status = "303 SEE OTHER"
+                                self.headers = [("location", subURL["auth"] + "/login")]
+                                error = True
 
                 if not error:
-                        content = getattr(self, self.method)()
+                        content = getattr(self, self.method)() or ""
 
                 data.put(content)
                 data.put(StopIteration)

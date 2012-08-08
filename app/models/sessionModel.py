@@ -27,6 +27,7 @@ import pickle
 import string
 import random
 
+import bcrypt
 
 class Session(object):
         parts = ["message", "history", "username", "user_id", "level"]
@@ -91,14 +92,15 @@ class Session(object):
                 """ % (messType, style, message)
                 self.data["message"] += str(messageTpl)
 
-        def login(self, user, passwd):
-                userData = am.checkUser(user, passwd)
-                if userData:
-                        self.data["level"] = userData.perms
-                        self.data["username"] = userData.name
-                        self.data["users_id"] = userData.users_id
+        def login(self, username, passwd):
+                user = am.findUser(username)
+
+                if user["password"] == bcrypt.hashpw(passwd, user["password"]):
+                        self.data["level"] = user["perm"]
+                        self.data["username"] = user["username"]
+                        self.data["users_id"] = user["key"]
                 else:
-                        raise "Wrong user or password"
+                        raise "Wrong username or password"
 
         def logout(self):
                 self.data = {

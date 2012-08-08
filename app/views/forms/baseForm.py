@@ -36,33 +36,42 @@ class baseForm(object):
         def build(self):
                 """
                 name
-                type (o if dbField)
-                dbField (o if type)
+                type (o - reverts to text input if none)
                 value (o)
                 label (o)
                 width (o)
                 """
                 returnData = """
-                <form action="%s" method="%s" class="span%s">
+                <form action="%s" method="%s" class="form span%s" style="padding-right: 10px; margin-right:10px">
                         <fieldset>
                 """ % (self.action, self.method, self.width)
 
                 for block in self.fields:
                         width = block["width"] if block.has_key("width") else self.width
-                        if block.has_key("formObjectType"):
+                        if not block.has_key("value"): block["value"] = ""
+
+                        if block.has_key("type"):
                                 field = getattr(fo, "base" + block["type"].title())
 
-                                if field["formObjectType"] is "button":
+                                if field.formObjectType is "button":
                                         field = field(block["name"], block["value"])
 
-                                if field["formObjectype"] is "text":
+                                if field.formObjectType is "text":
                                         if block.has_key("placeholder"):
                                                 field = field(block["name"], block["value"], width, block["placeholder"])
                                         else:
                                                 field = field(block["name"], block["value"], width)
 
+                                returnData += field.build()
+
                         else:
-                                field = getattr(fo, "baseText")(block["name"], block["value"], width)
+                                field = getattr(fo, "baseText")
+                                if block.has_key("placeholder"):
+                                        field = field(block["name"], block["value"], width, block["placeholder"])
+                                else:
+                                        field = field(block["name"], block["value"], width)
+
+                                returnData += field.build()
 
                 returnData += """
                         <fieldset>
@@ -70,142 +79,3 @@ class baseForm(object):
                 """
 
                 return str(returnData)
-
-
-class baseControlGroup(object):
-        def __init__(self, block):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseControl(object):
-        def __init__(self, block):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseLabel(object):
-        def __init__(self, text):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseButton(object):
-        def __init__(self, name, value, btnClass=""):
-                """
-                """
-                self.btnClass = ("btn-" + btnClass) if btnClass else ""
-                self.name = name
-                self.value = value
-                pass
-
-        def build(self):
-                """
-                """
-                returnData = """
-                <button name="%s" value="%s" class="%s">
-                """ % (self.name, self.value, self.btnClass)
-                pass
-
-
-class baseText(object):
-        def __init__(self, name, value="", width=8, placeholder=""):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-
-class basePassword(object):
-        def __init__(self, name, value="", width=8, placeholder=""):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseTextarea(object):
-        def __init__(self, name, value="", width=8, placeholder=""):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseSelect(object):
-        def __init__(self, name, options, width=8):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseCheckbox(object):
-        def __init__(self, name):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseFormAction(object):
-        def __init__(self, blocks):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass
-
-
-class baseSubmit(object):
-        def __init__(self, name, value):
-                """
-                """
-                pass
-
-        def build(self):
-                """
-                """
-                pass

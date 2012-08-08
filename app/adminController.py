@@ -60,7 +60,6 @@ class usersIndex_admin(basePage):
 
                 """
                 users = am.userList()
-                permList = am.permList()
 
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
@@ -85,18 +84,50 @@ class usersEdit_admin(basePage):
                 """
                 """
                 id = self.members[0]
-                user = am.getUser(id=id)
-                pass
+                user = am.redisUserORM(id)
+
+                view = bv.sidebarView()
+                view["nav"] = self.navbar()
+                view["sidebar"] = self.sidebar()
+                view["title"] = "Edit User " + id
+                view["messages"] = bv.baseRow(self.session.getMessage())
+
+                editForm = bf.baseForm(fields=[{
+                        "name": "username",
+                        "value": user["username"]
+                        }, {
+                        "name": "password",
+                        "type": "password",
+                        "value": user["password"]
+                        }, {
+                        "name": "notes",
+                        "type": "textarea",
+                        "value": user["notes"]
+                        }, {
+                        "name": "submit",
+                        "type": "submit",
+                        "value": "Update"
+                        }], action=(subURL["admin"]+"/users/new"))
+
+                view["content"] = bv.baseRow(editForm, offset=0)
+
+                return view.build()
 
         def POST(self):
                 """
                 """
                 id = self.members[0]
-                name = self.members["user"]
-                perms = self.members["perms"]
-                notes = self.members["notes"]
+                name = self.members["user"] or ""
+                perms = self.members["perms"] or "normal"
+                notes = self.members["notes"] or ""
                 try:
-                        am.updateUser(id, name, perms, notes)
+                        user = redisUserORM(id)
+                        user["username"] = name
+                        user["perms"] = perms
+                        user["notes"] = notes
+
+                        user.cou()
+
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", (subURL["admin"] + "/users/"))]
                         self.session.pushMessage(("Congrats! The user %s was updated!" % name))
@@ -104,7 +135,6 @@ class usersEdit_admin(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", (subURL["admin"] + "/users/"))]
                         self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
-                return ""
 
 
 @route(subURL["admin"] + "/users/new")
@@ -114,14 +144,29 @@ class usersNew_admin(basePage):
                 This gives a nice little list of all the users in the system, 
                 with the exception of users marked as having GOD level.
                 """
-                self.permList = am.permList()
                 view = bv.sidebarView()
                 view["sidebar"] = self.sidebar()
                 view["nav"] = self.navbar()
                 view["title"] = "Adding a new User"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
-                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+                editForm = bf.baseForm(fields=[{
+                        "name": "username",
+                        "placeholder": "Username"
+                        }, {
+                        "name": "password",
+                        "type": "password",
+                        "placeholder": "Password"
+                        }, {
+                        "name": "notes",
+                        "type": "textarea"
+                        }, {
+                        "name": "submit",
+                        "type": "submit",
+                        "value": "Update"
+                        }], action=(subURL["admin"]+"/users/new"))
+
+                view["content"] = bv.baseRow(editForm)
 
                 return view.build()
 
@@ -130,11 +175,16 @@ class usersNew_admin(basePage):
 
                 """
                 name = self.members["user"]
-                password = self.members["passwd"]
-                perms = self.members["perms"]
-                notes = self.members["notes"]
+                perms = self.members["perms"] or "normal"
+                notes = self.members["notes"] or ""
                 try:
-                        am.newUser(name, password, perms, notes)
+                        user = redisUserORM()
+                        user["username"] = name
+                        user["perms"] = perms
+                        user["notes"] = notes
+
+                        user.cou()
+
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", (subURL["admin"] + "/users/new"))]
                         self.session.pushMessage(("Congrats! The user %s was created!" % name))
@@ -142,7 +192,6 @@ class usersNew_admin(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", (subURL["admin"] + "/users/new"))]
                         self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
-                return ""
 
 
 @route(subURL["admin"] + "/posts")
@@ -180,11 +229,9 @@ class postsEdit_admin(basePage):
 
                 editForm = bf.baseForm(fields=[{
                         "name": "title",
-                        "width": 8,
                         "value": post["title"]
                         }, {
                         "name": "post",
-                        "width": 8,
                         "value": post["post"],
                         "type": "textarea"
                         }, {
@@ -201,9 +248,6 @@ class postsEdit_admin(basePage):
                 view["content"] = bv.baseRow(editForm)
 
                 return view.build()
-
-
-                pass
 
         def POST(self):
                 """
@@ -223,7 +267,6 @@ class postsEdit_admin(basePage):
                 self.status = "303 SEE OTHER"
                 self.headers = [("location", (subURL["admin"] + "/posts/"))]
                 self.session.pushMessage(("Congrats! The post %s was updated!" % title))
-                return ""
 
 
 @route(subURL["admin"] + "/posts/new")
@@ -237,7 +280,18 @@ class postsNew_admin(basePage):
                 view["title"] = "Adding a new Post"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 
-                view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+                editForm = bf.baseForm(fields=[{
+                        "name": "title",
+                        }, {
+                        "name": "post",
+                        "type": "textarea"
+                        }, {
+                        "name": "submit",
+                        "type": "submit",
+                        "value": "Create"
+                        }], action=(subURL["admin"]+"/posts/new"))
+
+                view["content"] = bv.baseRow(editForm)
 
                 return view.build()
 
@@ -257,4 +311,3 @@ class postsNew_admin(basePage):
                 self.status = "303 SEE OTHER"
                 self.headers = [("location", (subURL["admin"] + "/posts/"))]
                 self.session.pushMessage(("Congrats! The post %s was created!" % title))
-                return ""

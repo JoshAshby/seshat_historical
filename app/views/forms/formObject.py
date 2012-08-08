@@ -127,6 +127,7 @@ class baseTextarea(object):
 
 
 class baseSelect(object):
+        formObjectType = "select"
         def __init__(self, name, value="", width=8):
                 """
                 """
@@ -139,6 +140,7 @@ class baseSelect(object):
 
 
 class baseCheckbox(object):
+        formObjectType = "boolean"
         def __init__(self, name, value=""):
                 """
                 """
@@ -163,6 +165,7 @@ class baseFormAction(object):
 
 
 class baseSubmit(object):
+        formObjectType = "button"
         def __init__(self, name, value):
                 """
                 """
@@ -173,4 +176,4 @@ class baseSubmit(object):
         def build(self):
                 """
                 """
-                return """<input type="submit" %s />"""
+                return """<input type="submit" %s />""" % self.values

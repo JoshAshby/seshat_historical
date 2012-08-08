@@ -11,6 +11,11 @@
         </div><!-- Container -->
 
         <script src="$assetURL/js/jquery.js"></script>
+        <script>
+        $('.dropdown-menu').find('form').click(function (e) {
+            e.stopPropagation();
+          });
+        </script>
         <script src="$assetURL/js/bootstrap-dropdown.js"></script>
         <script src="$assetURL/js/bootstrap-button.js"></script>
         </body>

@@ -27,13 +27,15 @@ from datetime import datetime as dt
 import markdown
 
 
-def postList():
+def postList(md=True):
         posts = []
         for key in redisPostServer.keys():
                 if key[:5]=="post:":
                         post = redisPostORM(key)
-                        post["post"] = str(markdown.markdown(post["post"]))
-                        posts.append(post.keys)
+                        if md:
+                                post["post"] = str(markdown.markdown(post["post"]))
+                        posts.append(post)
+
         return posts
 
 
@@ -41,37 +43,37 @@ class redisPostORM(object):
         """
         Baisc ORM style system for Posts which are stored in Redis as hashes.
         """
-        def __init__(self, key=""):
+        def __init__(self, id=""):
                 """
                 Go through and either make a new post object, or if we are given a key
                 which can be in the style of either a string or number, and formated as
                 just the number, or like so: post:postID
                 """
                 self.keys = {}
-                if not key:
+                if not id:
                         try:
                                 keys = redisPostServer.keys()
                                 keyNum = []
                                 for keyTotal in keys:
                                         keyNum.append(int(keyTotal[5:]))
-                                self.key = "post:" + str(max(keyNum)+1)
+                                self.id = "post:" + str(max(keyNum)+1)
                         except:
-                                self.key = "post:0"
+                                self.id = "post:0"
                         self.keys["author"] = ""
                         self.keys["title"] = ""
                         self.keys["time"] = dt.now()
                         self.keys["post"] = ""
                 else:
-                        if not key[:5]=="post:":
-                                self.key = "post:" + str(key)
+                        if not id[:5]=="post:":
+                                self.id = "post:" + str(id)
                         else:
-                                self.key = str(key)
-                        self.keys["author"] = redisPostServer.hget(self.key, "author")
-                        self.keys["title"] = redisPostServer.hget(self.key, "title")
-                        self.keys["time"] = redisPostServer.hget(self.key, "time")
-                        self.keys["post"] = redisPostServer.hget(self.key, "post")
+                                self.id = str(id)
+                        self.keys["author"] = redisPostServer.hget(self.id, "author")
+                        self.keys["title"] = redisPostServer.hget(self.id, "title")
+                        self.keys["time"] = redisPostServer.hget(self.id, "time")
+                        self.keys["post"] = redisPostServer.hget(self.id, "post")
 
-                        self.keys["id"] = self.key[5:]
+                self.keys["id"] = self.id[5:]
 
         def __getitem__(self, item):
                 return self.keys[item]
@@ -83,10 +85,10 @@ class redisPostORM(object):
                 """
                 stands for create or update since this is really a dual function function
                 """
-                redisPostServer.hset(self.key, "author", self.keys["author"])
-                redisPostServer.hset(self.key, "title", self.keys["title"])
-                redisPostServer.hset(self.key, "post", self.keys["post"])
-                redisPostServer.hset(self.key, "time", self.keys["time"])
+                redisPostServer.hset(self.id, "author", self.keys["author"])
+                redisPostServer.hset(self.id, "title", self.keys["title"])
+                redisPostServer.hset(self.id, "post", self.keys["post"])
+                redisPostServer.hset(self.id, "time", self.keys["time"])
 
         def delete(self):
-                redisPostServer.delete(self.key)
+                redisPostServer.delete(self.id)

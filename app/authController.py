@@ -42,26 +42,26 @@ class login(basePage):
                         self.status = "303 SEE OTHER"
                         self.headers = [("location", baseURL + "/")]
                         self.session.pushMessage("Hey look, you're already signed in!")
-                        return ""
                 else:
                         view = bv.noSidebarView()
                         view["nav"] = self.navbar()
-                        view["nav"] = " "
                         view["title"] = "Login"
                         view["messages"] = bv.baseRow(self.session.getMessage())
 
-                        login = [{"name": "username",
-                                "label": "Username"},
-                                {"name": "password",
+                        loginForm = bf.baseForm(fields=[{
+                                "name": "username",
+                                "placeholder": "Username",
+                                }, {
                                 "type": "password",
-                                "label": "Password"},
-                                {"name": "submit",
+                                "name": "password",
+                                "placeholder": "Password",
+                                }, {
                                 "type": "submit",
-                                "value": "Login"}]
+                                "name": "submit",
+                                "value": "Login"
+                                }], action=(subURL["auth"] + "/login"), width=4)
 
-                        loginForm = bf.styledForm(fields=login, action=(subURL["auth"] + "/login"))
-
-                        view["content"] = bv.baseRow(loginForm)
+                        view["content"] = bv.baseRow(loginForm, 4, 4)
 
                         return view.build()
 
@@ -82,8 +82,6 @@ class login(basePage):
                         self.headers = [("location", subURL["auth"] + "/login")]
                         self.session.pushMessage("Something went wrong with your username or password, plase try again.", "error")
 
-                return ""
-
 
 @route(subURL["auth"] + "/logout")
 class logout(basePage):
@@ -97,5 +95,3 @@ class logout(basePage):
 
                 self.status = "303 SEE OTHER"
                 self.headers = [("location", (subURL["auth"] + "/login"))]
-
-                return ""
