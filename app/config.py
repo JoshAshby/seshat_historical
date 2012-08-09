@@ -13,11 +13,7 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import re
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import redis
-
 
 appName = "Seshat"
 
@@ -41,12 +37,6 @@ Next, do you want this framework to do some extra debugging?
 debug = True
 
 """
-Now up are the authentication and session database strings
-These are just sqlalchemy database strings so docu is around
-"""
-authDB = "mysql://josh:joshmysql@localhost/test"
-
-"""
 Finally we need to define the base url for various 
 things such as static assets and what not.
 """
@@ -66,13 +56,6 @@ Don't change these following settings unless you know what you're doing!!!
 urls = []
 
 authRegex = re.compile("([^_\W]*)")
-
-engine = create_engine(authDB)
-
-Base = declarative_base()
-
-Session = sessionmaker(bind=engine)
-dbSession = Session()
 
 #redisSessionServer = redis.Redis("localhost", db=0)
 redisPostServer = redis.Redis("localhost", db=1)

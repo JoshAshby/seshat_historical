@@ -64,10 +64,11 @@ class redisPostORM(object):
                         self.keys["time"] = dt.now()
                         self.keys["post"] = ""
                 else:
-                        if not id[:5]=="post:":
+                        if not id[:5] == "post:":
                                 self.id = "post:" + str(id)
                         else:
                                 self.id = str(id)
+
                         self.keys["author"] = redisPostServer.hget(self.id, "author")
                         self.keys["title"] = redisPostServer.hget(self.id, "title")
                         self.keys["time"] = redisPostServer.hget(self.id, "time")
@@ -88,7 +89,7 @@ class redisPostORM(object):
                 redisPostServer.hset(self.id, "author", self.keys["author"])
                 redisPostServer.hset(self.id, "title", self.keys["title"])
                 redisPostServer.hset(self.id, "post", self.keys["post"])
-                redisPostServer.hset(self.id, "time", self.keys["time"])
+                redisPostServer.hset(self.id, "time", dt.now())
 
         def delete(self):
                 redisPostServer.delete(self.id)

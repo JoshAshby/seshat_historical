@@ -70,21 +70,26 @@ class sidebarView(baseView):
 
 class baseRow(object):
         def __init__(self, block, width="8", offset="2"):
-                self.block = block
+                if type(block) != list:
+                        self.blocks = [block]
+                else:
+                        self.blocks = block
                 self.width = width
                 self.offset = offset
 
         def build(self):
-                width = "span%s" % self.width if self.width else ""
-                offset = " offset%s" % self.offset if self.offset else ""
-                classes = width + offset
-                returnData = """
-                <div class="row">
-                        <div class="%s">
-                        %s
+                returnData = ""
+                for block in self.blocks:
+                        width = "span%s" % self.width if self.width else ""
+                        offset = " offset%s" % self.offset if self.offset else ""
+                        classes = width + offset
+                        returnData += """
+                        <div class="row">
+                                <div class="%s">
+                                %s
+                                </div>
                         </div>
-                </div>
-                """ % (classes, self.block.build() if type(self.block) is not str else self.block)
+                        """ % (classes, block.build() if type(block) is not str else block)
 
                 return str(returnData)
 

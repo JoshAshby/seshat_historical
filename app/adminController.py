@@ -44,7 +44,7 @@ class adminIndex_admin(basePage):
                 view = bv.sidebarView()
                 view["nav"] = self.navbar()
                 view["title"] = "Admin Panel"
-                view["messages"] = bv.baseRow(self.session.getMessage())
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
                 view["sidebar"] = self.sidebar()
 
@@ -65,15 +65,19 @@ class usersIndex_admin(basePage):
                 view["nav"] = self.navbar()
                 view["sidebar"] = self.sidebar()
                 view["title"] = "Users"
-                view["messages"] = bv.baseRow(self.session.getMessage())
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+
+                pageHead = """What to <a href="%s">add a user?</a>""" % (subURL["admin"] + "/user/new")
 
                 if users:
                         userList = bl.baseList(users, "row_list_User")
 
-                        view["content"] = bv.baseRow(userList, 8, 0)
+                        content = bv.baseRow(userList, 8, 0)
 
                 else:
-                        view["content"] = "Well either all of your users have god perms and aren't shown, or you don't have any additional users!"
+                        content = "Well either all of your users have god perms and aren't shown, or you don't have any additional users!"
+
+                view["content"] = bv.baseRow([pageHead, content], 8, 0)
 
                 return view.build()
 
@@ -90,7 +94,7 @@ class usersEdit_admin(basePage):
                 view["nav"] = self.navbar()
                 view["sidebar"] = self.sidebar()
                 view["title"] = "Edit User " + id
-                view["messages"] = bv.baseRow(self.session.getMessage())
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "username",
@@ -98,7 +102,7 @@ class usersEdit_admin(basePage):
                         }, {
                         "name": "password",
                         "type": "password",
-                        "value": user["password"]
+                        "placeholder": "New Password"
                         }, {
                         "name": "notes",
                         "type": "textarea",
@@ -107,7 +111,7 @@ class usersEdit_admin(basePage):
                         "name": "submit",
                         "type": "submit",
                         "value": "Update"
-                        }], action=(subURL["admin"]+"/users/new"))
+                        }], action=(subURL["admin"]+"/users/edit" + id))
 
                 view["content"] = bv.baseRow(editForm, offset=0)
 
@@ -129,11 +133,11 @@ class usersEdit_admin(basePage):
                         user.cou()
 
                         self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users/"))]
+                        self.headers = [("location", (subURL["admin"] + "/users"))]
                         self.session.pushMessage(("Congrats! The user %s was updated!" % name))
                 except:
                         self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users/"))]
+                        self.headers = [("location", (subURL["admin"] + "/users"))]
                         self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
 
 
@@ -148,7 +152,7 @@ class usersNew_admin(basePage):
                 view["sidebar"] = self.sidebar()
                 view["nav"] = self.navbar()
                 view["title"] = "Adding a new User"
-                view["messages"] = bv.baseRow(self.session.getMessage())
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "username",
@@ -166,7 +170,7 @@ class usersNew_admin(basePage):
                         "value": "Update"
                         }], action=(subURL["admin"]+"/users/new"))
 
-                view["content"] = bv.baseRow(editForm)
+                view["content"] = bv.baseRow(editForm, offset=0)
 
                 return view.build()
 
@@ -205,15 +209,19 @@ class postsIndex_admin(basePage):
                 view["nav"] = self.navbar()
                 view["sidebar"] = self.sidebar()
                 view["title"] = "Posts"
-                view["messages"] = bv.baseRow(self.session.getMessage())
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+
+                pageHead = """Want to <a href="%s">add another post?</a>""" % (subURL["admin"] + "/posts/new")
 
                 if posts:
                         postList = bl.baseList(posts, "row_list_Post")
 
-                        view["content"] = bv.baseRow(postList, 8, 0)
+                        content = bv.baseRow(postList, 8, 0)
 
                 else:
-                        view["content"] = "You don't have any posts at this time!"
+                        content = "You don't have any posts at this time!"
+
+                view["content"] = bv.baseRow([pageHead, content], 8, 0)
 
                 return view.build()
 
@@ -240,32 +248,33 @@ class postsEdit_admin(basePage):
                         "value": "Update"
                         }], action=(subURL["admin"]+"/posts/edit/"+id))
 
-                view = bv.noSidebarView()
+                view = bv.sidebarView()
                 view["nav"] = self.navbar()
+                view["sidebar"] = self.sidebar()
                 view["title"] = "Edit Post" + id
-                view["messages"] = bv.baseRow(self.session.getMessage())
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
-                view["content"] = bv.baseRow(editForm)
+                view["content"] = bv.baseRow(editForm, offset=0)
 
                 return view.build()
 
         def POST(self):
                 """
                 """
-                id = self.members["id"]
+                id = self.members[0]
                 title = self.members["title"]
                 post = urllib.unquote(self.members["post"])
 
                 updatePost = pm.redisPostORM(id)
 
-                updatePost.title = title
-                updatePost.post = post
-                updatePost.author = self.session["username"]
+                updatePost["title"] = title
+                updatePost["post"] = post
+                updatePost["author"] = self.session["username"]
 
                 updatePost.cou()
 
                 self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURL["admin"] + "/posts/"))]
+                self.headers = [("location", (subURL["admin"] + "/posts"))]
                 self.session.pushMessage(("Congrats! The post %s was updated!" % title))
 
 
@@ -278,7 +287,7 @@ class postsNew_admin(basePage):
                 view["nav"] = self.navbar()
                 view["sidebar"] = self.sidebar()
                 view["title"] = "Adding a new Post"
-                view["messages"] = bv.baseRow(self.session.getMessage())
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "title",
@@ -303,11 +312,12 @@ class postsNew_admin(basePage):
 
                 newPost = pm.redisPostORM()
 
-                newPost.title = title
-                newPost.post = post
-                newPost.author = self.session["username"]
+                newPost["title"] = title
+                newPost["post"] = post
+                newPost["author"] = self.session["username"]
 
                 newPost.cou()
+
                 self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURL["admin"] + "/posts/"))]
+                self.headers = [("location", (subURL["admin"] + "/posts"))]
                 self.session.pushMessage(("Congrats! The post %s was created!" % title))

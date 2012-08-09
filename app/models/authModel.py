@@ -27,8 +27,9 @@ import bcrypt
 def userList():
         users = []
         for key in redisUserServer.keys():
-                if key[:5]=="user:":
+                if key[:5] == "user:":
                         users.append(redisUserORM(key))
+
         return users
 
 def findUser(username):
