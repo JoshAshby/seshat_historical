@@ -35,9 +35,9 @@ class Session(object):
         def __init__(self, id):
                 self.id = "session:" + id
 
-                if(redisSessionServer.exists(self.sessionId)):
+                if(c.redisSessionServer.exists(self.id)):
                         for bit in self.parts:
-                                setattr(self, bit, redisSessionServer.hget(self.sessionId, bit))
+                                setattr(self, bit, c.redisSessionServer.hget(self.id, bit))
                 else:
                         self.message = ""
                         self.history = []
@@ -47,14 +47,26 @@ class Session(object):
 
         def commit(self):
                 for bit in self.parts:
-                        redisSessionServer.hset(self.sessionId, bit, getattr(self, bit))
-                redisSessionServer.expire(self.sessionId, 172800) #two days after last action
+                        c.redisSessionServer.hset(self.id, bit, getattr(self, bit))
+                c.redisSessionServer.expire(self.id, 172800) #two days after last action
 
         def __str__(self):
                 returnData = ""
                 for bit in self:
-                        returnData += "%s : %s\n\r" % (bit, getattr(self, bit)])
+                        returnData += "%s : %s\n\r" % (bit, getattr(self, bit))
                 return returnData
+
+        def __getattr__(self, item):
+                return getattr(self, item)
+
+        def __getitem__(self, item):
+                return getattr(self, item)
+
+        def __setattr__(self, item, value):
+                return object.__setattr__(self, item, value)
+
+        def __setitem__(self, item, value):
+                return object.__setattr__(self, item, value)
 
         def gm(self):
                 return self.getMessage()

@@ -37,7 +37,6 @@ prtTplHome = "./views/htmlTemplates/partials/"
 class genericTemplate(Template):
         baseURL = baseURL
         assetURL = assetURL
-        subURL = subURL
         navTitle = appName
         nav = " "
         crumbs = " "
@@ -50,7 +49,6 @@ class genericTemplate(Template):
 class partialTemplate(Template):
         baseURL = baseURL
         assetURL = assetURL
-        subURL = subURL
 
 
 #set-o-main templates. This is really here for ease of use and so forth

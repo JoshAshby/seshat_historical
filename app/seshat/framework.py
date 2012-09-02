@@ -95,10 +95,10 @@ def app(env, start_response):
 
                         replyData = reply.get()
                         cookieHeader = ("Set-Cookie", cookie.output(header=""))
-                        header = replyData[0]
+                        header = replyData[1]
                         header.append(cookieHeader)
 
-                        status = replyData[1]
+                        status = replyData[0]
 
                         start_response(status, header)
 

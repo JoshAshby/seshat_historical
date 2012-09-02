@@ -21,11 +21,8 @@ except:
         os.chdir(abspath)
         from config import *
 
-import re
 
-
-class url(object):
-        def __init__(self, urlStr, pageObject):
-                self.regex = re.compile("^" + urlStr + "$")
-                self.url = urlStr
-                self.pageObject = pageObject
+class baseResponse(object):
+        def __init__(self, headers):
+                self.status = headers[0]
+                self.headers = headers[1]

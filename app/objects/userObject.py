@@ -27,3 +27,4 @@ import objects.baseObject as bo
 
 
 class userObject(bo.baseHTTPPageObject):
+        __name__ = "user"

@@ -38,10 +38,10 @@ class baseHTTPPageObject(object):
                 self.session = sm.Session(sessionID)
                 self.method = env["REQUEST_METHOD"]
 
-                self.status = "200 OK"
-                self.headers = [
-                        ("Content-type", "text/html"),
-                        ]
+                self.head = ("200 OK", 
+                        [
+                                ("Content-type", "text/html"),
+                        ])
 
         def build(self, data, reply):
                 content = ""
@@ -58,7 +58,7 @@ class baseHTTPPageObject(object):
                         for level in c.levels:
                                 if level in matches and level != self.session.level:
                                         self.session.pm("You need to have %s rights to access this." % level, "error")
-                                        self.head = (303, "login")
+                                        self.head = ("303 SEE OTHER", [("location", "login")])
                                         error = True
 
                 if not error:
@@ -67,7 +67,7 @@ class baseHTTPPageObject(object):
                 data.put(content)
                 data.put(StopIteration)
 
-                reply.put(br.baseResponse.build(self.head))
+                reply.put(self.head)
                 reply.put(StopIteration)
 
                 self.session.commit()

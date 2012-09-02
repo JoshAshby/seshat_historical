@@ -27,7 +27,7 @@ except:
         from config import *
 
 import seshat.framework as fw
-from objects.userObject import baseHTTPPageObject as basePage
+from objects.userObject import userObject as basePage
 from seshat.route import route
 
 import models.postModel as pm
@@ -49,23 +49,18 @@ class index(basePage):
 
                 view = bv.noSidebarView()
 
-                view["nav"] = "HOME"
+                view["nav"] = "Home"
                 view["title"] = "Home"
-                view["messages"] = bv.baseRow(self.session.getMessage())
 
-                if posts:
-                        postList = bl.baseList(posts, "post_index")
+                postList = bl.baseList(posts, "post_index")
 
-                        view["content"] = bv.baseRow(postList)
-
-                else:
-                        view["content"] = bv.baseRow("Hello there. Something goes here soon, but I can't say what or when yet...")
+                view["content"] = bv.baseRow(postList)
 
                 return view.build()
 
 
-from authController import *
-from adminController import *
+#from authController import *
+#from adminController import *
 
 
 if __name__ == '__main__':

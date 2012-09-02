@@ -27,3 +27,4 @@ import objects.baseObject as bo
 
 
 class adminObject(bo.baseHTTPPageObject):
+        __name__ = "admin"
