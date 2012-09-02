@@ -40,7 +40,7 @@ class Session(object):
                                 setattr(self, bit, c.redisSessionServer.hget(self.id, bit))
                 else:
                         self.message = ""
-                        self.history = []
+                        self.history = ""
                         self.username = ""
                         self.user_id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
                         self.level = None
@@ -114,7 +114,7 @@ class Session(object):
 
         def logout(self):
                 self.message = ""
-                self.history = []
+                self.history = ""
                 self.username = ""
                 self.user_id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
                 self.level = None

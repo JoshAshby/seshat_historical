@@ -30,21 +30,25 @@ import re
 
 import views.baseView as bv
 import views.forms.baseForm as bf
+import views.elements.baseElements as be
 
 
-@route(subURL["auth"] + "/login")
+@route("/auth/login")
 class login(basePage):
         def GET(self):
                 """
                 Display the login page.
                 """
-                if self.session["username"]:
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", baseURL + "/")]
-                        self.session.pushMessage("Hey look, you're already signed in!")
+                if self.session.username:
+                        self.header = ("303 SEE OTHER", [("location", baseURL + "/")])
+                        self.session.pm("Hey look, you're already signed in!")
+
                 else:
                         view = bv.noSidebarView()
-                        view["nav"] = self.navbar()
+
+                        elements = be.adminElements()
+                        view["nav"] = elements.navbar()
+
                         view["title"] = "Login"
                         view["messages"] = bv.baseRow(self.session.getMessage())
 
@@ -59,7 +63,7 @@ class login(basePage):
                                 "type": "submit",
                                 "name": "submit",
                                 "value": "Login"
-                                }], action=(subURL["auth"] + "/login"), width=4)
+                                }], action=("/auth/login"), width=4)
 
                         view["content"] = bv.baseRow(loginForm, 4, 4)
 
@@ -75,15 +79,14 @@ class login(basePage):
 
                 try:
                         self.session.login(name, passwd)
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", baseURL + "/")]
-                except:
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", subURL["auth"] + "/login")]
-                        self.session.pushMessage("Something went wrong with your username or password, plase try again.", "error")
+                        self.header = ("303 SEE OTHER", [("location", "/")])
+                except e:
+                        print e
+                        self.header = ("303 SEE OTHER", [("location", "/auth/login")])
+                        self.session.pm("Something went wrong with your username or password, plase try again.", "error")
 
 
-@route(subURL["auth"] + "/logout")
+@route("/auth/logout")
 class logout(basePage):
         def GET(self):
                 """
@@ -93,5 +96,4 @@ class logout(basePage):
                 """
                 self.session.logout()
 
-                self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURL["auth"] + "/login"))]
+                self.header = ("303 SEE OTHER", [("location", ("/auth/login"))])

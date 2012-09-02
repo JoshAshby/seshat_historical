@@ -30,5 +30,6 @@ def route(routeURL):
                 global urls
                 urlObject = bu.url(routeURL, HTTPObject)
                 urls.append(urlObject)
+                HTTPObject.__url__ = routeURL
                 return HTTPObject
         return wrapper

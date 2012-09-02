@@ -34,6 +34,7 @@ import models.postModel as pm
 
 import views.baseView as bv
 import views.lists.baseList as bl
+import views.elements.baseElements as be
 
 @route("/")
 class index(basePage):
@@ -49,7 +50,9 @@ class index(basePage):
 
                 view = bv.noSidebarView()
 
-                view["nav"] = "Home"
+                elements = be.baseElements(self.sessionID)
+                view["nav"] = elements.navbar()
+
                 view["title"] = "Home"
 
                 postList = bl.baseList(posts, "post_index")
@@ -59,7 +62,7 @@ class index(basePage):
                 return view.build()
 
 
-#from authController import *
+from authController import *
 #from adminController import *
 
 

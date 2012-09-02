@@ -35,6 +35,8 @@ import views.forms.baseForm as bf
 
 import urllib
 
+import views.elements.baseElements as be
+
 
 @route(subURL["admin"])
 class adminIndex_admin(basePage):
@@ -42,11 +44,13 @@ class adminIndex_admin(basePage):
                 """
                 """
                 view = bv.sidebarView()
-                view["nav"] = self.navbar()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
                 view["title"] = "Admin Panel"
                 view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
-
-                view["sidebar"] = self.sidebar()
 
                 view["content"] = "Well you have nothing to do here, but you might want to take a look over at the sidebar for somethings to do..."
 
@@ -62,8 +66,11 @@ class usersIndex_admin(basePage):
                 users = am.userList()
 
                 view = bv.sidebarView()
-                view["nav"] = self.navbar()
-                view["sidebar"] = self.sidebar()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
                 view["title"] = "Users"
                 view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
@@ -91,8 +98,11 @@ class usersEdit_admin(basePage):
                 user = am.redisUserORM(id)
 
                 view = bv.sidebarView()
-                view["nav"] = self.navbar()
-                view["sidebar"] = self.sidebar()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
                 view["title"] = "Edit User " + id
                 view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
@@ -149,8 +159,11 @@ class usersNew_admin(basePage):
                 with the exception of users marked as having GOD level.
                 """
                 view = bv.sidebarView()
-                view["sidebar"] = self.sidebar()
-                view["nav"] = self.navbar()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
                 view["title"] = "Adding a new User"
                 view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
@@ -206,8 +219,11 @@ class postsIndex_admin(basePage):
                 posts = pm.postList()
 
                 view = bv.sidebarView()
-                view["nav"] = self.navbar()
-                view["sidebar"] = self.sidebar()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
                 view["title"] = "Posts"
                 view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
@@ -249,8 +265,11 @@ class postsEdit_admin(basePage):
                         }], action=(subURL["admin"]+"/posts/edit/"+id))
 
                 view = bv.sidebarView()
-                view["nav"] = self.navbar()
-                view["sidebar"] = self.sidebar()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
                 view["title"] = "Edit Post" + id
                 view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
@@ -284,8 +303,11 @@ class postsNew_admin(basePage):
                 """
                 """
                 view = bv.sidebarView()
-                view["nav"] = self.navbar()
-                view["sidebar"] = self.sidebar()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
                 view["title"] = "Adding a new Post"
                 view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
 
