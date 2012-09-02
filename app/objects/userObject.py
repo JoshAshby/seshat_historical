@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 """
 Web App/API framework built on top of gevent
-routing decorator
+baseObject to build pages off of
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -15,20 +15,15 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
-import seshat.baseURL as bu
+import models.sessionModel as sm
+import objects.baseObject as bo
 
 
-def route(routeURL):
-        def wrapper(HTTPObject):
-                global urls
-                urlObject = bu.url(routeURL, HTTPObject)
-                urls.append(urlObject)
-                return HTTPObject
-        return wrapper
+class userObject(bo.baseHTTPPageObject):

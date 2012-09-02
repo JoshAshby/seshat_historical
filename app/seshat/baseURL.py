@@ -1,7 +1,6 @@
 #!/usr/bin/env python2
 """
 Web App/API framework built on top of gevent
-routing decorator
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -22,13 +21,11 @@ except:
         os.chdir(abspath)
         from config import *
 
-import seshat.baseURL as bu
+import re
 
 
-def route(routeURL):
-        def wrapper(HTTPObject):
-                global urls
-                urlObject = bu.url(routeURL, HTTPObject)
-                urls.append(urlObject)
-                return HTTPObject
-        return wrapper
+class url(object):
+        def __init__(self, urlStr, pageObject):
+                self.regex = re.compile("^" + routeURL + "$")
+                self.url = urlStr
+                self.pageObject = pageObject

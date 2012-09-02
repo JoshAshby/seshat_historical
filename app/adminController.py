@@ -23,7 +23,7 @@ except:
         from config import *
 
 import seshat.framework as fw
-from baseObject import baseHTTPPageObject as basePage
+from objects.adminObject import baseHTTPPageObject as basePage
 from seshat.route import route
 
 import models.authModel as am
@@ -36,7 +36,7 @@ import views.forms.baseForm as bf
 import urllib
 
 
-@route(subURL["admin"] + "/")
+@route(subURL["admin"])
 class adminIndex_admin(basePage):
         def GET(self):
                 """

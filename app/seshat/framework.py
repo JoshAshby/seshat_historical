@@ -15,12 +15,12 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
 from gevent import monkey; monkey.patch_all()
 import gevent
@@ -35,7 +35,6 @@ import string
 import random
 import Cookie
 import re
-
 
 cookie = Cookie.SimpleCookie()
 
@@ -58,16 +57,13 @@ def app(env, start_response):
         this all works, at the moment data can not be streammed. As a result
         it's all added together, then returned rather than sent out in chunks.
         """
-        global urls
-        for url in urls:
-                matched = url["regex"].match(env["REQUEST_URI"][len(fcgiBase):].split("?")[0])
+        for url in c.urls:
+                matched = url.regex.match(env["REQUEST_URI"][len(c.fcgiBase):].split("?")[0])
                 if matched:
                         try:
                                 cookie.load(env["HTTP_COOKIE"])
                         except:
                                 cookie["sid"] = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-                        cook = cookie.output(header="")
-                        sessionId = cook
 
                         members = {}
 
@@ -89,17 +85,22 @@ def app(env, start_response):
                                                 query = part.split("=")
                                                 members.update({re.sub("\+", " ", query[0]): re.sub("\+", " ", query[1])})
 
-                        newHTTPObject = url["object"](env, members, sessionId)
+                        sessionID = cookie.output(header="")[5:]
 
-                        data, headers, status = queue.Queue(), queue.Queue(), queue.Queue()
-                        dataThread = gevent.spawn(newHTTPObject.build, data, headers, status)
+                        newHTTPObject = url.pageObject(env, members, sessionID)
+
+                        data, reply = queue.Queue(), queue.Queue()
+                        dataThread = gevent.spawn(newHTTPObject.build, data, reply)
                         dataThread.join()
 
-                        header = headers.get()
-                        cookieHeader = ("Set-Cookie", cook)
+                        replyData = reply.get()
+                        cookieHeader = ("Set-Cookie", cookie.output(header=""))
+                        header = replyData[0]
                         header.append(cookieHeader)
 
-                        start_response(status.get(), header)
+                        status = replyData[1]
+
+                        start_response(status, header)
 
                         return data
 
@@ -114,12 +115,15 @@ def main():
 
         Sets up the server and all that messy stuff
         """
-        global port
-        global address
-        if port and type(port) is str:
-                port = int(port)
-        if not address:
+        if c.port and type(c.port) is str:
+                port = int(c.port)
+        else:
+                port = 8000
+        if not c.address:
                 address = "127.0.0.1"
+        else:
+                address = c.address
+
         server = WSGIServer((address, port), app)
 
         print ("Now serving py as a fastcgi server at %s:%i" % (address, port))

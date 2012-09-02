@@ -27,19 +27,17 @@ except:
         from config import *
 
 import seshat.framework as fw
-from baseObject import baseHTTPPageObject as basePage
+from objects.userObject import baseHTTPPageObject as basePage
 from seshat.route import route
 
 import models.postModel as pm
 
 import views.baseView as bv
-import views.forms.baseForm as bf
 import views.lists.baseList as bl
-import views.menus.baseMenu as bm
-
 
 @route("/")
-class menu_Home(basePage):
+class index(basePage):
+        __menu__ = "Home"
         """
         Returns base index page.
         """
@@ -51,7 +49,7 @@ class menu_Home(basePage):
 
                 view = bv.noSidebarView()
 
-                view["nav"] = self.navbar("home")
+                view["nav"] = "HOME"
                 view["title"] = "Home"
                 view["messages"] = bv.baseRow(self.session.getMessage())
 

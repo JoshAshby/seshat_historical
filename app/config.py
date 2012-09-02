@@ -42,10 +42,8 @@ things such as static assets and what not.
 """
 baseURL = "http://localhost"
 assetURL = "http://localhost/static"
-subURL = {
-        "admin": "/admin",
-        "auth": "/auth",
-        }
+
+levels = ["admin"]
 
 """
 #########################STOP EDITING#####################################
@@ -57,7 +55,6 @@ urls = []
 
 authRegex = re.compile("([^_\W]*)")
 
-#redisSessionServer = redis.Redis("localhost", db=0)
 redisPostServer = redis.Redis("localhost", db=1)
 redisSessionServer = redisPostServer
 redisUserServer = redisPostServer

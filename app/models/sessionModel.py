@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 """
 Web App/API framework built on top of gevent
-Database model for authentication and users
+baseObject to build pages off of
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -15,12 +15,12 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
 import authModel as am
 import pickle
@@ -29,46 +29,42 @@ import random
 
 import bcrypt
 
+
 class Session(object):
         parts = ["message", "history", "username", "user_id", "level"]
-        def __init__(self, sessionId):
-                self.data = {}
-                self.sessionId = "session:" + sessionId
+        def __init__(self, id):
+                self.id = "session:" + id
+
                 if(redisSessionServer.exists(self.sessionId)):
                         for bit in self.parts:
-                                self.data[bit] = redisSessionServer.hget(self.sessionId, bit)
+                                setattr(self, bit, redisSessionServer.hget(self.sessionId, bit))
                 else:
-                        self.data = {
-                                "message": "",
-                                "history": [],
-                                "username": "",
-                                "user_id": "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10)),
-                                "level": None,
-                        }
+                        self.message = ""
+                        self.history = []
+                        self.username = ""
+                        self.user_id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+                        self.level = None
 
         def commit(self):
-                for bit in self.data:
-                        redisSessionServer.hset(self.sessionId, bit, self.data[bit])
+                for bit in self.parts:
+                        redisSessionServer.hset(self.sessionId, bit, getattr(self, bit))
                 redisSessionServer.expire(self.sessionId, 172800) #two days after last action
-
-        def __setitem__(self, item, value):
-                self.data[item] = value
-
-        def __getitem__(self, item):
-                return self.data[item]
-
-        def __repr__(self):
-                pass
 
         def __str__(self):
                 returnData = ""
-                for bit in self.data:
-                        returnData += "%s : %s\n\r" % (bit, self.data[bit])
+                for bit in self:
+                        returnData += "%s : %s\n\r" % (bit, getattr(self, bit)])
                 return returnData
 
+        def gm(self):
+                return self.getMessage()
+
+        def pm(self, message, messType):
+                return self.pushMessage(message, messType)
+
         def getMessage(self):
-                returnData = self.data["message"]
-                self.data["message"] = ""
+                returnData = self.message
+                self.message = ""
                 return returnData
 
         def pushMessage(self, message, messType="info"):
@@ -90,24 +86,24 @@ class Session(object):
                         %s
                 </div>
                 """ % (messType, style, message)
-                self.data["message"] += str(messageTpl)
+                self.message += str(messageTpl)
 
         def login(self, username, passwd):
                 user = am.findUser(username)
-
-                if user["password"] == bcrypt.hashpw(passwd, user["password"]):
-                        self.data["level"] = user["perm"]
-                        self.data["username"] = user["username"]
-                        self.data["users_id"] = user["key"]
+                if user:
+                        if user["password"] == bcrypt.hashpw(passwd, user["password"]):
+                                self.level = user["perm"]
+                                self.username = user["username"]
+                                self.users_id = user["key"]
+                        else:
+                                raise "We're sorry, your password appears to be wrong."
                 else:
-                        raise "Wrong username or password"
+                        raise "We're sorry, we can't find that username in our system."
 
         def logout(self):
-                self.data = {
-                        "message": "",
-                        "history": [],
-                        "username": "",
-                        "users_id": "".join(random.choice(string.ascii_uppercase)),
-                        "level": None,
-                }
+                self.message = ""
+                self.history = []
+                self.username = ""
+                self.user_id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+                self.level = None
 
