@@ -23,7 +23,7 @@ except:
         from config import *
 
 import seshat.framework as fw
-from baseObject import baseHTTPPageObject as basePage
+from objects.baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
 
 import re
@@ -40,13 +40,13 @@ class login(basePage):
                 Display the login page.
                 """
                 if self.session.username:
-                        self.header = ("303 SEE OTHER", [("location", baseURL + "/")])
+                        self.head = ("303 SEE OTHER", [("location", baseURL + "/")])
                         self.session.pm("Hey look, you're already signed in!")
 
                 else:
                         view = bv.noSidebarView()
 
-                        elements = be.adminElements()
+                        elements = be.baseElements(self.sessionID)
                         view["nav"] = elements.navbar()
 
                         view["title"] = "Login"
@@ -79,11 +79,11 @@ class login(basePage):
 
                 try:
                         self.session.login(name, passwd)
-                        self.header = ("303 SEE OTHER", [("location", "/")])
-                except e:
-                        print e
-                        self.header = ("303 SEE OTHER", [("location", "/auth/login")])
-                        self.session.pm("Something went wrong with your username or password, plase try again.", "error")
+                        self.head = ("303 SEE OTHER", [("location", "/")])
+                        return
+                except Exception as exc:
+                        self.head = ("303 SEE OTHER", [("location", "/auth/login")])
+                        self.session.pm("Something went wrong: %s; plase try again." % exc, "error")
 
 
 @route("/auth/logout")
@@ -96,4 +96,4 @@ class logout(basePage):
                 """
                 self.session.logout()
 
-                self.header = ("303 SEE OTHER", [("location", ("/auth/login"))])
+                self.head = ("303 SEE OTHER", [("location", ("/auth/login"))])

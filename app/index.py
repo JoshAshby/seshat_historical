@@ -18,6 +18,7 @@ joshuaashby@joshashby.com
 """
 import sys, os
 
+
 try:
         from config import *
 except:
@@ -36,6 +37,7 @@ import views.baseView as bv
 import views.lists.baseList as bl
 import views.elements.baseElements as be
 
+
 @route("/")
 class index(basePage):
         __menu__ = "Home"
@@ -48,12 +50,14 @@ class index(basePage):
                 """
                 posts = pm.postList()
 
-                view = bv.noSidebarView()
+                view = bv.noSidebarView(self.sessionID)
 
                 elements = be.baseElements(self.sessionID)
                 view["nav"] = elements.navbar()
 
                 view["title"] = "Home"
+                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+
 
                 postList = bl.baseList(posts, "post_index")
 
@@ -63,7 +67,7 @@ class index(basePage):
 
 
 from authController import *
-#from adminController import *
+from adminController import *
 
 
 if __name__ == '__main__':

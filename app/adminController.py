@@ -23,7 +23,7 @@ except:
         from config import *
 
 import seshat.framework as fw
-from objects.adminObject import baseHTTPPageObject as basePage
+from objects.adminObject import adminObject as basePage
 from seshat.route import route
 
 import models.authModel as am
@@ -38,26 +38,26 @@ import urllib
 import views.elements.baseElements as be
 
 
-@route(subURL["admin"])
+@route("/admin")
 class adminIndex_admin(basePage):
         def GET(self):
                 """
                 """
                 view = bv.sidebarView()
 
-                elements = be.adminElements()
+                elements = be.adminElements(self.sessionID)
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Admin Panel"
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
 
                 view["content"] = "Well you have nothing to do here, but you might want to take a look over at the sidebar for somethings to do..."
 
                 return view.build()
 
 
-@route(subURL["admin"] + "/users")
+@route("/admin/users")
 class usersIndex_admin(basePage):
         def GET(self):
                 """
@@ -67,14 +67,14 @@ class usersIndex_admin(basePage):
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements()
+                elements = be.adminElements(self.sessionID)
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Users"
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
 
-                pageHead = """What to <a href="%s">add a user?</a>""" % (subURL["admin"] + "/user/new")
+                pageHead = """What to <a href="%s">add a user?</a>""" % ("/admin/user/new")
 
                 if users:
                         userList = bl.baseList(users, "row_list_User")
@@ -89,7 +89,7 @@ class usersIndex_admin(basePage):
                 return view.build()
 
 
-@route(subURL["admin"] + "/users/edit/(.*)")
+@route("/admin/users/edit/(.*)")
 class usersEdit_admin(basePage):
         def GET(self):
                 """
@@ -99,12 +99,12 @@ class usersEdit_admin(basePage):
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements()
+                elements = be.adminElements(self.sessionID)
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Edit User " + id
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "username",
@@ -121,7 +121,7 @@ class usersEdit_admin(basePage):
                         "name": "submit",
                         "type": "submit",
                         "value": "Update"
-                        }], action=(subURL["admin"]+"/users/edit" + id))
+                        }], action=("/admin/users/edit" + id))
 
                 view["content"] = bv.baseRow(editForm, offset=0)
 
@@ -142,16 +142,14 @@ class usersEdit_admin(basePage):
 
                         user.cou()
 
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users"))]
-                        self.session.pushMessage(("Congrats! The user %s was updated!" % name))
+                        self.head = ("303 SEE OTHER", [("location", "/admin/users")])
+                        self.session.pm(("Congrats! The user %s was updated!" % name))
                 except:
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users"))]
-                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
+                        self.head = ("303 SEE OTHER", [("location", "/admin/users")])
+                        self.session.pm(("The user name %s is already in use. Sorry!" % name), "error")
 
 
-@route(subURL["admin"] + "/users/new")
+@route("/admin/users/new")
 class usersNew_admin(basePage):
         def GET(self):
                 """
@@ -160,12 +158,12 @@ class usersNew_admin(basePage):
                 """
                 view = bv.sidebarView()
 
-                elements = be.adminElements()
+                elements = be.adminElements(self.sessionID)
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Adding a new User"
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "username",
@@ -181,7 +179,7 @@ class usersNew_admin(basePage):
                         "name": "submit",
                         "type": "submit",
                         "value": "Update"
-                        }], action=(subURL["admin"]+"/users/new"))
+                        }], action="/admin/users/new")
 
                 view["content"] = bv.baseRow(editForm, offset=0)
 
@@ -202,16 +200,14 @@ class usersNew_admin(basePage):
 
                         user.cou()
 
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users/new"))]
-                        self.session.pushMessage(("Congrats! The user %s was created!" % name))
+                        self.head = ("303 SEE OTHER", [("location", "/admin/users/new")])
+                        self.session.pm(("Congrats! The user %s was created!" % name))
                 except:
-                        self.status = "303 SEE OTHER"
-                        self.headers = [("location", (subURL["admin"] + "/users/new"))]
-                        self.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
+                        self.head = ("303 SEE OTHER", [("location", "/admin/users/new")])
+                        self.session.pm(("The user name %s is already in use. Sorry!" % name), "error")
 
 
-@route(subURL["admin"] + "/posts")
+@route("/admin/posts")
 class postsIndex_admin(basePage):
         def GET(self):
                 """
@@ -220,14 +216,14 @@ class postsIndex_admin(basePage):
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements()
+                elements = be.adminElements(self.sessionID)
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Posts"
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
 
-                pageHead = """Want to <a href="%s">add another post?</a>""" % (subURL["admin"] + "/posts/new")
+                pageHead = """Want to <a href="%s">add another post?</a>""" % ("/admin/posts/new")
 
                 if posts:
                         postList = bl.baseList(posts, "row_list_Post")
@@ -242,7 +238,7 @@ class postsIndex_admin(basePage):
                 return view.build()
 
 
-@route(subURL["admin"] + "/posts/edit/(.*)")
+@route("/admin/posts/edit/(.*)")
 class postsEdit_admin(basePage):
         def GET(self):
                 """
@@ -262,16 +258,16 @@ class postsEdit_admin(basePage):
                         "name": "submit",
                         "type": "submit",
                         "value": "Update"
-                        }], action=(subURL["admin"]+"/posts/edit/"+id))
+                        }], action=("/admin/posts/edit/" + id))
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements()
+                elements = be.adminElements(self.sessionID)
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Edit Post" + id
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
 
                 view["content"] = bv.baseRow(editForm, offset=0)
 
@@ -288,28 +284,27 @@ class postsEdit_admin(basePage):
 
                 updatePost["title"] = title
                 updatePost["post"] = post
-                updatePost["author"] = self.session["username"]
+                updatePost["author"] = self.session.username
 
                 updatePost.cou()
 
-                self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURL["admin"] + "/posts"))]
-                self.session.pushMessage(("Congrats! The post %s was updated!" % title))
+                self.head = ("303 SEE OTHER", [("location", "/admin/posts")])
+                self.session.pm(("Congrats! The post %s was updated!" % title))
 
 
-@route(subURL["admin"] + "/posts/new")
+@route("/admin/posts/new")
 class postsNew_admin(basePage):
         def GET(self):
                 """
                 """
                 view = bv.sidebarView()
 
-                elements = be.adminElements()
+                elements = be.adminElements(self.sessionID)
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Adding a new Post"
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "title",
@@ -320,7 +315,7 @@ class postsNew_admin(basePage):
                         "name": "submit",
                         "type": "submit",
                         "value": "Create"
-                        }], action=(subURL["admin"]+"/posts/new"))
+                        }], action="/admin/posts/new")
 
                 view["content"] = bv.baseRow(editForm)
 
@@ -336,10 +331,9 @@ class postsNew_admin(basePage):
 
                 newPost["title"] = title
                 newPost["post"] = post
-                newPost["author"] = self.session["username"]
+                newPost["author"] = self.session.username
 
                 newPost.cou()
 
-                self.status = "303 SEE OTHER"
-                self.headers = [("location", (subURL["admin"] + "/posts"))]
-                self.session.pushMessage(("Congrats! The post %s was created!" % title))
+                self.head = ("303 SEE OTHER", [("location", "/admin/posts")])
+                self.session.pm(("Congrats! The post %s was created!" % title))

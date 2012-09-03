@@ -71,7 +71,7 @@ class Session(object):
         def gm(self):
                 return self.getMessage()
 
-        def pm(self, message, messType):
+        def pm(self, message, messType="info"):
                 return self.pushMessage(message, messType)
 
         def getMessage(self):
@@ -106,11 +106,11 @@ class Session(object):
                         if user["password"] == bcrypt.hashpw(passwd, user["password"]):
                                 self.level = user["perm"]
                                 self.username = user["username"]
-                                self.users_id = user["key"]
+                                self.users_id = user["id"]
                         else:
-                                raise "We're sorry, your password appears to be wrong."
+                                raise "Your password appears to be wrong"
                 else:
-                        raise "We're sorry, we can't find that username in our system."
+                        raise "We can't find that username in our system"
 
         def logout(self):
                 self.message = ""

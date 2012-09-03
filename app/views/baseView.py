@@ -30,7 +30,7 @@ import views.templateConfig as tc
 
 
 class baseView(object):
-        def __init__(self):
+        def __init__(self, sessionID=0):
                 self.blocks = {}
 
         def __setitem__(self, block, value):

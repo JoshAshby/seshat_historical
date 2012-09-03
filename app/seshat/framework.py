@@ -60,6 +60,7 @@ def app(env, start_response):
         for url in c.urls:
                 matched = url.regex.match(env["REQUEST_URI"][len(c.fcgiBase):].split("?")[0])
                 if matched:
+                        if c.debug: print env["REQUEST_METHOD"], url.url
                         try:
                                 cookie.load(env["HTTP_COOKIE"])
                         except:
