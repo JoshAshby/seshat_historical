@@ -15,14 +15,13 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
-import seshat.framework as fw
 from objects.baseObject import baseHTTPPageObject as basePage
 from seshat.route import route
 
@@ -39,18 +38,18 @@ class login(basePage):
                 """
                 Display the login page.
                 """
-                if self.session.username:
-                        self.head = ("303 SEE OTHER", [("location", baseURL + "/")])
-                        self.session.pm("Hey look, you're already signed in!")
+                if c.session.loggedIn == True:
+                        self.head = ("303 SEE OTHER", [("location", "/")])
+                        c.session.pushMessage("Hey look, you're already signed in!")
 
                 else:
                         view = bv.noSidebarView()
 
-                        elements = be.baseElements(self.sessionID)
+                        elements = be.baseElements()
                         view["nav"] = elements.navbar()
 
                         view["title"] = "Login"
-                        view["messages"] = bv.baseRow(self.session.getMessage())
+                        view["messages"] = bv.baseRow(c.session.getMessages())
 
                         loginForm = bf.baseForm(fields=[{
                                 "name": "username",
@@ -78,12 +77,12 @@ class login(basePage):
                 name = self.members["username"]
 
                 try:
-                        self.session.login(name, passwd)
+                        c.session.login(name, passwd)
                         self.head = ("303 SEE OTHER", [("location", "/")])
-                        return
+
                 except Exception as exc:
                         self.head = ("303 SEE OTHER", [("location", "/auth/login")])
-                        self.session.pm("Something went wrong: %s; plase try again." % exc, "error")
+                        c.session.pushMessage("Something went wrong:<br>%s; plase try again." % exc, "error")
 
 
 @route("/auth/logout")
@@ -94,6 +93,6 @@ class logout(basePage):
 
                 redirect to login page after we're done.
                 """
-                self.session.logout()
+                c.session.logout()
 
                 self.head = ("303 SEE OTHER", [("location", ("/auth/login"))])

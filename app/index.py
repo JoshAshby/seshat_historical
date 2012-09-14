@@ -18,14 +18,13 @@ joshuaashby@joshashby.com
 """
 import sys, os
 
-
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
 import seshat.framework as fw
 from objects.userObject import userObject as basePage
@@ -50,13 +49,13 @@ class index(basePage):
                 """
                 posts = pm.postList()
 
-                view = bv.noSidebarView(self.sessionID)
+                view = bv.noSidebarView()
 
-                elements = be.baseElements(self.sessionID)
+                elements = be.baseElements()
                 view["nav"] = elements.navbar()
 
                 view["title"] = "Home"
-                view["messages"] = bv.baseRow(self.session.getMessage(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
 
                 postList = bl.baseList(posts, "post_index")

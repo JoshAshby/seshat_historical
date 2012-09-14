@@ -22,64 +22,40 @@ except:
         os.chdir(abspath)
         import config as c
 
-import authModel as am
-import pickle
 import string
 import random
-
 import bcrypt
 
+import models.authModel as am
 
-class Session(object):
-        parts = ["message", "history", "username", "user_id", "level"]
+
+class session(object):
+        parts = ["history", "userID", "messages", "loggedIn"]
         def __init__(self, id):
-                self.id = "session:" + id
+                self.id = id
 
-                if(c.redisSessionServer.exists(self.id)):
+                if(c.redisSessionServer.exists("session:"+self.id)):
                         for bit in self.parts:
-                                setattr(self, bit, c.redisSessionServer.hget(self.id, bit))
+                                setattr(self, bit, c.redisSessionServer.hget("session:"+self.id, bit))
+
+                        self.user = am.baseUser(self.userID)
                 else:
-                        self.message = ""
-                        self.history = ""
-                        self.username = ""
-                        self.user_id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-                        self.level = None
+                        #No session was found so make a new one
+                        for bit in self.parts:
+                                setattr(self, bit, None)
+                                self.messages = ""
+                                self.history = ""
+                                self.loggedIn = False
 
-        def commit(self):
-                for bit in self.parts:
-                        c.redisSessionServer.hset(self.id, bit, getattr(self, bit))
-                c.redisSessionServer.expire(self.id, 172800) #two days after last action
+                        self.user = am.baseUser()
 
-        def __str__(self):
-                returnData = ""
-                for bit in self:
-                        returnData += "%s : %s\n\r" % (bit, getattr(self, bit))
-                return returnData
-
-        def __getattr__(self, item):
-                return getattr(self, item)
-
-        def __getitem__(self, item):
-                return getattr(self, item)
-
-        def __setattr__(self, item, value):
-                return object.__setattr__(self, item, value)
-
-        def __setitem__(self, item, value):
-                return object.__setattr__(self, item, value)
-
-        def gm(self):
-                return self.getMessage()
-
-        def pm(self, message, messType="info"):
-                return self.pushMessage(message, messType)
-
-        def getMessage(self):
-                returnData = self.message
-                self.message = ""
+        def getMessages(self):
+                returnData = self.messages
+                self.messages = ""
                 return returnData
 
         def pushMessage(self, message, messType="info"):
+                #this needs to be rewritten...
                 if messType == "error":
                         style = """
                                 <i class="icon-fire"></i> <strong>OH SNAP!!</strong><br>
@@ -98,24 +74,43 @@ class Session(object):
                         %s
                 </div>
                 """ % (messType, style, message)
-                self.message += str(messageTpl)
+                self.messages += str(messageTpl)
 
         def login(self, username, passwd):
-                user = am.findUser(username)
-                if user:
-                        if user["password"] == bcrypt.hashpw(passwd, user["password"]):
-                                self.level = user["perm"]
-                                self.username = user["username"]
-                                self.users_id = user["id"]
+                foundUser = am.findUser(username)
+                if foundUser:
+                        print bcrypt.hashpw(passwd, foundUser.password)
+                        if foundUser.password == bcrypt.hashpw(passwd, foundUser.password):
+                                self.loggedIn = True
+                                self.user = foundUser
+                                self.userID = foundUser.userID
                         else:
-                                raise "Your password appears to be wrong"
+                                self.logout()
+                                raise Exception("Your password appears to be wrong")
                 else:
-                        raise "We can't find that username in our system"
+                        self.logout()
+                        raise Exception("We can't find that username in our system")
 
         def logout(self):
-                self.message = ""
-                self.history = ""
-                self.username = ""
-                self.user_id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-                self.level = None
+                self.loggedIn = False
+                self.user = None
+                self.userID = None
 
+        def commit(self):
+                for bit in self.parts:
+                        c.redisSessionServer.hset("session:"+self.id, bit, getattr(self, bit))
+
+        def __getattr__(self, item):
+                return object.__getattribute__(self, item)
+
+        def __getitem__(self, item):
+                return object.__getattribute__(self, item)
+
+        def __setattr__(self, item, value):
+                return object.__setattr__(self, item, value)
+
+        def __setitem__(self, item, value):
+                return object.__setattr__(self, item, value)
+
+        def delete(self):
+                redisSessionServer.delete("session:"+self.id)

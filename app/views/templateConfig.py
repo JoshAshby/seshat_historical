@@ -15,12 +15,12 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
 from Cheetah.Template import Template
 
@@ -32,23 +32,26 @@ along with partial templates
 tplHome = "./views/htmlTemplates/"
 prtTplHome = "./views/htmlTemplates/partials/"
 
+
 #generic template class, called by all the views currently
 #because nothing fancy is needed.
 class genericTemplate(Template):
-        baseURL = baseURL
-        assetURL = assetURL
-        navTitle = appName
-        nav = " "
-        crumbs = " "
-        footerLinks = " "
-        messages = " "
+        Template.baseURL = c.baseURL
+        Template.assetURL = c.assetURL
+        Template.navTitle = c.appName
+        Template.nav = " "
+        Template.crumbs = " "
+        Template.footerLinks = " "
+        Template.messages = " "
+        Template.session = c.session
 
 
 #just one for Partials, not that it's needed, but just as a 
 #reminder that your working with a partial. same as above basically.
 class partialTemplate(Template):
-        baseURL = baseURL
-        assetURL = assetURL
+        Template.baseURL = c.baseURL
+        Template.assetURL = c.assetURL
+        Template.session = c.session
 
 
 #set-o-main templates. This is really here for ease of use and so forth

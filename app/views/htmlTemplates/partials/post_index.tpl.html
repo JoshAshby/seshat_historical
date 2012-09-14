@@ -1,3 +1,7 @@
 <h2>$title <small>$author</small></h2>
 <p>$post</p>
-<small>Posted at $time. Yes, I'm that exact.</small> <a href="/admin/posts/edit/$id" class="btn">Edit Post</a>
+<small>Posted at $time. Yes, I'm that exact.</small> 
+
+#if $session
+        <a href="/admin/posts/edit/$id" class="btn">Edit Post</a>
+#end if

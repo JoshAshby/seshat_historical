@@ -27,4 +27,5 @@ import objects.baseObject as bo
 
 
 class adminObject(bo.baseHTTPPageObject):
-        __name__ = "admin"
+       __level__ = "admin"
+       __name__ = "admin"

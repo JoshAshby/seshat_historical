@@ -21,8 +21,6 @@ except:
         os.chdir(abspath)
         import config as c
 
-import models.sessionModel as sm
-
 import views.menus.baseMenu as bm
 import views.sidebars.baseSidebar as bs
 import views.lists.baseList as bl
@@ -31,8 +29,7 @@ import views.baseView as bv
 
 
 class baseElements(object):
-        def __init__(self, sessionID, nav="", sidebar=0):
-                self.session = sm.Session(sessionID)
+        def __init__(self, nav="", sidebar=0):
                 self.navActive = nav
                 self.sidebarActive = sidebar
 
@@ -46,7 +43,7 @@ class baseElements(object):
                         "id": "home"
                         }]
 
-                if self.session["username"]:
+                if c.session.loggedIn and c.session.user.username:
                         navDropdownList = [{
                                 "label": bv.baseIcon("cog", "Admin"),
                                 "link": ("/admin/")
@@ -56,7 +53,7 @@ class baseElements(object):
                                 }]
 
 
-                        navDropdown = bm.baseDropdown(navDropdownList, bv.baseIcon("user", "Heya, " + self.session.username, True))
+                        navDropdown = bm.baseDropdown(navDropdownList, bv.baseIcon("user", "Heya, " + c.session.user.username, True))
 
                 else:
                         loginForm = bf.baseForm(fields=[{

@@ -36,6 +36,8 @@ import random
 import Cookie
 import re
 
+import models.sessionModel as sm
+
 cookie = Cookie.SimpleCookie()
 
 
@@ -60,7 +62,7 @@ def app(env, start_response):
         for url in c.urls:
                 matched = url.regex.match(env["REQUEST_URI"][len(c.fcgiBase):].split("?")[0])
                 if matched:
-                        if c.debug: print env["REQUEST_METHOD"], url.url
+                        if c.debug: print"\n\r----------------------------\n\r", env["REQUEST_METHOD"], url.url
                         try:
                                 cookie.load(env["HTTP_COOKIE"])
                         except:
@@ -87,8 +89,11 @@ def app(env, start_response):
                                                 members.update({re.sub("\+", " ", query[0]): re.sub("\+", " ", query[1])})
 
                         sessionID = cookie.output(header="")[5:]
+                        c.session = sm.session(sessionID)
 
-                        newHTTPObject = url.pageObject(env, members, sessionID)
+                        print c.session.loggedIn
+
+                        newHTTPObject = url.pageObject(env, members)
 
                         data, reply = queue.Queue(), queue.Queue()
                         dataThread = gevent.spawn(newHTTPObject.build, data, reply)
@@ -100,6 +105,8 @@ def app(env, start_response):
                         header.append(cookieHeader)
 
                         status = replyData[0]
+
+                        c.session.commit()
 
                         start_response(status, header)
 

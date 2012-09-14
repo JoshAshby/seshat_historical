@@ -15,15 +15,15 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
-import seshat.framework as fw
 from objects.adminObject import adminObject as basePage
+from objects.userObject import userObject as setupPage
 from seshat.route import route
 
 import models.authModel as am
@@ -45,12 +45,12 @@ class adminIndex_admin(basePage):
                 """
                 view = bv.sidebarView()
 
-                elements = be.adminElements(self.sessionID)
+                elements = be.adminElements()
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Admin Panel"
-                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 view["content"] = "Well you have nothing to do here, but you might want to take a look over at the sidebar for somethings to do..."
 
@@ -67,12 +67,12 @@ class usersIndex_admin(basePage):
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements(self.sessionID)
+                elements = be.adminElements()
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Users"
-                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 pageHead = """What to <a href="%s">add a user?</a>""" % ("/admin/user/new")
 
@@ -99,12 +99,12 @@ class usersEdit_admin(basePage):
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements(self.sessionID)
+                elements = be.adminElements()
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Edit User " + id
-                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "username",
@@ -137,16 +137,16 @@ class usersEdit_admin(basePage):
                 try:
                         user = redisUserORM(id)
                         user["username"] = name
-                        user["perms"] = perms
+                        user["level"] = perms
                         user["notes"] = notes
 
                         user.cou()
 
                         self.head = ("303 SEE OTHER", [("location", "/admin/users")])
-                        self.session.pm(("Congrats! The user %s was updated!" % name))
+                        c.session.pushMessage(("Congrats! The user %s was updated!" % name))
                 except:
                         self.head = ("303 SEE OTHER", [("location", "/admin/users")])
-                        self.session.pm(("The user name %s is already in use. Sorry!" % name), "error")
+                        c.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
 
 
 @route("/admin/users/new")
@@ -158,12 +158,12 @@ class usersNew_admin(basePage):
                 """
                 view = bv.sidebarView()
 
-                elements = be.adminElements(self.sessionID)
+                elements = be.adminElements()
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Adding a new User"
-                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "username",
@@ -193,18 +193,18 @@ class usersNew_admin(basePage):
                 perms = self.members["perms"] or "normal"
                 notes = self.members["notes"] or ""
                 try:
-                        user = redisUserORM()
+                        user = am.baseUser()
                         user["username"] = name
-                        user["perms"] = perms
+                        user["level"] = perms
                         user["notes"] = notes
 
-                        user.cou()
+                        user.commit()
 
                         self.head = ("303 SEE OTHER", [("location", "/admin/users/new")])
-                        self.session.pm(("Congrats! The user %s was created!" % name))
+                        c.session.pushMessage(("Congrats! The user %s was created!" % name))
                 except:
                         self.head = ("303 SEE OTHER", [("location", "/admin/users/new")])
-                        self.session.pm(("The user name %s is already in use. Sorry!" % name), "error")
+                        c.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
 
 
 @route("/admin/posts")
@@ -216,12 +216,12 @@ class postsIndex_admin(basePage):
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements(self.sessionID)
+                elements = be.adminElements()
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Posts"
-                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 pageHead = """Want to <a href="%s">add another post?</a>""" % ("/admin/posts/new")
 
@@ -262,12 +262,12 @@ class postsEdit_admin(basePage):
 
                 view = bv.sidebarView()
 
-                elements = be.adminElements(self.sessionID)
+                elements = be.adminElements()
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Edit Post" + id
-                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 view["content"] = bv.baseRow(editForm, offset=0)
 
@@ -284,12 +284,12 @@ class postsEdit_admin(basePage):
 
                 updatePost["title"] = title
                 updatePost["post"] = post
-                updatePost["author"] = self.session.username
+                updatePost["author"] = c.session.username
 
                 updatePost.cou()
 
                 self.head = ("303 SEE OTHER", [("location", "/admin/posts")])
-                self.session.pm(("Congrats! The post %s was updated!" % title))
+                c.session.pushMessage(("Congrats! The post %s was updated!" % title))
 
 
 @route("/admin/posts/new")
@@ -299,12 +299,12 @@ class postsNew_admin(basePage):
                 """
                 view = bv.sidebarView()
 
-                elements = be.adminElements(self.sessionID)
+                elements = be.adminElements()
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Adding a new Post"
-                view["messages"] = bv.baseRow(self.session.gm(), 12, 0)
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "title",
@@ -331,9 +331,38 @@ class postsNew_admin(basePage):
 
                 newPost["title"] = title
                 newPost["post"] = post
-                newPost["author"] = self.session.username
+                newPost["author"] = c.session.username
 
                 newPost.cou()
 
                 self.head = ("303 SEE OTHER", [("location", "/admin/posts")])
-                self.session.pm(("Congrats! The post %s was created!" % title))
+                c.session.pushMessage(("Congrats! The post %s was created!" % title))
+
+
+@route("/setup")
+class setup(setupPage):
+        def GET(self):
+                """
+                """
+                user = am.baseUser()
+                user["username"] = "Josh"
+                user["level"] = "GOD"
+                user["notes"] = ""
+                user.password = "josh"
+
+                user.commit()
+
+                print user.password
+
+                view = bv.sidebarView()
+
+                elements = be.adminElements()
+                view["nav"] = elements.navbar()
+                view["sidebar"] = elements.sidebar()
+
+                view["title"] = "Initial Setup"
+                view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
+
+                view["content"] = "User Josh with password josh has been created."
+
+                return view.build()

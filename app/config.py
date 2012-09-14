@@ -51,11 +51,13 @@ levels = ["admin"]
 Don't change these following settings unless you know what you're doing!!!
 ##########################################################################
 """
+session = None
+
 urls = []
 
 authRegex = re.compile("([^_\W]*)")
 
-redisPostServer = redis.Redis("localhost", db=1)
+redisPostServer = redis.Redis("localhost")
 redisSessionServer = redisPostServer
 redisUserServer = redisPostServer
 redisPermServer = redisPostServer

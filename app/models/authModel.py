@@ -15,75 +15,69 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
+
+import string
+import random
 
 import bcrypt
 
+
 def userList():
         users = []
-        for key in redisUserServer.keys():
+        for key in c.redisUserServer.keys():
                 if key[:5] == "user:":
-                        users.append(redisUserORM(key))
-
+                        users.append(baseUser(key[5:]))
         return users
 
 def findUser(username):
         names = []
         for key in userList():
-                if key["username"] == username:
+                if key.username == username:
                         return key
 
 
-class redisUserORM(object):
-        def __init__(self, id=""):
-                self.keys = {}
-                if not id:
-                        try:
-                                keys = redisUserServer.keys()
-                                keyNum = []
-                                for keyTotal in keys:
-                                        keyNum.append(int(keyTotal[5:]))
-                                self.id = "user:" + str(max(keyNum)+1)
-                        except:
-                                self.id = "user:0"
+class baseUser(object):
+        parts = ["username", "level", "password", "notes", "level"]
+        def __init__(self, id=None):
+                self.id = id
 
-                        self.keys["username"] = ""
-                        self.keys["password"] = ""
-                        self.keys["notes"] = dt.now()
-                        self.keys["perm"] = ""
+                if(self.id and c.redisUserServer.exists("user:"+self.id)):
+                        for bit in self.parts:
+                                setattr(self, bit, c.redisUserServer.hget("user:"+self.id, bit))
                 else:
-                        if not id[:5] == "user:":
-                                self.id = "user:" + str(id)
-                        else:
-                                self.id = str(id)
+                        #User doesn't exist, so create a blank user object
+                        self.id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
 
-                        self.keys["username"] = redisPostServer.hget(self.id, "username")
-                        self.keys["password"] = redisPostServer.hget(self.id, "password")
-                        self.keys["notes"] = redisPostServer.hget(self.id, "notes")
-                        self.keys["perm"] = redisPostServer.hget(self.id, "perm")
+                        for bit in self.parts:
+                                setattr(self, bit, None)
 
-                        self.keys["id"] = self.id[5:]
+        def commit(self):
+                for bit in self.parts:
+                        c.redisUserServer.hset("user:"+self.id, bit, getattr(self, bit))
+
+        def __getattr__(self, item):
+                return object.__getattribute__(self, item)
 
         def __getitem__(self, item):
-                return self.keys[item]
+                return object.__getattribute__(self, item)
+
+        def __setattr__(self, item, value):
+                if item == "password" and value:
+                        value = bcrypt.hashpw(value, bcrypt.gensalt())
+
+                return object.__setattr__(self, item, value)
 
         def __setitem__(self, item, value):
-                if item == "password":
+                if item == "password" and value:
                         value = bcrypt.hashpw(value, bcrypt.gensalt())
-                self.keys[item] = value
 
-        def cou(self):
-                if findUser(self.keys["username"]):
-                        raise "Username already in use"
-                redisPostServer.hset(self.id, "username", self.keys["username"])
-                redisPostServer.hset(self.id, "password", self.keys["password"])
-                redisPostServer.hset(self.id, "notes", self.keys["notes"])
-                redisPostServer.hset(self.id, "perm", self.keys["perm"])
+                return object.__setattr__(self, item, value)
 
         def delete(self):
-                redisUserServer.delete(self.id)
+                c.redisUserServer.delete("user:"+self.id)
