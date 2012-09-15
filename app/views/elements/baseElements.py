@@ -46,7 +46,7 @@ class baseElements(object):
                 if c.session.loggedIn and c.session.user.username:
                         navDropdownList = [{
                                 "label": bv.baseIcon("cog", "Admin"),
-                                "link": ("/admin/")
+                                "link": ("/admin")
                                 }, {
                                 "label": bv.baseIcon("road", "Logout"),
                                 "link": ("/auth/logout")

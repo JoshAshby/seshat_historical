@@ -74,7 +74,7 @@ class usersIndex_admin(basePage):
                 view["title"] = "Users"
                 view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
-                pageHead = """What to <a href="%s">add a user?</a>""" % ("/admin/user/new")
+                pageHead = """What to <a href="%s">add a user?</a>""" % ("/admin/users/new")
 
                 if users:
                         userList = bl.baseList(users, "row_list_User")
@@ -95,7 +95,7 @@ class usersEdit_admin(basePage):
                 """
                 """
                 id = self.members[0]
-                user = am.redisUserORM(id)
+                user = am.baseUser(id)
 
                 view = bv.sidebarView()
 
@@ -103,7 +103,7 @@ class usersEdit_admin(basePage):
                 view["nav"] = elements.navbar()
                 view["sidebar"] = elements.sidebar()
 
-                view["title"] = "Edit User " + id
+                view["title"] = "Edit User " + user.username
                 view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)
 
                 editForm = bf.baseForm(fields=[{
@@ -121,7 +121,7 @@ class usersEdit_admin(basePage):
                         "name": "submit",
                         "type": "submit",
                         "value": "Update"
-                        }], action=("/admin/users/edit" + id))
+                        }], action=("/admin/users/edit/" + id))
 
                 view["content"] = bv.baseRow(editForm, offset=0)
 
@@ -135,12 +135,15 @@ class usersEdit_admin(basePage):
                 perms = self.members["perms"] or "normal"
                 notes = self.members["notes"] or ""
                 try:
-                        user = redisUserORM(id)
+                        user = am.userBase(id)
                         user["username"] = name
                         user["level"] = perms
                         user["notes"] = notes
 
-                        user.cou()
+                        if self.members["password"]:
+                                user.paassword = self.members["password"]
+
+                        user.commit()
 
                         self.head = ("303 SEE OTHER", [("location", "/admin/users")])
                         c.session.pushMessage(("Congrats! The user %s was updated!" % name))
@@ -317,7 +320,7 @@ class postsNew_admin(basePage):
                         "value": "Create"
                         }], action="/admin/posts/new")
 
-                view["content"] = bv.baseRow(editForm)
+                view["content"] = bv.baseRow(editForm, offset=0)
 
                 return view.build()
 
@@ -339,6 +342,8 @@ class postsNew_admin(basePage):
                 c.session.pushMessage(("Congrats! The post %s was created!" % title))
 
 
+
+import bcrypt
 @route("/setup")
 class setup(setupPage):
         def GET(self):
@@ -352,13 +357,12 @@ class setup(setupPage):
 
                 user.commit()
 
-                print user.password
+                print user.password, bcrypt.hashpw("josh", user.password)
 
-                view = bv.sidebarView()
+                view = bv.noSidebarView()
 
-                elements = be.adminElements()
+                elements = be.baseElements()
                 view["nav"] = elements.navbar()
-                view["sidebar"] = elements.sidebar()
 
                 view["title"] = "Initial Setup"
                 view["messages"] = bv.baseRow(c.session.getMessages(), 12, 0)

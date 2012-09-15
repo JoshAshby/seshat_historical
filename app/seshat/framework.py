@@ -91,8 +91,6 @@ def app(env, start_response):
                         sessionID = cookie.output(header="")[5:]
                         c.session = sm.session(sessionID)
 
-                        print c.session.loggedIn
-
                         newHTTPObject = url.pageObject(env, members)
 
                         data, reply = queue.Queue(), queue.Queue()

@@ -52,7 +52,6 @@ class baseHTTPPageObject(object):
                 content = ""
 
                 matches = c.authRegex.findall(str(self.__class__.__name__))
-                print self.__level__, self.__class__.__level__
                 if not error and self.__level__:
                         if c.session.user["level"] == "GOD":
                                 """

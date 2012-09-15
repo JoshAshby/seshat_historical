@@ -39,7 +39,7 @@ class baseList(object):
                 for block in self.blocks:
                         page = tc.partialTplSet[self.template]
 
-                        for part in block.keys:
+                        for part in block.parts:
                                 if type(block[part]) != str and block[part] != None:
                                         setattr(page, part, block[part].build())
                                 else:

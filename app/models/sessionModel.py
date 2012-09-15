@@ -79,17 +79,16 @@ class session(object):
         def login(self, username, passwd):
                 foundUser = am.findUser(username)
                 if foundUser:
-                        print bcrypt.hashpw(passwd, foundUser.password)
                         if foundUser.password == bcrypt.hashpw(passwd, foundUser.password):
                                 self.loggedIn = True
                                 self.user = foundUser
-                                self.userID = foundUser.userID
+                                self.userID = foundUser.id
                         else:
                                 self.logout()
                                 raise Exception("Your password appears to be wrong")
                 else:
                         self.logout()
-                        raise Exception("We can't find that username in our system")
+                        raise Exception("We can't find that username, are you sure it's correct?")
 
         def logout(self):
                 self.loggedIn = False
