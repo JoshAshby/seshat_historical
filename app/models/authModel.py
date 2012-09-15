@@ -27,6 +27,8 @@ import random
 
 import bcrypt
 
+import models.baseModel as bm
+
 
 def userList():
         users = []
@@ -42,30 +44,10 @@ def findUser(username):
                         return key
 
 
-class baseUser(object):
+class baseUser(bm.baseModel):
+        __dbname__ = "redisUserServer"
+        __dbid__ = "user:"
         parts = ["username", "level", "password", "notes", "level", "id"]
-        def __init__(self, id=None):
-                self.id = id
-
-                if(self.id and c.redisUserServer.exists("user:"+self.id)):
-                        for bit in self.parts:
-                                setattr(self, bit, c.redisUserServer.hget("user:"+self.id, bit))
-                        self.id = id
-                else:
-                        #User doesn't exist, so create a blank user object
-                        for bit in self.parts:
-                                setattr(self, bit, None)
-                        self.id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-
-        def commit(self):
-                for bit in self.parts:
-                        c.redisUserServer.hset("user:"+self.id, bit, getattr(self, bit))
-
-        def __getattr__(self, item):
-                return object.__getattribute__(self, item)
-
-        def __getitem__(self, item):
-                return object.__getattribute__(self, item)
 
         def __setattr__(self, item, value):
                 if item == "password" and value and value[:7] != "$2a$12$":
@@ -78,6 +60,3 @@ class baseUser(object):
                         value = bcrypt.hashpw(value, bcrypt.gensalt())
 
                 return object.__setattr__(self, item, value)
-
-        def delete(self):
-                c.redisUserServer.delete("user:"+self.id)

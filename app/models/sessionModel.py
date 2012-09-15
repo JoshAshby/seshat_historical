@@ -27,16 +27,19 @@ import random
 import bcrypt
 
 import models.authModel as am
+import models.baseModel as bm
 
 
-class session(object):
+class session(bm.baseModel):
+        __dbname__ = "redisSessionServer"
+        __dbid__ = "session:"
         parts = ["history", "userID", "messages", "loggedIn"]
         def __init__(self, id):
                 self.id = id
 
-                if(c.redisSessionServer.exists("session:"+self.id)):
+                if(getattr(c, self.__dbname__).exists(self.__dbid__+self.id)):
                         for bit in self.parts:
-                                setattr(self, bit, c.redisSessionServer.hget("session:"+self.id, bit))
+                                setattr(self, bit, getattr(c, self.__dbname__).hget(self.__dbid__+self.id, bit))
 
                         self.user = am.baseUser(self.userID)
                 else:
@@ -94,22 +97,3 @@ class session(object):
                 self.loggedIn = False
                 self.user = None
                 self.userID = None
-
-        def commit(self):
-                for bit in self.parts:
-                        c.redisSessionServer.hset("session:"+self.id, bit, getattr(self, bit))
-
-        def __getattr__(self, item):
-                return object.__getattribute__(self, item)
-
-        def __getitem__(self, item):
-                return object.__getattribute__(self, item)
-
-        def __setattr__(self, item, value):
-                return object.__setattr__(self, item, value)
-
-        def __setitem__(self, item, value):
-                return object.__setattr__(self, item, value)
-
-        def delete(self):
-                redisSessionServer.delete("session:"+self.id)

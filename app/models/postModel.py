@@ -23,6 +23,7 @@ except:
         import config as c
 
 from datetime import datetime as dt
+import models.baseModel as bm
 
 import markdown
 import string
@@ -45,52 +46,22 @@ def postList(md=True):
         return posts
 
 
-class basePost(object):
+class basePost(bm.baseModel):
+        __dbname__ = "redisPostServer"
+        __dbid__ = "post:"
         parts = ["author", "title", "post", "time", "id"]
+
         def __init__(self, id=None):
                 self.id = id
 
                 if(self.id and c.redisPostServer.exists("post:"+self.id)):
                         for bit in self.parts:
                                 setattr(self, bit, c.redisPostServer.hget("post:"+self.id, bit))
-                        self.id = id
+                                self.id = id
+
                 else:
                         #Post doesn't exist, so create a blank post object
                         for bit in self.parts:
                                 setattr(self, bit, None)
-
-                        self.time = dt.utcnow().strftime("%b-%d-%Y %I:%M %p")
-                        self.id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-
-        def commit(self):
-                for bit in self.parts:
-                        c.redisPostServer.hset("post:"+self.id, bit, getattr(self, bit))
-
-        def __str__(self):
-                reply = ""
-                for part in self.parts:
-                         reply += "%s: "%(part) + getattr(self, part) + "\r\n"
-
-                return reply
-
-        def __repr__(self):
-                reply = ""
-                for part in self.parts:
-                         reply += "%s: "%(part) + getattr(self, part) + "\r\n"
-
-                return reply
-
-        def __getattr__(self, item):
-                return object.__getattribute__(self, item)
-
-        def __getitem__(self, item):
-                return object.__getattribute__(self, item)
-
-        def __setattr__(self, item, value):
-                return object.__setattr__(self, item, value)
-
-        def __setitem__(self, item, value):
-                return object.__setattr__(self, item, value)
-
-        def delete(self):
-                c.redisPostServer.delete("post:"+self.id)
+                                self.time = dt.utcnow().strftime("%b-%d-%Y %I:%M %p")
+                                self.id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))

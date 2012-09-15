@@ -132,7 +132,6 @@ class usersEdit_admin(basePage):
                 """
                 id = self.members[0]
                 name = self.members["username"] or ""
-                perms = self.members["perms"] or "normal"
                 notes = self.members["notes"] or ""
 
                 try:
@@ -195,7 +194,6 @@ class usersNew_admin(basePage):
 
                 """
                 name = self.members["username"]
-                perms = self.members["perms"] or "normal"
                 notes = self.members["notes"] or ""
                 try:
                         user = am.baseUser()
