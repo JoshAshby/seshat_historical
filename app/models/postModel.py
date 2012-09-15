@@ -15,81 +15,82 @@ joshuaashby@joshashby.com
 import sys, os
 
 try:
-        from config import *
+        import config as c
 except:
         abspath = os.path.dirname(__file__)
         sys.path.append(abspath)
         os.chdir(abspath)
-        from config import *
+        import config as c
 
 from datetime import datetime as dt
 
 import markdown
+import string
+import random
 
 
 def postList(md=True):
         posts = []
-        for key in redisPostServer.keys():
+        for key in c.redisPostServer.keys():
                 if key[:5]=="post:":
-                        post = redisPostORM(key)
+                        post = basePost(key[5:])
                         if md:
-                                post["post"] = str(markdown.markdown(post["post"]))
+                                try:
+                                        post["post"] = str(markdown.markdown(post["post"]))
+
+                                except:
+                                        pass
                         posts.append(post)
 
         return posts
 
 
-class redisPostORM(object):
-        """
-        Baisc ORM style system for Posts which are stored in Redis as hashes.
-        """
-        def __init__(self, id=""):
-                """
-                Go through and either make a new post object, or if we are given a key
-                which can be in the style of either a string or number, and formated as
-                just the number, or like so: post:postID
-                """
-                self.keys = {}
-                if not id:
-                        try:
-                                keys = redisPostServer.keys()
-                                keyNum = []
-                                for keyTotal in keys:
-                                        keyNum.append(int(keyTotal[5:]))
-                                self.id = "post:" + str(max(keyNum)+1)
-                        except:
-                                self.id = "post:0"
-                        self.keys["author"] = ""
-                        self.keys["title"] = ""
-                        self.keys["time"] = dt.now()
-                        self.keys["post"] = ""
+class basePost(object):
+        parts = ["author", "title", "post", "time", "id"]
+        def __init__(self, id=None):
+                self.id = id
+
+                if(self.id and c.redisPostServer.exists("post:"+self.id)):
+                        for bit in self.parts:
+                                setattr(self, bit, c.redisPostServer.hget("post:"+self.id, bit))
+                        self.id = id
                 else:
-                        if not id[:5] == "post:":
-                                self.id = "post:" + str(id)
-                        else:
-                                self.id = str(id)
+                        #Post doesn't exist, so create a blank post object
+                        for bit in self.parts:
+                                setattr(self, bit, None)
 
-                        self.keys["author"] = redisPostServer.hget(self.id, "author")
-                        self.keys["title"] = redisPostServer.hget(self.id, "title")
-                        self.keys["time"] = redisPostServer.hget(self.id, "time")
-                        self.keys["post"] = redisPostServer.hget(self.id, "post")
+                        self.time = dt.utcnow().strftime("%b-%d-%Y %I:%M %p")
+                        self.id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
 
-                self.keys["id"] = self.id[5:]
+        def commit(self):
+                for bit in self.parts:
+                        c.redisPostServer.hset("post:"+self.id, bit, getattr(self, bit))
+
+        def __str__(self):
+                reply = ""
+                for part in self.parts:
+                         reply += "%s: "%(part) + getattr(self, part) + "\r\n"
+
+                return reply
+
+        def __repr__(self):
+                reply = ""
+                for part in self.parts:
+                         reply += "%s: "%(part) + getattr(self, part) + "\r\n"
+
+                return reply
+
+        def __getattr__(self, item):
+                return object.__getattribute__(self, item)
 
         def __getitem__(self, item):
-                return self.keys[item]
+                return object.__getattribute__(self, item)
+
+        def __setattr__(self, item, value):
+                return object.__setattr__(self, item, value)
 
         def __setitem__(self, item, value):
-                self.keys[item] = value
-
-        def cou(self):
-                """
-                stands for create or update since this is really a dual function function
-                """
-                redisPostServer.hset(self.id, "author", self.keys["author"])
-                redisPostServer.hset(self.id, "title", self.keys["title"])
-                redisPostServer.hset(self.id, "post", self.keys["post"])
-                redisPostServer.hset(self.id, "time", dt.now())
+                return object.__setattr__(self, item, value)
 
         def delete(self):
-                redisPostServer.delete(self.id)
+                c.redisPostServer.delete("post:"+self.id)

@@ -43,7 +43,7 @@ things such as static assets and what not.
 baseURL = "http://localhost"
 assetURL = "http://localhost/static"
 
-levels = ["admin"]
+levels = ["normal", "admin", "GOD"]
 
 """
 #########################STOP EDITING#####################################

@@ -131,9 +131,10 @@ class usersEdit_admin(basePage):
                 """
                 """
                 id = self.members[0]
-                name = self.members["user"] or ""
+                name = self.members["username"] or ""
                 perms = self.members["perms"] or "normal"
                 notes = self.members["notes"] or ""
+
                 try:
                         user = am.userBase(id)
                         user["username"] = name
@@ -147,6 +148,7 @@ class usersEdit_admin(basePage):
 
                         self.head = ("303 SEE OTHER", [("location", "/admin/users")])
                         c.session.pushMessage(("Congrats! The user %s was updated!" % name))
+
                 except:
                         self.head = ("303 SEE OTHER", [("location", "/admin/users")])
                         c.session.pushMessage(("The user name %s is already in use. Sorry!" % name), "error")
@@ -192,7 +194,7 @@ class usersNew_admin(basePage):
                 """
 
                 """
-                name = self.members["user"]
+                name = self.members["username"]
                 perms = self.members["perms"] or "normal"
                 notes = self.members["notes"] or ""
                 try:
@@ -200,6 +202,7 @@ class usersNew_admin(basePage):
                         user["username"] = name
                         user["level"] = perms
                         user["notes"] = notes
+                        user.paassword = self.members["password"]
 
                         user.commit()
 
@@ -248,7 +251,7 @@ class postsEdit_admin(basePage):
                 """
                 id = self.members[0]
 
-                post = pm.redisPostORM(id)
+                post = pm.basePost(id)
 
                 editForm = bf.baseForm(fields=[{
                         "name": "title",
@@ -283,13 +286,13 @@ class postsEdit_admin(basePage):
                 title = self.members["title"]
                 post = urllib.unquote(self.members["post"])
 
-                updatePost = pm.redisPostORM(id)
+                updatePost = pm.basePost(id)
 
                 updatePost["title"] = title
                 updatePost["post"] = post
-                updatePost["author"] = c.session.username
+                updatePost["author"] = c.session.user.username
 
-                updatePost.cou()
+                updatePost.commit()
 
                 self.head = ("303 SEE OTHER", [("location", "/admin/posts")])
                 c.session.pushMessage(("Congrats! The post %s was updated!" % title))
@@ -330,13 +333,13 @@ class postsNew_admin(basePage):
                 title = self.members["title"]
                 post = urllib.unquote(self.members["post"])
 
-                newPost = pm.redisPostORM()
+                newPost = pm.basePost()
 
                 newPost["title"] = title
                 newPost["post"] = post
-                newPost["author"] = c.session.username
+                newPost["author"] = c.session.user.username
 
-                newPost.cou()
+                newPost.commit()
 
                 self.head = ("303 SEE OTHER", [("location", "/admin/posts")])
                 c.session.pushMessage(("Congrats! The post %s was created!" % title))
