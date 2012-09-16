@@ -30,10 +30,11 @@ import models.authModel as am
 import models.baseModel as bm
 
 
-class session(bm.baseModel):
+class session(bm.baseRedisModel):
         __dbname__ = "redisSessionServer"
         __dbid__ = "session:"
         parts = ["history", "userID", "messages", "loggedIn"]
+
         def __init__(self, id):
                 self.id = id
 
@@ -46,9 +47,10 @@ class session(bm.baseModel):
                         #No session was found so make a new one
                         for bit in self.parts:
                                 setattr(self, bit, None)
-                                self.messages = ""
-                                self.history = ""
-                                self.loggedIn = False
+
+                        self.messages = ""
+                        self.history = ""
+                        self.loggedIn = False
 
                         self.user = am.baseUser()
 

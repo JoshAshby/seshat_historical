@@ -26,7 +26,7 @@ import string
 import random
 
 
-class baseModel(object):
+class baseRedisModel(object):
         def __init__(self, id=None):
                 self.id = id
 
@@ -38,6 +38,10 @@ class baseModel(object):
                         for bit in self.parts:
                                 setattr(self, bit, None)
                         self.id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+                        self.new()
+
+        def new(self):
+                pass
 
         def commit(self):
                 for bit in self.parts:

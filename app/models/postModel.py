@@ -46,22 +46,10 @@ def postList(md=True):
         return posts
 
 
-class basePost(bm.baseModel):
+class basePost(bm.baseRedisModel):
         __dbname__ = "redisPostServer"
         __dbid__ = "post:"
         parts = ["author", "title", "post", "time", "id"]
 
-        def __init__(self, id=None):
-                self.id = id
-
-                if(self.id and c.redisPostServer.exists("post:"+self.id)):
-                        for bit in self.parts:
-                                setattr(self, bit, c.redisPostServer.hget("post:"+self.id, bit))
-                                self.id = id
-
-                else:
-                        #Post doesn't exist, so create a blank post object
-                        for bit in self.parts:
-                                setattr(self, bit, None)
-                                self.time = dt.utcnow().strftime("%b-%d-%Y %I:%M %p")
-                                self.id = "".join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+        def new(self):
+                self.time = dt.utcnow().strftime("%b-%d-%Y %I:%M %p")

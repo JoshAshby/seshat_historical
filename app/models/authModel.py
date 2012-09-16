@@ -44,7 +44,7 @@ def findUser(username):
                         return key
 
 
-class baseUser(bm.baseModel):
+class baseUser(bm.baseRedisModel):
         __dbname__ = "redisUserServer"
         __dbid__ = "user:"
         parts = ["username", "level", "password", "notes", "level", "id"]
