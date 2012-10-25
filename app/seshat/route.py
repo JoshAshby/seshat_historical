@@ -1,5 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """
+Seshat
 Web App/API framework built on top of gevent
 routing decorator
 
@@ -16,7 +17,7 @@ from config import *
 
 import seshat.baseURL as bu
 import logging
-logger = logging.getLogger("flagr.seshat.route")
+logger = logging.getLogger("seshat.seshat.route")
 
 
 def route(routeURL):

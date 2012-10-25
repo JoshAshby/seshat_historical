@@ -1,5 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """
+Seshat
 Web App/API framework built on top of gevent
 baseObject to build pages off of
 
@@ -13,8 +14,7 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
-
-import objects.baseObject as bo
+import seshat.baseObject as bo
 
 
 class userObject(bo.baseHTTPPageObject):

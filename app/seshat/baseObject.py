@@ -1,5 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """
+Seshat
 Web App/API framework built on top of gevent
 baseObject to build pages off of
 
@@ -13,7 +14,6 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
-import views.smartPage as sp
 import models.blocks.helpers as helpers
 
 
@@ -30,7 +30,7 @@ class baseHTTPPageObject(object):
                 self.env = env
                 self.members = members
 
-                self.view = sp.flagrPage()
+                self.view = ""
 
                 self.method = env["REQUEST_METHOD"]
 
@@ -65,29 +65,16 @@ class baseHTTPPageObject(object):
 
                         elif self.__level__ != c.session.user["level"]:
                                 c.session.pushMessage("You need to have %s rights to access this." % self.__level__)
-                                self.head = ("303 SEE OTHER", [("location", "/you")])
+                                self.head = ("303 SEE OTHER", [("location", "/")])
                                 error = True
 
                 elif helpers.boolean(self.__login__) and not helpers.boolean(c.session.loggedIn):
                         c.session.pushMessage("You need to be logged in to view this.")
-                        self.head = ("303 SEE OTHER", [("location", "/auth/login")])
+                        self.head = ("303 SEE OTHER", [("location", "/")])
                         error = True
 
                 if not error:
                         getattr(self, self.method)()
-                        if not self.view.title: self.view.title = self.__menu__
-                        self.view.title = "%s - %s" % (c.appName, self.view.title)
-                        self.view.scripts += """
-                        <script>
-                        $('.btn-group').tooltip({
-                                selector: "a[rel=tooltip]"
-                                })
-                        $('.nav-tabs').tooltip({
-                                selector: "a[rel=tooltip]"
-                                })
-                        </script>
-                        """
-                        self.view.build()
                         content = self.view
                         if self.method == "GET" or self.method == "HEAD":
                                 c.session.messages = ""

@@ -1,5 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """
+Seshat
 Web App/API framework built on top of gevent
 Config settings
 
@@ -16,8 +17,7 @@ import re
 import redis
 import os
 
-appName = "fla.gr"
-appNameNav = "<i class=\"icon-flag\"></i> fla.gr"
+appName = "seshat"
 
 """
 We need to make
@@ -61,8 +61,5 @@ urls = []
 
 authRegex = re.compile("([^_\W]*)")
 
-redisPostServer = redis.Redis("localhost", db=3)
-redisCarouselServer = redisPostServer
 redisSessionServer = redis.Redis("localhost", db=1)
 redisUserServer = redis.Redis("localhost", db=0)
-redisFlagServer = redis.Redis("localhost", db=2)

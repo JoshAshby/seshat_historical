@@ -1,5 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """
+Seshat
 Web App/API framework built on top of gevent
 Main framework app
 
@@ -20,7 +21,7 @@ from gevent_fastcgi.server import WSGIServer
 from gevent import queue
 
 import logging
-logger = logging.getLogger("flagr.seshat")
+logger = logging.getLogger("seshat.seshat")
 
 import string
 import random

@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 """
+Seshat
 Web App/API framework built on top of gevent
 Main application file.
 Run this!
@@ -26,6 +27,7 @@ os.chdir(abspath)
 debug = False
 logFolder = "/var/log/python/"
 pidFolder = "/tmp/"
+appFileName = "seshat"
 
 def setupLog():
         import logging
@@ -36,10 +38,10 @@ def setupLog():
         formatter = logging.Formatter("""%(asctime)s - %(name)s - %(levelname)s
         %(message)s""")
 
-        logger = logging.getLogger("flagr")
+        logger = logging.getLogger(appFileName)
         logger.setLevel(level)
 
-        fh = logging.FileHandler(logFolder+"flagr.log")
+        fh = logging.FileHandler(logFolder+appFileName+".log")
         fh.setLevel(level)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
@@ -61,28 +63,28 @@ class app(Daemon):
         down = False
         def run(self):
                 setupLog()
-                import seshat.framework as fw
+                import seshat.framework as seshat
 
                 if self.down:
                         import controllers.maintenanceController
                 else:
                         import controllers.controllerMap
 
-                fw.forever()
+                seshat.serveForever()
 
 
 if __name__ == "__main__":
-        daemon = app(pidFolder+'flagr.pid')
+        daemon = app(pidFolder+appFileName+'.pid')
         daemon.down=False
         if len(sys.argv) >= 2:
                 if 'noDaemon' in sys.argv:
                         setupLog()
-                        import seshat.framework as fw
+                        import seshat.seshat as seshat
                         if 'maintenance' in sys.argv:
                                 import controllers.maintenanceController
                         else:
                                 import controllers.controllerMap
-                        fw.forever()
+                        seshat.serveForever()
 
                 elif 'start' in sys.argv:
                         daemon.start()
