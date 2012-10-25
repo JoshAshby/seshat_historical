@@ -12,17 +12,11 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
-import sys, os
-
-try:
-        from config import *
-except:
-        abspath = os.path.dirname(__file__)
-        sys.path.append(abspath)
-        os.chdir(abspath)
-        from config import *
+from config import *
 
 import seshat.baseURL as bu
+import logging
+logger = logging.getLogger("flagr.seshat.route")
 
 
 def route(routeURL):
@@ -31,5 +25,8 @@ def route(routeURL):
                 urlObject = bu.url(routeURL, HTTPObject)
                 urls.append(urlObject)
                 HTTPObject.__url__ = routeURL
+                if debug: logger.debug("""Made route table entry for:
+        Object: %(objectName)s
+        Pattern %(regex)s""" % {"regex": routeURL, "objectName": HTTPObject.__module__ + "." + HTTPObject.__name__})
                 return HTTPObject
         return wrapper

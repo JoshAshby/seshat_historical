@@ -12,20 +12,19 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
-import sys, os
+import config as c
 
-try:
-        import config as c
-except:
-        abspath = os.path.dirname(__file__)
-        sys.path.append(abspath)
-        os.chdir(abspath)
-        import config as c
-
-import models.sessionModel as sm
 import objects.baseObject as bo
+import views.pyStrap.pyStrap as ps
 
 
 class adminObject(bo.baseHTTPPageObject):
        __level__ = "admin"
+       __login__ = True
        __name__ = "admin"
+       def finishInit(self):
+               self.view.sidebar = ps.baseWell(ps.baseNavList(items=[{"header": "Things to do..."},
+                {"link": c.baseURL + "/admin", "name": "%s Front Panel"%ps.baseIcon("dashboard")},
+                {"link": c.baseURL + "/admin/posts", "name": "%s Front Page Posts"%ps.baseIcon("rss")},
+                {"link": c.baseURL + "/admin/carousels", "name": "%s Front Page Carousel"%ps.baseIcon("play")},
+                {"link": c.baseURL + "/admin/users", "name": "%s Manage Some Users" % ps.baseIcon("group")}]))

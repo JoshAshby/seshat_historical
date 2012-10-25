@@ -15,7 +15,12 @@ joshuaashby@joshashby.com
 import config as c
 
 import objects.baseObject as bo
+import views.pyStrap.pyStrap as ps
 
 
-class userObject(bo.baseHTTPPageObject):
-        __name__ = "user"
+class godObject(bo.baseHTTPPageObject):
+       __level__ = "GOD"
+       __login__ = True
+       __name__ = "god"
+       def finishInit(self):
+               self.view.sidebar = ps.baseWell(ps.baseNavList(items=[{"header": "Your Throne Awaits..."}]))

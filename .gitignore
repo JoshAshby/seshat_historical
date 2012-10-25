@@ -14,6 +14,9 @@
 .sw[nop]
 *.tmp
 *.scratchpad
+.searchIndex/
+virt/
+*.out
 
 # Compiled source #
 ###################

@@ -14,8 +14,10 @@ joshuaashby@joshashby.com
 """
 import re
 import redis
+import os
 
-appName = "Seshat"
+appName = "fla.gr"
+appNameNav = "<i class=\"icon-flag\"></i> fla.gr"
 
 """
 We need to make
@@ -45,6 +47,7 @@ assetURL = "http://localhost/static"
 
 levels = ["normal", "admin", "GOD"]
 
+
 """
 #########################STOP EDITING#####################################
 ***WARNING***
@@ -52,12 +55,14 @@ Don't change these following settings unless you know what you're doing!!!
 ##########################################################################
 """
 session = None
+path = os.path.dirname(__file__)
 
 urls = []
 
 authRegex = re.compile("([^_\W]*)")
 
-redisPostServer = redis.Redis("localhost")
-redisSessionServer = redisPostServer
-redisUserServer = redisPostServer
-redisPermServer = redisPostServer
+redisPostServer = redis.Redis("localhost", db=3)
+redisCarouselServer = redisPostServer
+redisSessionServer = redis.Redis("localhost", db=1)
+redisUserServer = redis.Redis("localhost", db=0)
+redisFlagServer = redis.Redis("localhost", db=2)
