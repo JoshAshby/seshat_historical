@@ -43,18 +43,18 @@ class session(bm.baseRedisModel):
                         for bit in self.parts:
                                 setattr(self, bit, None)
 
-                        self.messages = ""
+                        self.alerts = ""
                         self.history = ""
                         self.loggedIn = False
 
                         self.user = profilem.profile()
 
-        def getMessages(self):
-                returnData = self.messages
-                self.messages = ""
+        def getAlert(self):
+                returnData = self.alerts
+                self.alerts = ""
                 return returnData
 
-        def pushMessage(self, message, title="", icon="pushpin", type="info"):
+        def pushAlert(self, message, title="", icon="pushpin", type="info"):
                 content = ""
                 if icon and title:
                         content += " %s"%title
@@ -66,7 +66,7 @@ class session(bm.baseRedisModel):
                 content += message
 
                 if type:
-                        self.messages += content
+                        self.alerts += content
 
         def login(self, username, passwd):
                 foundUser = profilem.findUser(username)

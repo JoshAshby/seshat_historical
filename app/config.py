@@ -56,7 +56,6 @@ Don't change these following settings unless you know what you're doing!!!
 ##########################################################################
 """
 session = None
-path = os.path.dirname(__file__)
 
 urls = []
 

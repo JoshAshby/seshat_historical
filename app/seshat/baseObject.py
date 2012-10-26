@@ -79,7 +79,7 @@ class baseHTTPObject(object):
                         self.view.title = "%s - %s" % (c.appName, self.view.title)
                         self.view.scripts += ""
                         self.view.css += ""
-                        content = self.view
+                        content = self.view.build()
                         if self.method == "GET" or self.method == "HEAD":
                                 c.session.alerts = ""
 

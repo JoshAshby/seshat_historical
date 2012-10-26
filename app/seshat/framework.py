@@ -34,6 +34,7 @@ import models.basic.sessionModel as sm
 import models.blocks.helpers as helpers
 cookie = Cookie.SimpleCookie()
 
+
 def app(env, start_response):
         """
         WSGI app and controller
@@ -55,12 +56,13 @@ def app(env, start_response):
         for url in c.urls:
                 matched = url.regex.match(env["REQUEST_URI"][len(c.fcgiBase):].split("?")[0])
                 if matched:
-                        if c.debug: logger.debug("""\n\r----------------------------
+                        if c.debug:
+                                logger.debug("""\n\r----------------------------
         Method: %s
         URL: %s
         Object: %s
         IP: %s
-""" % (env["REQUEST_METHOD"], env["REQUEST_URI"], url.pageObject.__name__, env["REMOTE_ADDR"]))
+""" % (env["REQUEST_METHOD"], env["REQUEST_URI"], url.pageObject.__module__+"."+url.pageObject.__name__, env["REMOTE_ADDR"]))
 
                         try:
                                 cookie.load(env["HTTP_COOKIE"])
@@ -98,8 +100,9 @@ def app(env, start_response):
                         newHTTPObject = url.pageObject(env, members)
 
                         data, reply = queue.Queue(), queue.Queue()
-                        dataThread = gevent.spawn(newHTTPObject.build, data, reply)
-                        dataThread.join()
+#                        dataThread = gevent.spawn(newHTTPObject.build, data, reply)
+#                        dataThread.join()
+                        newHTTPObject.build(data, reply)
 
                         replyData = reply.get()
                         cookieHeader = ("Set-Cookie", cookie.output(header=""))

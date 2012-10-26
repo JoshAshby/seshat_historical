@@ -25,3 +25,4 @@ class url(object):
                 self.regex = re.compile("^" + urlStr + "$")
                 self.url = urlStr
                 self.pageObject = pageObject
+                self.name = pageObject.__menu__

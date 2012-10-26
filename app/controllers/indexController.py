@@ -14,7 +14,6 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
-
 import seshat.baseObject as bo
 import seshat.baseView as bv
 from seshat.route import route

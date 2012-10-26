@@ -82,6 +82,7 @@ class baseHTMLView(baseView):
                 self.title = ""
                 self.body = ""
                 self.scripts = ""
+                self.css = ""
                 self.returnHTML = ""
 
         def build(self):
@@ -102,4 +103,6 @@ class baseHTMLView(baseView):
                 %(scripts)s
         </body>
 </html>""" % self
+
+                return self.returnHTML
 
