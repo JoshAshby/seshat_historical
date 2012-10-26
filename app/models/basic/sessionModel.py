@@ -14,15 +14,14 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
+import siteConfig.dbConfig as dbc
 import string
 import random
 import bcrypt
 
 import models.basic.baseModel as bm
-import views.pyStrap.pyStrap as ps
 
 import models.profileModel as profilem
-import models.messageModel as mm
 
 
 class session(bm.baseRedisModel):
@@ -33,12 +32,11 @@ class session(bm.baseRedisModel):
         def __init__(self, id):
                 self.id = id
 
-                if(getattr(c, self.__dbname__).exists(self.__dbid__+self.id)):
+                if(getattr(dbc, self.__dbname__).exists(self.__dbid__+self.id)):
                         for bit in self.parts:
-                                setattr(self, bit, getattr(c, self.__dbname__).hget(self.__dbid__+self.id, bit))
+                                setattr(self, bit, getattr(dbc, self.__dbname__).hget(self.__dbid__+self.id, bit))
 
                         self.user = profilem.profile(self.userID)
-                        self.mail = mm.mail(self.userID)
 
                 else:
                         #No session was found so make a new one
@@ -50,7 +48,6 @@ class session(bm.baseRedisModel):
                         self.loggedIn = False
 
                         self.user = profilem.profile()
-                        self.mail = mm.mail()
 
         def getMessages(self):
                 returnData = self.messages
@@ -60,16 +57,16 @@ class session(bm.baseRedisModel):
         def pushMessage(self, message, title="", icon="pushpin", type="info"):
                 content = ""
                 if icon and title:
-                        content += ps.baseHeading(ps.baseIcon(icon)+ " %s"%title, size=4)
+                        content += " %s"%title
                 if icon and not title:
-                        content += ps.baseIcon(icon)
+                        content += ""
                 elif title and not icon:
-                        content += ps.baseHeading(title, size=4)
+                        content += title
 
-                content += ps.baseParagraph(message)
+                content += message
 
                 if type:
-                        self.messages += ps.baseAlert(content, classes="alert-%s alert-block"%type)
+                        self.messages += content
 
         def login(self, username, passwd):
                 foundUser = profilem.findUser(username)
@@ -94,4 +91,3 @@ class session(bm.baseRedisModel):
                 self.loggedIn = False
                 self.user = None
                 self.userID = None
-                self.mail = None

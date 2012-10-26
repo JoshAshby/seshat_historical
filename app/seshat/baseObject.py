@@ -14,13 +14,20 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
+import baseView as bv
 import models.blocks.helpers as helpers
 
 
-class baseHTTPPageObject(object):
+class baseHTTPObject(object):
         __level__ = None
         __login__ = "False"
         __menu__ = ""
+        head = ("200 OK", 
+                [
+                        ("Content-type", "text/html"),
+                ])
+        view = bv.baseView()
+
         """
         Base HTTP page response object
         This determins which REQUEST method to send to,
@@ -30,14 +37,7 @@ class baseHTTPPageObject(object):
                 self.env = env
                 self.members = members
 
-                self.view = ""
-
                 self.method = env["REQUEST_METHOD"]
-
-                self.head = ("200 OK", 
-                        [
-                                ("Content-type", "text/html"),
-                        ])
 
                 self.finishInit()
 
@@ -64,20 +64,24 @@ class baseHTTPPageObject(object):
                                 pass
 
                         elif self.__level__ != c.session.user["level"]:
-                                c.session.pushMessage("You need to have %s rights to access this." % self.__level__)
+                                c.session.pushAlert("You need to have %s rights to access this." % self.__level__)
                                 self.head = ("303 SEE OTHER", [("location", "/")])
                                 error = True
 
                 elif helpers.boolean(self.__login__) and not helpers.boolean(c.session.loggedIn):
-                        c.session.pushMessage("You need to be logged in to view this.")
+                        c.session.pushAlert("You need to be logged in to view this.")
                         self.head = ("303 SEE OTHER", [("location", "/")])
                         error = True
 
                 if not error:
                         getattr(self, self.method)()
+                        if not self.view.title: self.view.title = self.__menu__
+                        self.view.title = "%s - %s" % (c.appName, self.view.title)
+                        self.view.scripts += ""
+                        self.view.css += ""
                         content = self.view
                         if self.method == "GET" or self.method == "HEAD":
-                                c.session.messages = ""
+                                c.session.alerts = ""
 
                 data.put(str(content))
                 data.put(StopIteration)

@@ -14,6 +14,7 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
+import siteConfig.dbConfig as dbc
 
 import string
 import random
@@ -23,12 +24,12 @@ class blockSet(object):
         def __init__(self, id, keyID, dbName, dataType=str):
                 self.id = id
 
-                if(self.id and getattr(c, self.dbName).exists(self.keyID+self.id)):
-                        list = [ dataType(i) for i in getattr(c, self.dbName).smembers(self.keyID+self.id) ]
+                if(self.id and getattr(dbc, self.dbName).exists(self.keyID+self.id)):
+                        list = [ dataType(i) for i in getattr(dbc self.dbName).smembers(self.keyID+self.id) ]
                         self.current = list
                 else:
                         self.current = list()
 
         def commit(self):
                 for bit in self.current:
-                        getattr(c, self.dbName).rpush(self.keyID+self.id, bit)
+                        getattr(dbc, self.dbName).rpush(self.keyID+self.id, bit)

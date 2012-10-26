@@ -13,7 +13,6 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
-from config import *
 import re
 
 

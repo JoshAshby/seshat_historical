@@ -149,7 +149,7 @@ def main():
         return server
 
 
-def forever():
+def serveForever():
         """
         Server
 

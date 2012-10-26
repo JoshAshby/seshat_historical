@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """
 Seshat
 Web App/API framework built on top of gevent
@@ -23,30 +23,26 @@ import os
 abspath = os.path.dirname(__file__)
 sys.path.append(abspath)
 os.chdir(abspath)
-
-debug = False
-logFolder = "/var/log/python/"
-pidFolder = "/tmp/"
-appFileName = "seshat"
+import config as c
 
 def setupLog():
         import logging
         level = logging.WARNING
-        if debug:
+        if c.debug:
                 level = logging.DEBUG
 
         formatter = logging.Formatter("""%(asctime)s - %(name)s - %(levelname)s
         %(message)s""")
 
-        logger = logging.getLogger(appFileName)
+        logger = logging.getLogger(c.appName)
         logger.setLevel(level)
 
-        fh = logging.FileHandler(logFolder+appFileName+".log")
+        fh = logging.FileHandler(c.logFolder+c.appName+".log")
         fh.setLevel(level)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
 
-        if debug and "noDaemon" in sys.argv:
+        if c.debug and "noDaemon" in sys.argv:
                 """
                 Make sure we're not in daemon mode if we're logging to console too
                 """
@@ -63,28 +59,28 @@ class app(Daemon):
         down = False
         def run(self):
                 setupLog()
-                import seshat.framework as seshat
+                import seshat.framework as fw
 
                 if self.down:
                         import controllers.maintenanceController
                 else:
                         import controllers.controllerMap
 
-                seshat.serveForever()
+                fw.serveForever()
 
 
 if __name__ == "__main__":
-        daemon = app(pidFolder+appFileName+'.pid')
+        daemon = app(c.pidFolder+c.appName+'.pid')
         daemon.down=False
         if len(sys.argv) >= 2:
                 if 'noDaemon' in sys.argv:
                         setupLog()
-                        import seshat.seshat as seshat
+                        import seshat.framework as fw
                         if 'maintenance' in sys.argv:
                                 import controllers.maintenanceController
                         else:
                                 import controllers.controllerMap
-                        seshat.serveForever()
+                        fw.serveForever()
 
                 elif 'start' in sys.argv:
                         daemon.start()

@@ -14,6 +14,7 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
+import siteConfig.dbConfig as dbc
 
 
 class blockString(object):
@@ -23,16 +24,16 @@ class blockString(object):
                 self.key = key
 
 
-                if getattr(c, self.dbName).exists(self.key):
-                        self.current = dataType(getattr(c, self.dbName).get(self.key))
+                if getattr(dbc, self.dbName).exists(self.key):
+                        self.current = dataType(getattr(dbc, self.dbName).get(self.key))
                 else:
                         self.current = dataType(u"")
 
         def commit(self):
-                getattr(c, self.dbName).set(self.key, self.current)
+                getattr(dbc, self.dbName).set(self.key, self.current)
 
         def delete(self):
-                getattr(c, self.dbName).delete(self.key)
+                getattr(dbc, self.dbName).delete(self.key)
 
         def __str__(self):
                 reply = u"%s" % self.current

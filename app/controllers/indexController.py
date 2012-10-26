@@ -15,13 +15,15 @@ joshuaashby@joshashby.com
 """
 import config as c
 
-from objects.userObject import userObject as basePage
+import seshat.baseObject as bo
+import seshat.baseView as bv
 from seshat.route import route
 
 
 @route("/")
-class index(basePage):
+class index(bo.baseHTTPObject):
         __menu__ = "Home"
+        view = bv.baseHTMLView()
         """
         Returns base index page.
         """
@@ -29,4 +31,5 @@ class index(basePage):
                 """
 
                 """
-                self.view = "Hi there"
+                self.view.title = "Testing..."
+                self.view.body = "Hi there"

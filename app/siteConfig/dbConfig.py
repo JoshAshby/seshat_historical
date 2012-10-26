@@ -2,7 +2,7 @@
 """
 Seshat
 Web App/API framework built on top of gevent
-baseObject to build pages off of
+Config settings
 
 For more information, see: https://github.com/JoshAshby/
 
@@ -13,11 +13,7 @@ Josh Ashby
 http://joshashby.com
 joshuaashby@joshashby.com
 """
-import config as c
-import seshat.baseObject as bo
+import redis
 
-
-class adminObject(bo.baseHTTPPageObject):
-       __level__ = "admin"
-       __login__ = True
-       __name__ = "admin"
+redisSessionServer = redis.Redis("localhost", db=1)
+redisUserServer = redis.Redis("localhost", db=0)

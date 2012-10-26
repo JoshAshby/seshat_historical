@@ -14,12 +14,13 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import config as c
-from objects.userObject import userObject as basePage
+import seshat.baseObject as bo
+import seshat.baseView as bv
 from seshat.route import route
 
 
 @route("/(.*)")
-class maintenance(basePage):
+class maintenance(bo.baseHTMLObject):
         """
         Returns base maintenance page
         """

@@ -14,10 +14,11 @@ http://joshashby.com
 joshuaashby@joshashby.com
 """
 import re
-import redis
 import os
 
 appName = "seshat"
+logFolder = "/var/log/python/"
+pidFolder = "/tmp/"
 
 """
 We need to make
@@ -60,6 +61,3 @@ path = os.path.dirname(__file__)
 urls = []
 
 authRegex = re.compile("([^_\W]*)")
-
-redisSessionServer = redis.Redis("localhost", db=1)
-redisUserServer = redis.Redis("localhost", db=0)
