@@ -97,7 +97,7 @@ def app(env, start_response):
                         c.session.loggedIn = helpers.boolean(c.session.loggedIn)
 
 
-                        newHTTPObject = url.pageObject(env, members)
+                        pageObject = newHTTPObject = url.pageObject(env, members)
 
                         data, reply = queue.Queue(), queue.Queue()
 #                        dataThread = gevent.spawn(newHTTPObject.build, data, reply)
@@ -114,6 +114,8 @@ def app(env, start_response):
                         c.session.commit()
 
                         start_response(status, header)
+
+                        del(pageObject)
 
                         return data
 
